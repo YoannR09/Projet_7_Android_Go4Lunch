@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="horizontal"
+    android:padding="10dp">
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight=".80"
+        android:orientation="vertical"
+        android:padding="5dp">
+    <TextView
+        android:id="@+id/restaurant_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        tools:text="Title of the Restaurant"
+        android:textFontWeight="700"
+        android:text="Title"
+        android:textSize="16dp"/>
+    <TextView
+        android:id="@+id/restaurant_description"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Description"
+        tools:text="Description from the restaurant"
+        android:textSize="12dp"/>
+        <TextView
+            android:id="@+id/restaurant_opening"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Opening"
+            tools:text="Opening"
+            android:textStyle="italic"
+            android:textSize="12dp"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/picture_linear"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight=".20" >
+        <ImageView
+            android:id="@+id/restaurant_picture"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+    </LinearLayout>
+</LinearLayout>
