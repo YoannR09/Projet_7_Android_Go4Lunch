@@ -1,19 +1,19 @@
 package com.example.go4lunch.ui;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.DefaultItemAnimator;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.go4lunch.R;
 import com.example.go4lunch.ui.list.RestaurantsAdapter;
-import com.example.go4lunch.viewModel.MainActivityViewModel;
+import com.example.go4lunch.ui.viewModel.ListFragmentViewModel;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -23,7 +23,7 @@ public class ListViewFragment extends Fragment {
 
     RestaurantsAdapter adapter;
     RecyclerView recyclerView;
-    MainActivityViewModel viewModel = new MainActivityViewModel();
+    ListFragmentViewModel viewModel = new ListFragmentViewModel();
 
     public ListViewFragment() {
         // Required empty public constructor
@@ -35,9 +35,10 @@ public class ListViewFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_list_view, container, false);
         recyclerView = view.findViewById(R.id.rvRestaurants);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        adapter = new RestaurantsAdapter(new ArrayList<>());
+        recyclerView.setAdapter(adapter);
         viewModel.getCurrentRestaurants().observe(getActivity(), restaurants -> {
-            adapter = new RestaurantsAdapter(restaurants);
-            recyclerView.setAdapter(adapter);
+           // TODO adapter.updateList(restaurants);
         } );
         return view;
     }

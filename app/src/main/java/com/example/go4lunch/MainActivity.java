@@ -1,20 +1,30 @@
 package com.example.go4lunch;
+import android.os.Build;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.example.go4lunch.ui.ListViewFragment;
 import com.example.go4lunch.ui.MapFragment;
 import com.example.go4lunch.ui.WorkmatesFragment;
+import com.example.go4lunch.ui.viewModel.MainActivityViewModel;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 
 import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity{
 
+    DrawerLayout drawer;
+    NavigationView navigationView;
 
     final Fragment fragment1 = new MapFragment();
     final Fragment fragment2 = new ListViewFragment();
@@ -24,10 +34,14 @@ public class MainActivity extends AppCompatActivity{
 
     private static final int RC_SIGN_IN = 123;
 
+    private MainActivityViewModel viewModel = new MainActivityViewModel();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
         startActivityForResult(
                 AuthUI.getInstance()
                         .createSignInIntentBuilder()
@@ -41,6 +55,15 @@ public class MainActivity extends AppCompatActivity{
                         .build(),
                 RC_SIGN_IN);
         setContentView(R.layout.activity_main);
+        setSupportActionBar(findViewById(R.id.topAppBar));
+
+        drawer = findViewById(R.id.drawer);
+        navigationView = findViewById(R.id.navigation_view);
+
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawer, 0,R.string.com_facebook_loginview_cancel_action);
+        drawer.addDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
         bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         fm.beginTransaction().add(R.id.main_container, fragment3, "3").hide(fragment3).commit();
@@ -70,4 +93,18 @@ public class MainActivity extends AppCompatActivity{
                 }
                 return false;
             };
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        super.onOptionsItemSelected(item);
+        if(item.getItemId() == 16908332) {
+            drawer.openDrawer(GravityCompat.START);
+            return true;
+        }
+        return false;
+    }
+
+    public MainActivityViewModel getViewModel() {
+        return viewModel;
+    }
 }

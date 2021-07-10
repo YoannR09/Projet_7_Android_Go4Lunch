@@ -1,8 +1,7 @@
 package com.example.go4lunch.mapper;
 
-import com.example.go4lunch.entity.RestaurantEntity;
 import com.example.go4lunch.model.RestaurantModel;
-import com.example.go4lunch.viewModel.RestaurantViewModel;
+import com.example.go4lunch.ui.viewModel.RestaurantViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +17,8 @@ public class RestaurantModelToViewModel {
                 123,
                 "1hour",
                 restaurantModel.getLatitude(),
-                restaurantModel.getLongitude());
+                restaurantModel.getLongitude(),
+                restaurantModel.getPhotoReference());
     }
 
     public List<RestaurantViewModel> maps(List<RestaurantModel> restaurantModels) {

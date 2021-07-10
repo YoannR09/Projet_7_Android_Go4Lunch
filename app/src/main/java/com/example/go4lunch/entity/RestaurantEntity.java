@@ -12,6 +12,7 @@ public class RestaurantEntity {
     private double longitude;
     private String imgUrl;
     private double rating;
+    private String photoReference;
     // private RestaurantType type;
     private String address;
     private int countMatesPassed;
@@ -105,5 +106,13 @@ public class RestaurantEntity {
 
     public void setRating(double rating) {
         this.rating = rating;
+    }
+
+    public String getPhotoReference() {
+        return photoReference;
+    }
+
+    public void setPhotoReference(String photoReference) {
+        this.photoReference = photoReference;
     }
 }

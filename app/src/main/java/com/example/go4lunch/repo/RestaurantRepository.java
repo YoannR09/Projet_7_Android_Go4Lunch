@@ -3,8 +3,10 @@ package com.example.go4lunch.repo;
 import android.location.Location;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Transformations;
 
 import com.example.go4lunch.dao.RestaurantDao;
+import com.example.go4lunch.entity.RestaurantEntity;
 import com.example.go4lunch.mapper.RestaurantEntityToModel;
 import com.example.go4lunch.model.RestaurantModel;
 
@@ -18,12 +20,20 @@ public class RestaurantRepository {
         this.dao = dao;
     }
 
-    public List<RestaurantModel> getCurrentRestaurants() {
-        return new RestaurantEntityToModel().maps(dao.getCurrentRestaurants());
+    public LiveData<List<RestaurantModel>> getCurrentRestaurants() {
+        return mappers(dao.getCurrentRestaurants());
     }
 
-    public LiveData<RestaurantModel> getRestaurantById(String placeId) {
-        return null; // dao.getRestaurantById(placeId);
+    public RestaurantModel getRestaurantById(String placeId) {
+        return new RestaurantEntityToModel().map(dao.getRestaurantById(placeId));
+    }
+
+    public LiveData<List<RestaurantModel>> mappers(LiveData<List<RestaurantEntity>> list) {
+        return Transformations.map(list, restaurants -> new RestaurantEntityToModel().maps(restaurants));
+    }
+
+    public LiveData<RestaurantModel> mapper(LiveData<RestaurantEntity> data) {
+        return Transformations.map(data, restaurant -> new RestaurantEntityToModel().map(restaurant));
     }
 
     public void findByName(Location location,String name) {

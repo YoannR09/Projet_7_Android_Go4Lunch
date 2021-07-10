@@ -1,8 +1,4 @@
-package com.example.go4lunch.viewModel;
-
-import com.example.go4lunch.entity.MateEntity;
-
-import java.util.List;
+package com.example.go4lunch.ui.viewModel;
 
 public class RestaurantViewModel {
 
@@ -13,7 +9,8 @@ public class RestaurantViewModel {
                                int range,
                                String opening,
                                double latitude,
-                               double longitude) {
+                               double longitude,
+                               String photoReference) {
         this.id = id;
         this.decription = decription;
         this.phone = phone;
@@ -22,6 +19,7 @@ public class RestaurantViewModel {
         this.opening = opening;
         this.latitude = latitude;
         this.longitude = longitude;
+        this.photoReference = photoReference;
     }
 
     private String id;
@@ -32,6 +30,7 @@ public class RestaurantViewModel {
     private String webSite;
     private int range;
     private String opening;
+    private String photoReference;
 
     public String getId() {
         return id;
@@ -95,5 +94,13 @@ public class RestaurantViewModel {
 
     public void setOpening(String opening) {
         this.opening = opening;
+    }
+
+    public String getPhotoReference() {
+        return photoReference;
+    }
+
+    public void setPhotoReference(String photoReference) {
+        this.photoReference = photoReference;
     }
 }

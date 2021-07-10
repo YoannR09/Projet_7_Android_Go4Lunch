@@ -11,7 +11,7 @@ import java.util.List;
 public interface RestaurantDao {
 
     RestaurantEntity getRestaurantById(String placeId);
-    List<RestaurantEntity> getCurrentRestaurants();
+    LiveData<List<RestaurantEntity>> getCurrentRestaurants();
     void findByName(Location location, String name);
     void refreshList(double latitude, double longitude);
 }

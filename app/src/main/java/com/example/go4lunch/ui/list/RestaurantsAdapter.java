@@ -1,7 +1,5 @@
 package com.example.go4lunch.ui.list;
 
-import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.go4lunch.Go4LunchApplication;
 import com.example.go4lunch.R;
-import com.example.go4lunch.entity.RestaurantEntity;
-import com.example.go4lunch.viewModel.RestaurantViewModel;
+import com.example.go4lunch.ui.viewModel.RestaurantViewModel;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
@@ -34,6 +31,12 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
 
     public RestaurantsAdapter(List<RestaurantViewModel> data) {
         this.mData = data;
+    }
+
+    public void updateList(List<RestaurantViewModel> viewModelList) {
+        mData.clear();
+        mData.addAll(viewModelList);
+        notifyDataSetChanged();
     }
 
     @Override
@@ -80,6 +83,8 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
         }
         void bind(RestaurantViewModel restaurantViewModel) {
             myTextView.setText(restaurantViewModel.getDecription());
+
+            // Glide.with(Go4LunchApplication.getContext()).load("https://maps.googleapis.com/maps/api/place/photo?photoreference="+restaurantViewModel.getPhotoReference()+"&key="+restaurantViewModel.getId()).into(imageView);
             PlacesClient placesClient = Places.createClient(Go4LunchApplication.getContext());
             final List<Place.Field> fields = Collections.singletonList(Place.Field.PHOTO_METADATAS);
             final FetchPlaceRequest placeRequest = FetchPlaceRequest.newInstance(restaurantViewModel.getId(), fields);
@@ -88,8 +93,6 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
                 final List<PhotoMetadata> metadata = place.getPhotoMetadatas();
                 if (metadata == null || metadata.isEmpty()) {
                     return;
-                }
-                for(PhotoMetadata photoMetadata: metadata) {
                 }
 
                 final String attributions = metadata.get(0).getAttributions();

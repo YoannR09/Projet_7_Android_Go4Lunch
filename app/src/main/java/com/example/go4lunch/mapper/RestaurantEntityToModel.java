@@ -11,11 +11,13 @@ public class RestaurantEntityToModel {
     public RestaurantModel map(RestaurantEntity restaurantEntity) {
         return new RestaurantModel(
                 restaurantEntity.getId(),
+                restaurantEntity.getName(),
                 restaurantEntity.getLatitude(),
                 restaurantEntity.getLongitude(),
                 restaurantEntity.getAddress(),
                 restaurantEntity.getInterestMates(),
-                restaurantEntity.getOpinion());
+                restaurantEntity.getOpinion(),
+                restaurantEntity.getPhotoReference());
     }
 
     public List<RestaurantModel> maps(List<RestaurantEntity> restaurantEntity) {
