@@ -13,10 +13,11 @@ public class RestaurantEntity {
     private String imgUrl;
     private double rating;
     private String photoReference;
+    private boolean opening;
     // private RestaurantType type;
     private String address;
     private int countMatesPassed;
-    private List<MateEntity> interestMates;
+    private List<WorkmateEntity> interestMates;
     private float opinion;
 
 
@@ -76,7 +77,7 @@ public class RestaurantEntity {
         this.countMatesPassed = countMatesPassed;
     }
 
-    public List<MateEntity> getInterestMates() {
+    public List<WorkmateEntity> getInterestMates() {
         return interestMates;
     }
 
@@ -88,7 +89,7 @@ public class RestaurantEntity {
         this.name = name;
     }
 
-    public void setInterestMates(List<MateEntity> interestMates) {
+    public void setInterestMates(List<WorkmateEntity> interestMates) {
         this.interestMates = interestMates;
     }
 
@@ -114,5 +115,13 @@ public class RestaurantEntity {
 
     public void setPhotoReference(String photoReference) {
         this.photoReference = photoReference;
+    }
+
+    public boolean getOpening() {
+        return opening;
+    }
+
+    public void setOpening(boolean opening) {
+        this.opening = opening;
     }
 }

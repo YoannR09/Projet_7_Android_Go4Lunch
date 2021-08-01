@@ -1,6 +1,6 @@
 package com.example.go4lunch.model;
 
-import com.example.go4lunch.entity.MateEntity;
+import com.example.go4lunch.entity.WorkmateEntity;
 
 import java.io.Serializable;
 import java.util.List;
@@ -12,9 +12,10 @@ public class RestaurantModel implements Serializable {
                            double latitude,
                            double longitude,
                            String address,
-                           List<MateEntity> interestMates,
+                           List<WorkmateEntity> interestMates,
                            float opinion,
-                           String photoReference) {
+                           String photoReference,
+                           String opening) {
         this.id = id;
         this.name = name;
         this.latitude = latitude;
@@ -23,6 +24,7 @@ public class RestaurantModel implements Serializable {
         this.interestMates = interestMates;
         this.opinion = opinion;
         this.photoReference = photoReference;
+        this.opening = opening;
     }
 
     private String id;
@@ -34,9 +36,10 @@ public class RestaurantModel implements Serializable {
     // private RestaurantType type;
     private String address;
     private int countMatesPassed;
-    private List<MateEntity> interestMates;
+    private List<WorkmateEntity> interestMates;
     private float opinion;
     private String name;
+    private String opening;
 
 
     public long getRangePosition() {
@@ -80,11 +83,11 @@ public class RestaurantModel implements Serializable {
         this.countMatesPassed = countMatesPassed;
     }
 
-    public List<MateEntity> getInterestMates() {
+    public List<WorkmateEntity> getInterestMates() {
         return interestMates;
     }
 
-    public void setInterestMates(List<MateEntity> interestMates) {
+    public void setInterestMates(List<WorkmateEntity> interestMates) {
         this.interestMates = interestMates;
     }
 
@@ -134,5 +137,13 @@ public class RestaurantModel implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getOpening() {
+        return opening;
+    }
+
+    public void setOpening(String opening) {
+        this.opening = opening;
     }
 }

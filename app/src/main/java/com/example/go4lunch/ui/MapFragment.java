@@ -99,6 +99,7 @@ public class MapFragment extends Fragment implements LocationListener {
         }
         assert provider != null;
         location = locationManager.getLastKnownLocation(provider);
+        ((MainActivity) getActivity()).getViewModel().setLocation(location);
     }
 
     /**

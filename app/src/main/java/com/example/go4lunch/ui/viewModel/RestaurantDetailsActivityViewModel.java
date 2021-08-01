@@ -6,6 +6,8 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.go4lunch.Go4LunchApplication;
+import com.example.go4lunch.entity.DinerEntity;
+import com.example.go4lunch.repo.Repositories;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.PhotoMetadata;
@@ -13,6 +15,7 @@ import com.google.android.libraries.places.api.model.Place;
 import com.google.android.libraries.places.api.net.FetchPhotoRequest;
 import com.google.android.libraries.places.api.net.FetchPlaceRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.firebase.database.core.Repo;
 
 import java.util.Collections;
 import java.util.List;
@@ -25,7 +28,12 @@ public class RestaurantDetailsActivityViewModel {
         return pictureData;
     }
 
+    public void createDiner(DinerEntity dinerEntity) {
+        Repositories.getDinerRepository().createDiner(dinerEntity);
+    }
+
     public void definePicture(String placeId) {
+
         PlacesClient placesClient = Places.createClient(Go4LunchApplication.getContext());
         final List<Place.Field> fields = Collections.singletonList(Place.Field.PHOTO_METADATAS);
         final FetchPlaceRequest placeRequest = FetchPlaceRequest.newInstance(placeId, fields);

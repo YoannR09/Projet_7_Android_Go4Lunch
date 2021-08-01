@@ -36,7 +36,7 @@
                     android:layout_height="wrap_content"
                     android:src="@drawable/ic_baseline_search_24"
                     android:layout_gravity="right"
-                    android:backgroundTint="@color/fui_transparent"
+                    android:backgroundTint="@android:color/transparent"
                     />
             </androidx.appcompat.widget.Toolbar>
 
@@ -70,7 +70,36 @@
         android:layout_height="match_parent"
         android:layout_gravity="start"
         android:clipToPadding="false"
-        />
+        android:backgroundTint="@color/colorPrimary"
+        >
+        <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="top"
+                android:src="@drawable/restaurant_background" />
+
+            <RelativeLayout
+                android:id="@+id/today"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:text="@string/app_name"
+                    android:textSize="24sp" />
+            </RelativeLayout>
+        </FrameLayout>
+    </com.google.android.material.navigation.NavigationView>
 </androidx.drawerlayout.widget.DrawerLayout>
 
 

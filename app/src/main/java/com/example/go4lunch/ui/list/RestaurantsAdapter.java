@@ -1,6 +1,9 @@
 package com.example.go4lunch.ui.list;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,9 +12,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
+import com.bumptech.glide.Glide;
 import com.example.go4lunch.Go4LunchApplication;
 import com.example.go4lunch.R;
+import com.example.go4lunch.repo.Repositories;
+import com.example.go4lunch.ui.RestaurantDetailsActivity;
 import com.example.go4lunch.ui.viewModel.RestaurantViewModel;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.libraries.places.api.Places;
@@ -28,6 +35,7 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
 
     private List<RestaurantViewModel> mData;
 
+    private Context context;
 
     public RestaurantsAdapter(List<RestaurantViewModel> data) {
         this.mData = data;
@@ -47,6 +55,7 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
     @Override
     public RestaurantViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
+        context = parent.getContext();
         return new RestaurantViewHolder(view);
     }
 
@@ -65,13 +74,20 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
 
     // stores and recycles views as they are scrolled off screen
     public class RestaurantViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView myTextView;
+
+        TextView title;
+        TextView openStatus;
         TextView description;
+        TextView opinion;
         ImageView imageView;
+        TextView range;
 
         RestaurantViewHolder(@NonNull View itemView) {
             super(itemView);
-            myTextView = itemView.findViewById(R.id.restaurant_title);
+            openStatus = itemView.findViewById(R.id.restaurant_opening);
+            opinion = itemView.findViewById(R.id.restaurant_opinion);
+            range = itemView.findViewById(R.id.restaurant_range);
+            title = itemView.findViewById(R.id.restaurant_title);
             description = itemView.findViewById(R.id.restaurant_description);
             imageView = itemView.findViewById(R.id.restaurant_picture);
             itemView.setOnClickListener(this);
@@ -79,42 +95,25 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
 
         @Override
         public void onClick(View view) {
-
+            Intent intent = new Intent(context, RestaurantDetailsActivity.class);
+            intent.putExtra("data_restaurant",
+                    Repositories.getRestaurantRepository().getRestaurantById(mData.get(this.getPosition()).getId()));
+            context.startActivity(intent);
         }
+
         void bind(RestaurantViewModel restaurantViewModel) {
-            myTextView.setText(restaurantViewModel.getDecription());
-
-            // Glide.with(Go4LunchApplication.getContext()).load("https://maps.googleapis.com/maps/api/place/photo?photoreference="+restaurantViewModel.getPhotoReference()+"&key="+restaurantViewModel.getId()).into(imageView);
-            PlacesClient placesClient = Places.createClient(Go4LunchApplication.getContext());
-            final List<Place.Field> fields = Collections.singletonList(Place.Field.PHOTO_METADATAS);
-            final FetchPlaceRequest placeRequest = FetchPlaceRequest.newInstance(restaurantViewModel.getId(), fields);
-            placesClient.fetchPlace(placeRequest).addOnSuccessListener((response) -> {
-                final Place place = response.getPlace();
-                final List<PhotoMetadata> metadata = place.getPhotoMetadatas();
-                if (metadata == null || metadata.isEmpty()) {
-                    return;
-                }
-
-                final String attributions = metadata.get(0).getAttributions();
-                final FetchPhotoRequest photoRequest = FetchPhotoRequest.builder(metadata.get(0))
-                        .setMaxWidth(500)
-                        .setMaxHeight(300)
-                        .build();
-                placesClient.fetchPhoto(photoRequest).addOnSuccessListener((fetchPhotoResponse) -> {
-                    Bitmap bitmap = fetchPhotoResponse.getBitmap();
-                    imageView.setImageBitmap(bitmap);
-                }).addOnFailureListener((exception) -> {
-                    if (exception instanceof ApiException) {
-                        final ApiException apiException = (ApiException) exception;;
-                        final int statusCode = apiException.getStatusCode();
-                    }
-                });
-            });
+            title.setText(restaurantViewModel.getName());
+            description.setText(restaurantViewModel.getDecription());
+            range.setText(restaurantViewModel.getRange());
+            opinion.setText(restaurantViewModel.getOpinion());
+            opinion.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_star_12, 0, 0, 0);
+            openStatus.setText(restaurantViewModel.getOpening());
+            if(restaurantViewModel.getOpening().equals("Close")) openStatus.setTextColor(Color.RED);
+            CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(itemView.getContext());
+            circularProgressDrawable.setStrokeWidth(5f);
+            circularProgressDrawable.setCenterRadius(30f);
+            circularProgressDrawable.start();
+            Glide.with(Go4LunchApplication.getContext()).load("https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+restaurantViewModel.getPhotoReference()+"&key=AIzaSyD-NY3k75I5IbFh13vcv-kJ3YORhDNETSE").placeholder(circularProgressDrawable).into(imageView);
         }
-    }
-
-    // parent activity will implement this method to respond to click events
-    public interface ItemClickListener {
-        void onItemClick(View view, int position);
     }
 }

@@ -1,8 +1,8 @@
 package com.example.go4lunch;
-import android.os.Build;
+
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.view.View;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
@@ -36,7 +36,6 @@ public class MainActivity extends AppCompatActivity{
 
     private MainActivityViewModel viewModel = new MainActivityViewModel();
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +50,7 @@ public class MainActivity extends AppCompatActivity{
                                         new AuthUI.IdpConfig.Builder(AuthUI.GOOGLE_PROVIDER).build(), //GOOGLE
                                         new AuthUI.IdpConfig.Builder(AuthUI.FACEBOOK_PROVIDER).build())) // FACEBOOK
                         .setIsSmartLockEnabled(false, true)
+                        .setTheme(R.style.AppTheme_NoActionBar)
                         .setLogo(R.drawable.ic_baseline_local_pizza_24)
                         .build(),
                 RC_SIGN_IN);
@@ -59,6 +59,7 @@ public class MainActivity extends AppCompatActivity{
 
         drawer = findViewById(R.id.drawer);
         navigationView = findViewById(R.id.navigation_view);
+
 
         ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawer, 0,R.string.com_facebook_loginview_cancel_action);
         drawer.addDrawerListener(drawerToggle);
@@ -69,6 +70,12 @@ public class MainActivity extends AppCompatActivity{
         fm.beginTransaction().add(R.id.main_container, fragment3, "3").hide(fragment3).commit();
         fm.beginTransaction().add(R.id.main_container, fragment2, "2").hide(fragment2).commit();
         fm.beginTransaction().add(R.id.main_container,fragment1, "1").commit();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        viewModel.createUser();
     }
 
 

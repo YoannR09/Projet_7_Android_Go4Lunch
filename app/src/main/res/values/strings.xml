@@ -12,6 +12,7 @@
     <string name="phone_button">CALL</string>
     <string name="like_button">LIKE</string>
     <string name="website_button">WEBSITE</string>
+    <string name="undefined">undefined</string>
     <style name="drawer_open">Open</style>
     <style name="drawer_close">Close</style>
     <string name="title_toolbar">I\'m Hungry !</string>

@@ -94,12 +94,18 @@ public class RestaurantDaoImpl implements RestaurantDao {
                                     restaurant.setLatitude(loc.getDouble("lat"));
                                     restaurant.setLongitude(loc.getDouble("lng"));
                                     restaurant.setName(arr.getJSONObject(i).getString("name"));
+                                    if(arr.getJSONObject(i).has("opening_hours")) {
+                                        restaurant.setOpening(arr.getJSONObject(i).getJSONObject("opening_hours").getBoolean("open_now"));
+                                    }
                                     restaurant.setId(arr.getJSONObject(i).getString("place_id"));
                                     // restaurant.setRating(arr.getJSONObject(i).getDouble("rating"));
-                                    try {
-                                        restaurant.setPhotoReference(arr.getJSONObject(i).getJSONArray("photos").getJSONObject(0).getString("photo_reference"));
-                                    }catch (Exception e) {
-                                        e.printStackTrace();
+                                    if(arr.getJSONObject(i).has("photos")) {
+                                        if(arr.getJSONObject(i).getJSONArray("photos").getJSONObject(0).has("photo_reference")) {
+                                            restaurant.setPhotoReference(arr.getJSONObject(i).getJSONArray("photos").getJSONObject(0).getString("photo_reference"));
+                                        }
+                                    }
+                                    if(arr.getJSONObject(i).has("rating")) {
+                                        restaurant.setOpinion((float) arr.getJSONObject(i).getDouble("rating"));
                                     }
                                     restaurant.setAddress(arr.getJSONObject(i).getString("vicinity"));
                                     vList.add(restaurant);

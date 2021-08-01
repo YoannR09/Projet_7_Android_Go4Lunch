@@ -3,15 +3,18 @@ package com.example.go4lunch.ui.viewModel;
 public class RestaurantViewModel {
 
     public RestaurantViewModel(String id,
+                               String name,
                                String decription,
                                int phone,
                                String webSite,
-                               int range,
+                               String range,
                                String opening,
                                double latitude,
                                double longitude,
-                               String photoReference) {
+                               String photoReference,
+                               String opinion) {
         this.id = id;
+        this.name = name;
         this.decription = decription;
         this.phone = phone;
         this.webSite = webSite;
@@ -20,15 +23,18 @@ public class RestaurantViewModel {
         this.latitude = latitude;
         this.longitude = longitude;
         this.photoReference = photoReference;
+        this.opinion = opinion;
     }
 
+    private String name;
     private String id;
     private String decription;
+    private String opinion;
     private double latitude;
     private double longitude;
     private int phone;
     private String webSite;
-    private int range;
+    private String range;
     private String opening;
     private String photoReference;
 
@@ -80,11 +86,11 @@ public class RestaurantViewModel {
         this.webSite = webSite;
     }
 
-    public int getRange() {
+    public String getRange() {
         return range;
     }
 
-    public void setRange(int range) {
+    public void setRange(String range) {
         this.range = range;
     }
 
@@ -102,5 +108,21 @@ public class RestaurantViewModel {
 
     public void setPhotoReference(String photoReference) {
         this.photoReference = photoReference;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getOpinion() {
+        return opinion;
+    }
+
+    public void setOpinion(String opinion) {
+        this.opinion = opinion;
     }
 }

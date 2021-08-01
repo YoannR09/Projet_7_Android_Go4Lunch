@@ -13,6 +13,8 @@ import java.util.List;
 
 public class MainActivityViewModel {
 
+    private Location location;
+
     public MainActivityViewModel () {
     }
 
@@ -30,5 +32,17 @@ public class MainActivityViewModel {
 
     public void refreshList(double latitude, double longitude) {
        Repositories.getRestaurantRepository().refreshList(latitude, longitude);
+    }
+
+    public void createUser() {
+        Repositories.getWorkmateRepository().createUser();
+    }
+
+    public Location getCurrentPosition() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
     }
 }

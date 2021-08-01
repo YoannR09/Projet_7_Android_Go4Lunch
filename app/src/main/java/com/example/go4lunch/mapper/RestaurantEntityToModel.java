@@ -17,7 +17,8 @@ public class RestaurantEntityToModel {
                 restaurantEntity.getAddress(),
                 restaurantEntity.getInterestMates(),
                 restaurantEntity.getOpinion(),
-                restaurantEntity.getPhotoReference());
+                restaurantEntity.getPhotoReference(),
+                String.valueOf(restaurantEntity.getOpening()));
     }
 
     public List<RestaurantModel> maps(List<RestaurantEntity> restaurantEntity) {
