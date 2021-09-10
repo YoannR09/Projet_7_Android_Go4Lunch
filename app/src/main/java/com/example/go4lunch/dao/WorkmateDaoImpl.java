@@ -2,6 +2,7 @@ package com.example.go4lunch.dao;
 
 
 import com.example.go4lunch.entity.WorkmateEntity;
+import com.example.go4lunch.ui.ToastError;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -9,14 +10,34 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.List;
+
+import static com.example.go4lunch.ui.ToastError.errorMessage;
+
 public class WorkmateDaoImpl implements WorkmateDao{
 
     private static final String COLLECTION_NAME = "workmate";
-    private static final String USERNAME_FIELD = "username";
 
     // Get the Collection Reference
     private CollectionReference getUsersCollection(){
         return FirebaseFirestore.getInstance().collection(COLLECTION_NAME);
+    }
+
+    public void getUser(String userId, DaoOnSuccessListener<WorkmateEntity> listener) {
+        this.getUsersCollection().document(userId).get()
+                .continueWith(task -> task.getResult().toObject(WorkmateEntity.class))
+                .addOnSuccessListener(listener::onSuccess)
+                .addOnFailureListener(err -> {
+                    System.out.println("Error : " + err);
+                    errorMessage(err.getMessage());
+                });
+    }
+
+    @Override
+    public void getWorkmatesLits(DaoOnSuccessListener<List<WorkmateEntity>> listener) {
+        this.getUsersCollection().get()
+                .continueWith(task -> task.getResult().toObjects(WorkmateEntity.class))
+                .addOnSuccessListener(listener::onSuccess);
     }
 
     // Create User in Firestore
@@ -24,13 +45,16 @@ public class WorkmateDaoImpl implements WorkmateDao{
         FirebaseUser user = getCurrentUser();
         if(user != null){
             String urlPicture = (user.getPhotoUrl() != null) ? user.getPhotoUrl().toString() : null;
-            String username = user.getDisplayName();
-            String uid = user.getUid();
 
-            WorkmateEntity userToCreate = new WorkmateEntity(uid, username, urlPicture);
+            WorkmateEntity userToCreate = new WorkmateEntity(
+                    user.getUid(),
+                    user.getDisplayName(),
+                    urlPicture,
+                    user.getEmail());
 
             Task<DocumentSnapshot> userData = getUserData();
-            userData.addOnSuccessListener(documentSnapshot -> this.getUsersCollection().document(uid).set(userToCreate));
+            userData.addOnSuccessListener(documentSnapshot
+                    -> this.getUsersCollection().document(user.getUid()).set(userToCreate));
         }
     }
 

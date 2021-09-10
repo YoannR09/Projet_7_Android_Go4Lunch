@@ -1,9 +1,10 @@
-package com.example.go4lunch.ui.viewModel;
+package com.example.go4lunch.ui.viewModel.ui;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Transformations;
 
 import com.example.go4lunch.mapper.RestaurantModelToMapViewModel;
+import com.example.go4lunch.ui.viewModel.ui.MainActivityViewModel;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.util.List;

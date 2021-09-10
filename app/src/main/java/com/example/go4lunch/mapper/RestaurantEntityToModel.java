@@ -18,7 +18,8 @@ public class RestaurantEntityToModel {
                 restaurantEntity.getInterestMates(),
                 restaurantEntity.getOpinion(),
                 restaurantEntity.getPhotoReference(),
-                String.valueOf(restaurantEntity.getOpening()));
+                String.valueOf(restaurantEntity.getOpening()),
+                restaurantEntity.isWorkmateDiner());
     }
 
     public List<RestaurantModel> maps(List<RestaurantEntity> restaurantEntity) {

@@ -12,6 +12,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.go4lunch.Go4LunchApplication;
 import com.example.go4lunch.entity.RestaurantEntity;
+import com.example.go4lunch.repo.Repositories;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -79,42 +80,48 @@ public class RestaurantDaoImpl implements RestaurantDao {
                 + "AIzaSyD-NY3k75I5IbFh13vcv-kJ3YORhDNETSE";
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                (Response.Listener<String>)
-                        response -> {
-                            try {
-                                JSONObject mainObject = new JSONObject(response);
+                response -> {
+                    try {
+                        JSONObject mainObject = new JSONObject(response);
 
-                                JSONArray arr = mainObject.getJSONArray("results");
-                                for (int i = 0; i < arr.length(); i++)
-                                {
-                                    System.out.println(" restaurant : " + arr.getJSONObject(i));
-                                    JSONObject geo = arr.getJSONObject(i).getJSONObject("geometry");
-                                    JSONObject loc = geo.getJSONObject("location");
-                                    RestaurantEntity restaurant = new RestaurantEntity();
-                                    restaurant.setLatitude(loc.getDouble("lat"));
-                                    restaurant.setLongitude(loc.getDouble("lng"));
-                                    restaurant.setName(arr.getJSONObject(i).getString("name"));
-                                    if(arr.getJSONObject(i).has("opening_hours")) {
-                                        restaurant.setOpening(arr.getJSONObject(i).getJSONObject("opening_hours").getBoolean("open_now"));
-                                    }
-                                    restaurant.setId(arr.getJSONObject(i).getString("place_id"));
-                                    // restaurant.setRating(arr.getJSONObject(i).getDouble("rating"));
-                                    if(arr.getJSONObject(i).has("photos")) {
-                                        if(arr.getJSONObject(i).getJSONArray("photos").getJSONObject(0).has("photo_reference")) {
-                                            restaurant.setPhotoReference(arr.getJSONObject(i).getJSONArray("photos").getJSONObject(0).getString("photo_reference"));
-                                        }
-                                    }
-                                    if(arr.getJSONObject(i).has("rating")) {
-                                        restaurant.setOpinion((float) arr.getJSONObject(i).getDouble("rating"));
-                                    }
-                                    restaurant.setAddress(arr.getJSONObject(i).getString("vicinity"));
-                                    vList.add(restaurant);
-                                }
-                                currentList.setValue(vList);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                        JSONArray arr = mainObject.getJSONArray("results");
+                        for (int i = 0; i < arr.length(); i++)
+                        {
+                            System.out.println(" restaurant : " + arr.getJSONObject(i));
+                            JSONObject geo = arr.getJSONObject(i).getJSONObject("geometry");
+                            JSONObject loc = geo.getJSONObject("location");
+                            RestaurantEntity restaurant = new RestaurantEntity();
+                            restaurant.setLatitude(loc.getDouble("lat"));
+                            restaurant.setLongitude(loc.getDouble("lng"));
+                            restaurant.setName(arr.getJSONObject(i).getString("name"));
+                            if(arr.getJSONObject(i).has("opening_hours")) {
+                                restaurant.setOpening(arr.getJSONObject(i).getJSONObject("opening_hours").getBoolean("open_now"));
                             }
-                        }, error -> {
+                            restaurant.setId(arr.getJSONObject(i).getString("place_id"));
+                            // restaurant.setRating(arr.getJSONObject(i).getDouble("rating"));
+                            if(arr.getJSONObject(i).has("photos")) {
+                                if(arr.getJSONObject(i).getJSONArray("photos").getJSONObject(0).has("photo_reference")) {
+                                    restaurant.setPhotoReference(arr.getJSONObject(i).getJSONArray("photos").getJSONObject(0).getString("photo_reference"));
+                                }
+                            }
+                            if(arr.getJSONObject(i).has("rating")) {
+                                restaurant.setOpinion((float) arr.getJSONObject(i).getDouble("rating"));
+                            }
+                            restaurant.setAddress(arr.getJSONObject(i).getString("vicinity"));
+                            Repositories.getDinerRepository().getListDinersFromRestaurant(data -> {
+                                if(data.size() > 0) {
+                                    restaurant.setWorkmateDiner(true);
+                                }else {
+                                    restaurant.setWorkmateDiner(false);
+                                }
+                                vList.add(restaurant);
+                                currentList.setValue(vList);
+                            },restaurant.getId());
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }, error -> {
         });
         queue.add(stringRequest);
     }

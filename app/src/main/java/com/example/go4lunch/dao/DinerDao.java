@@ -1,19 +1,22 @@
 package com.example.go4lunch.dao;
 
 import com.example.go4lunch.entity.DinerEntity;
-import com.google.android.gms.tasks.Task;
 
 import java.util.List;
 
 public interface DinerDao {
 
-    void createDiner(DinerEntity dinerEntity);
+    void createDiner(DinerEntity dinerEntity, DaoOnSuccessListener<Void> listener);
 
-    Task<DinerEntity> getDinerFromWorkmate();
+    void getDinerFromWorkmate(DaoOnSuccessListener<DinerEntity> listener);
 
-    Task<List<DinerEntity>> getListDiner();
+    void getDinerFromRestaurant(String restaurantId, DaoOnSuccessListener<List<DinerEntity>> listener);
 
-    Task<List<DinerEntity>> getListDinerFromRestaurant();
+    void getListDiner(DaoOnSuccessListener<List<DinerEntity>> listener);
 
-    void deleteDiner();
+    void getListDinerFromRestaurant(DaoOnSuccessListener<List<DinerEntity>> listener, String restaurantId);
+
+    void deleteDiner(DaoOnSuccessListener<Void> listener);
+
+
 }

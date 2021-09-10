@@ -12,8 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.go4lunch.MainActivity;
 import com.example.go4lunch.R;
 import com.example.go4lunch.ui.list.RestaurantsAdapter;
-import com.example.go4lunch.ui.viewModel.ListFragmentViewModel;
-import com.example.go4lunch.ui.viewModel.MapFragmentViewModel;
+import com.example.go4lunch.ui.viewModel.ui.ListFragmentViewModel;
 
 import java.util.ArrayList;
 
@@ -47,8 +46,9 @@ myTextView.text = spannable
         viewModel = new ListFragmentViewModel(((MainActivity) getActivity()).getViewModel());
         recyclerView = view.findViewById(R.id.rvRestaurants);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter = new RestaurantsAdapter(new ArrayList<>());
+        adapter = new RestaurantsAdapter(new ArrayList<>(), this);
         recyclerView.setAdapter(adapter);
+
         viewModel.getCurrentRestaurants().observe(getActivity(), restaurants
                 -> adapter.updateList(restaurants));
         return view;

@@ -19,6 +19,7 @@ public class RestaurantEntity {
     private int countMatesPassed;
     private List<WorkmateEntity> interestMates;
     private float opinion;
+    private boolean workmateDiner;
 
 
     public String getId() {
@@ -123,5 +124,17 @@ public class RestaurantEntity {
 
     public void setOpening(boolean opening) {
         this.opening = opening;
+    }
+
+    public boolean isOpening() {
+        return opening;
+    }
+
+    public boolean isWorkmateDiner() {
+        return workmateDiner;
+    }
+
+    public void setWorkmateDiner(boolean workmateDiner) {
+        this.workmateDiner = workmateDiner;
     }
 }

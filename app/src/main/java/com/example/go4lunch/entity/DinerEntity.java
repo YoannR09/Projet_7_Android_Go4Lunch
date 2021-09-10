@@ -1,5 +1,7 @@
 package com.example.go4lunch.entity;
 
+import com.google.firebase.database.Exclude;
+
 import java.util.Date;
 
 public class DinerEntity {
@@ -7,6 +9,10 @@ public class DinerEntity {
     private String restaurantId;
     private String workmateId;
     private Date date;
+    private boolean status;
+
+    @Exclude
+    private WorkmateEntity workmateEntity;
 
     public String getRestaurantId() {
         return restaurantId;
@@ -30,5 +36,21 @@ public class DinerEntity {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public WorkmateEntity getWorkmateEntity() {
+        return workmateEntity;
+    }
+
+    public void setWorkmateEntity(WorkmateEntity workmateEntity) {
+        this.workmateEntity = workmateEntity;
     }
 }

@@ -1,19 +1,17 @@
-package com.example.go4lunch.entity;
+package com.example.go4lunch.model;
 
-public class WorkmateEntity {
+public class WorkmateModel {
 
     private String id;
     private String username;
-    private String urlPicture;
     private String mail;
+    private String pictureUrl;
 
-    public WorkmateEntity (){}
-
-    public WorkmateEntity(String id, String username, String urlPicture, String mail) {
+    public WorkmateModel(String id, String username, String mail, String pictureUrl) {
         this.id = id;
         this.username = username;
-        this.urlPicture = urlPicture;
         this.mail = mail;
+        this.pictureUrl = pictureUrl;
     }
 
     public String getId() {
@@ -32,19 +30,19 @@ public class WorkmateEntity {
         this.username = username;
     }
 
-    public String getUrlPicture() {
-        return urlPicture;
-    }
-
-    public void setUrlPicture(String urlPicture) {
-        this.urlPicture = urlPicture;
-    }
-
     public String getMail() {
         return mail;
     }
 
     public void setMail(String mail) {
         this.mail = mail;
+    }
+
+    public String getPictureUrl() {
+        return pictureUrl;
+    }
+
+    public void setPictureUrl(String pictureUrl) {
+        this.pictureUrl = pictureUrl;
     }
 }

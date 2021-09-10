@@ -15,7 +15,8 @@ public class RestaurantModel implements Serializable {
                            List<WorkmateEntity> interestMates,
                            float opinion,
                            String photoReference,
-                           String opening) {
+                           String opening,
+                           boolean workmateDiner) {
         this.id = id;
         this.name = name;
         this.latitude = latitude;
@@ -25,6 +26,7 @@ public class RestaurantModel implements Serializable {
         this.opinion = opinion;
         this.photoReference = photoReference;
         this.opening = opening;
+        this.workmateDiner = workmateDiner;
     }
 
     private String id;
@@ -40,6 +42,7 @@ public class RestaurantModel implements Serializable {
     private float opinion;
     private String name;
     private String opening;
+    private boolean workmateDiner;
 
 
     public long getRangePosition() {
@@ -145,5 +148,13 @@ public class RestaurantModel implements Serializable {
 
     public void setOpening(String opening) {
         this.opening = opening;
+    }
+
+    public boolean isWorkmateDiner() {
+        return workmateDiner;
+    }
+
+    public void setWorkmateDiner(boolean workmateDiner) {
+        this.workmateDiner = workmateDiner;
     }
 }

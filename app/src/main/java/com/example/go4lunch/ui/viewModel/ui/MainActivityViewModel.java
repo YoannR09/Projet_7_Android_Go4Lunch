@@ -1,4 +1,4 @@
-package com.example.go4lunch.ui.viewModel;
+package com.example.go4lunch.ui.viewModel.ui;
 
 import android.location.Location;
 
@@ -8,6 +8,7 @@ import androidx.lifecycle.Transformations;
 import com.example.go4lunch.mapper.RestaurantModelToViewModel;
 import com.example.go4lunch.model.RestaurantModel;
 import com.example.go4lunch.repo.Repositories;
+import com.example.go4lunch.ui.viewModel.RestaurantViewModel;
 
 import java.util.List;
 

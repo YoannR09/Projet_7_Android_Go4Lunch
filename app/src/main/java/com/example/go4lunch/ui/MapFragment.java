@@ -20,7 +20,7 @@ import androidx.fragment.app.Fragment;
 import com.example.go4lunch.MainActivity;
 import com.example.go4lunch.R;
 import com.example.go4lunch.repo.Repositories;
-import com.example.go4lunch.ui.viewModel.MapFragmentViewModel;
+import com.example.go4lunch.ui.viewModel.ui.MapFragmentViewModel;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;

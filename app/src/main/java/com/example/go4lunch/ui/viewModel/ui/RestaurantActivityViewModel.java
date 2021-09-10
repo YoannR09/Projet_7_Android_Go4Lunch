@@ -1,6 +1,8 @@
-package com.example.go4lunch.ui.viewModel;
+package com.example.go4lunch.ui.viewModel.ui;
 
 import androidx.lifecycle.LiveData;
+
+import com.example.go4lunch.ui.viewModel.RestaurantViewModel;
 
 public class RestaurantActivityViewModel {
 

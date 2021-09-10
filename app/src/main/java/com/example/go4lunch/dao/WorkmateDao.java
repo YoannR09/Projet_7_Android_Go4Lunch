@@ -7,9 +7,15 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.List;
+
 public interface WorkmateDao {
 
     void createUser();
+
+    void getUser(String userId, DaoOnSuccessListener<WorkmateEntity> listener);
+
+    void getWorkmatesLits(DaoOnSuccessListener<List<WorkmateEntity>> listener);
 
     void deleteUser();
 }

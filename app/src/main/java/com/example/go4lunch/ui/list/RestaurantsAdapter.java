@@ -2,7 +2,6 @@ package com.example.go4lunch.ui.list;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.lifecycle.Lifecycle;
+import androidx.lifecycle.LifecycleOwner;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
@@ -19,26 +20,20 @@ import com.example.go4lunch.Go4LunchApplication;
 import com.example.go4lunch.R;
 import com.example.go4lunch.repo.Repositories;
 import com.example.go4lunch.ui.RestaurantDetailsActivity;
+import com.example.go4lunch.ui.viewModel.ui.ListFragmentViewModel;
 import com.example.go4lunch.ui.viewModel.RestaurantViewModel;
-import com.google.android.gms.common.api.ApiException;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.PhotoMetadata;
-import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.net.FetchPhotoRequest;
-import com.google.android.libraries.places.api.net.FetchPlaceRequest;
-import com.google.android.libraries.places.api.net.PlacesClient;
 
-import java.util.Collections;
 import java.util.List;
 
 public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.RestaurantViewHolder> {
 
     private List<RestaurantViewModel> mData;
-
+    private LifecycleOwner lifecycleRegistry;
     private Context context;
 
-    public RestaurantsAdapter(List<RestaurantViewModel> data) {
+    public RestaurantsAdapter(List<RestaurantViewModel> data, LifecycleOwner lifecycleOwner) {
         this.mData = data;
+        lifecycleRegistry = lifecycleOwner;
     }
 
     public void updateList(List<RestaurantViewModel> viewModelList) {
@@ -73,11 +68,13 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
 
 
     // stores and recycles views as they are scrolled off screen
-    public class RestaurantViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class RestaurantViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, LifecycleOwner {
 
+        ListFragmentViewModel viewModel = new ListFragmentViewModel();
         TextView title;
         TextView openStatus;
         TextView description;
+        TextView workmateDiner;
         TextView opinion;
         ImageView imageView;
         TextView range;
@@ -90,6 +87,8 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
             title = itemView.findViewById(R.id.restaurant_title);
             description = itemView.findViewById(R.id.restaurant_description);
             imageView = itemView.findViewById(R.id.restaurant_picture);
+            workmateDiner = itemView.findViewById(R.id.restaurant_workmates_diner);
+
             itemView.setOnClickListener(this);
         }
 
@@ -105,6 +104,16 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
             title.setText(restaurantViewModel.getName());
             description.setText(restaurantViewModel.getDecription());
             range.setText(restaurantViewModel.getRange());
+            viewModel.loadDinersFromRestaurant(restaurantViewModel.getId());
+            viewModel.getDinersFromRestaurant().observe(lifecycleRegistry, diners -> {
+                if (diners.size() > 0) {
+                    workmateDiner.setVisibility(View.VISIBLE);
+                    workmateDiner.setText(" (" + diners.size() + ")");
+                    workmateDiner.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_emoji_people_24, 0, 0, 0);
+                } else {
+                    workmateDiner.setVisibility(View.GONE);
+                }
+            });
             opinion.setText(restaurantViewModel.getOpinion());
             opinion.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_star_12, 0, 0, 0);
             openStatus.setText(restaurantViewModel.getOpening());
@@ -114,6 +123,12 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
             circularProgressDrawable.setCenterRadius(30f);
             circularProgressDrawable.start();
             Glide.with(Go4LunchApplication.getContext()).load("https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+restaurantViewModel.getPhotoReference()+"&key=AIzaSyD-NY3k75I5IbFh13vcv-kJ3YORhDNETSE").placeholder(circularProgressDrawable).into(imageView);
+        }
+
+        @NonNull
+        @Override
+        public Lifecycle getLifecycle() {
+            return null;
         }
     }
 }

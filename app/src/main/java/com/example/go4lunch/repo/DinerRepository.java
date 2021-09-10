@@ -2,7 +2,8 @@ package com.example.go4lunch.repo;
 
 import com.example.go4lunch.dao.DinerDao;
 import com.example.go4lunch.entity.DinerEntity;
-import com.google.android.gms.tasks.Task;
+import com.example.go4lunch.mapper.DinerEntityToModel;
+import com.example.go4lunch.model.DinerModel;
 
 import java.util.List;
 
@@ -14,23 +15,34 @@ public class DinerRepository {
         this.dao = dao;
     }
 
-    public void createDiner(DinerEntity dinerEntity) {
-        dao.createDiner(dinerEntity);
+    public void createDiner(DinerEntity dinerEntity, RepositoryOnSuccessListener<Void> listener) {
+        dao.createDiner(dinerEntity, listener::onSuccess);
     }
 
-    public Task<DinerEntity> getDinerFromWorkmate() {
-        return dao.getDinerFromWorkmate();
+    public void getDinerFromWorkmate(
+            RepositoryOnSuccessListener<DinerModel> listener) {
+        dao.getDinerFromWorkmate(
+                data -> listener.onSuccess(new DinerEntityToModel().map(data)));
     }
 
-    public Task<List<DinerEntity>> getListDiner() {
-        return dao.getListDiner();
+    public void getDinerFromRestaurant(
+            String restaurantId,
+            RepositoryOnSuccessListener<List<DinerModel>> listener) {
+
+        dao.getDinerFromRestaurant(
+                restaurantId,
+                data -> listener.onSuccess(new DinerEntityToModel().maps(data)));
     }
 
-    public Task<List<DinerEntity>> getListDinerFromRestaurant() {
-        return dao.getListDinerFromRestaurant();
+    public void getListDiner(RepositoryOnSuccessListener<List<DinerModel>> listener) {
+        dao.getListDiner(data -> listener.onSuccess(new DinerEntityToModel().maps(data)));
     }
 
-    void deleteDiner() {
-        dao.deleteDiner();
+    public void getListDinersFromRestaurant(RepositoryOnSuccessListener<List<DinerModel>> listener, String restaurantId) {
+        dao.getListDinerFromRestaurant(data -> listener.onSuccess(new DinerEntityToModel().maps(data)), restaurantId);
+    }
+
+    void deleteDiner(RepositoryOnSuccessListener<Void> listener) {
+        dao.deleteDiner(listener::onSuccess);
     }
 }
