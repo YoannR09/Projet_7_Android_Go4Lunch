@@ -9,7 +9,7 @@ import java.util.List;
 public class RestaurantEntityToModel {
 
     public RestaurantModel map(RestaurantEntity restaurantEntity) {
-        return new RestaurantModel(
+        RestaurantModel r = new RestaurantModel(
                 restaurantEntity.getId(),
                 restaurantEntity.getName(),
                 restaurantEntity.getLatitude(),
@@ -20,6 +20,13 @@ public class RestaurantEntityToModel {
                 restaurantEntity.getPhotoReference(),
                 String.valueOf(restaurantEntity.getOpening()),
                 restaurantEntity.isWorkmateDiner());
+        if(restaurantEntity.getWebSite() != null) {
+            r.setWebSite(restaurantEntity.getWebSite());
+        }
+        if(restaurantEntity.getPhoneNumber() != null) {
+            r.setPhoneNumber(restaurantEntity.getPhoneNumber());
+        }
+        return r;
     }
 
     public List<RestaurantModel> maps(List<RestaurantEntity> restaurantEntity) {

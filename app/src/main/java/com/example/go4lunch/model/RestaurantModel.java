@@ -43,7 +43,24 @@ public class RestaurantModel implements Serializable {
     private String name;
     private String opening;
     private boolean workmateDiner;
+    private String webSite;
+    private String phoneNumber;
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getWebSite() {
+        return webSite;
+    }
+
+    public void setWebSite(String webSite) {
+        this.webSite = webSite;
+    }
 
     public long getRangePosition() {
         return rangePosition;

@@ -22,7 +22,7 @@ public class RestaurantModelToMapViewModel {
 
     public MarkerOptions map(RestaurantModel restaurantModel) {
         LatLng restaurantPosition = new LatLng(restaurantModel.getLatitude(), restaurantModel.getLongitude());
-        int picture = restaurantModel.isWorkmateDiner() ? R.drawable.ic_dish_diner : R.drawable.ic_dish ;
+        int picture = restaurantModel.isWorkmateDiner() ? R.drawable.map_star : R.drawable.map_burger ;
         return new MarkerOptions()
                 .position(restaurantPosition)
                 .icon(bitmapDescriptorFromVector(Go4LunchApplication.getContext(),

@@ -1,6 +1,8 @@
 package com.example.go4lunch.ui.viewModel;
 
-public class RestaurantViewModel {
+import java.io.Serializable;
+
+public class RestaurantViewModel implements Serializable {
 
     public RestaurantViewModel(String id,
                                String name,
@@ -33,10 +35,19 @@ public class RestaurantViewModel {
     private double latitude;
     private double longitude;
     private int phone;
-    private String webSite;
     private String range;
     private String opening;
     private String photoReference;
+    private String webSite;
+    private String phoneNumber;
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
 
     public String getId() {
         return id;

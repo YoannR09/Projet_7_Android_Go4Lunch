@@ -3,10 +3,9 @@ package com.example.go4lunch.ui;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,10 +15,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.example.go4lunch.MainActivity;
 import com.example.go4lunch.R;
+import com.example.go4lunch.mapper.RestaurantEntityToModel;
 import com.example.go4lunch.repo.Repositories;
+import com.example.go4lunch.ui.viewModel.factory.MapFragmentViewModelFactory;
+import com.example.go4lunch.ui.viewModel.ui.MainActivityViewModel;
 import com.example.go4lunch.ui.viewModel.ui.MapFragmentViewModel;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -28,17 +31,10 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.libraries.places.api.Places;
-
-import java.util.Locale;
+import com.google.firebase.database.core.Repo;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
-
-import static android.Manifest.permission.ACCESS_COARSE_LOCATION;
-import static android.Manifest.permission.ACCESS_FINE_LOCATION;
-import static android.content.Context.LOCATION_SERVICE;
-import static com.facebook.FacebookSdk.getApplicationContext;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -52,13 +48,19 @@ public class MapFragment extends Fragment implements LocationListener {
     Location location;
 
     public MapFragment() {
-
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        viewModel = new MapFragmentViewModel(((MainActivity) getActivity()).getViewModel());
+        viewModel = new ViewModelProvider(
+                this,
+                new MapFragmentViewModelFactory(
+                        new ViewModelProvider(
+                                getActivity()).get(MainActivityViewModel.class)))
+                .get(MapFragmentViewModel.class);
+        viewModel = new ViewModelProvider(this).get(MapFragmentViewModel.class);
+        location = viewModel.getLocation();
         viewModel.getRestaurantMarkersList().observe(getActivity(), restaurants -> {
             if(mMap != null) {
                 mMap.clear();
@@ -76,38 +78,16 @@ public class MapFragment extends Fragment implements LocationListener {
 
     /**
      * On start, check the current application's permission
-     * TODO should be restart app on first time to find current location
-     * @param savedInstanceState
      */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestLocationPermission();
-        if (!Places.isInitialized()) {
-            Places.initialize(getApplicationContext(),
-                    "AIzaSyBxg-nI5L_4b2NXhUXlz6L6xkpiLH0-AE4",
-                    Locale.FRANCE);
-        }
-        Criteria criteria = new Criteria();
-        LocationManager locationManager = (LocationManager) requireActivity().getSystemService(LOCATION_SERVICE);
-        String provider = locationManager.getBestProvider(criteria, true);
-        if (ActivityCompat.checkSelfPermission(requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(requireActivity(), ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            if (!ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), ACCESS_FINE_LOCATION)) {
-                ActivityCompat.requestPermissions(requireActivity(), new String[]{ACCESS_FINE_LOCATION}, 0);
-            }
-            return;
-        }
-        assert provider != null;
-        location = locationManager.getLastKnownLocation(provider);
-        ((MainActivity) getActivity()).getViewModel().setLocation(location);
     }
 
     /**
      * View model return markers list for each restaurants find
-     * @param inflater
-     * @param container
-     * @param savedInstanceState
-     * @return
+     * @return inflate
      */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -121,7 +101,7 @@ public class MapFragment extends Fragment implements LocationListener {
      */
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
         @Override
-        public void onMapReady(GoogleMap googleMap) {
+        public void onMapReady(@NonNull GoogleMap googleMap) {
             mMap = googleMap;
             if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
                 return;
@@ -130,35 +110,62 @@ public class MapFragment extends Fragment implements LocationListener {
             if(location != null) {
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
             }
-            mMap.setOnCameraIdleListener(() -> {
-                viewModel.refreshList(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude);
-            });
+            mMap.setOnCameraIdleListener(
+                    () -> viewModel.refreshList(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude));
             mMap.setOnMarkerClickListener(marker -> {
                 Intent intent = new Intent(getContext(), RestaurantDetailsActivity.class);
-                intent.putExtra("data_restaurant",
-                        Repositories.getRestaurantRepository().getRestaurantById(marker.getTitle()));
-                startActivity(intent);
+                MainActivity mainActivity = (MainActivity) getActivity();
+                Repositories.getRestaurantRepository().getCurrentRestaurant().observe(
+                        getActivity(),
+                        rest -> {
+                            intent.putExtra(
+                                    "data_restaurant",
+                                    new RestaurantEntityToModel().map(rest));
+                            startActivityForResult(intent, 234);
+                        });
+                Repositories.getRestaurantRepository().getRestaurantNotFoundOnMapById(marker.getTitle());
                 return true;
             });
         }
     };
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if(requestCode == 0x0123) {
+            assert data != null;
+            boolean result = data.getBooleanExtra("valueChanged", false);
+            if(result) {
+                viewModel.refreshList(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude);
+            }
+        }
+    }
 
-        // Forward results to EasyPermissions
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode,
+            @NonNull String[] permissions,
+            @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        EasyPermissions.onRequestPermissionsResult(
+                requestCode,
+                permissions,
+                grantResults,
+                this);
     }
 
     @AfterPermissionGranted(REQUEST_LOCATION_PERMISSION)
     public void requestLocationPermission() {
+        // TODO Add while ask permission
         String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION};
         if(EasyPermissions.hasPermissions(getActivity(), perms)) {
-            Toast.makeText(getActivity(), "Permission already granted", Toast.LENGTH_SHORT).show();
+
         }
         else {
-            EasyPermissions.requestPermissions(this, "Please grant the location permission", REQUEST_LOCATION_PERMISSION, perms);
+            EasyPermissions.requestPermissions(
+                    this,
+                    "Please grant the location permission",
+                    REQUEST_LOCATION_PERMISSION,
+                    perms);
         }
     }
 

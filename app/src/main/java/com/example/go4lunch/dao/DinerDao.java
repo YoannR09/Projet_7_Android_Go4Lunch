@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface DinerDao {
 
-    void createDiner(DinerEntity dinerEntity, DaoOnSuccessListener<Void> listener);
+    void createDiner(DinerEntity dinerEntity, DaoEmptyOnSuccessListener listener);
 
     void getDinerFromWorkmate(DaoOnSuccessListener<DinerEntity> listener);
 

@@ -28,17 +28,20 @@ public class DinerDaoImpl implements DinerDao {
     }
 
     @Override
-    public void createDiner(DinerEntity dinerEntity, DaoOnSuccessListener<Void> listener) {
+    public void createDiner(DinerEntity dinerEntity, DaoEmptyOnSuccessListener listener) {
         try {
             if(dinerEntity != null) {
                 dinerEntity.setDate(new Date());
                 dinerEntity.setWorkmateId(getCurrentUser().getUid());
                 Task<DocumentSnapshot> dinerData = getDinerData();
                 dinerData.addOnSuccessListener(documentSnapshot
-                        ->
-                        this.getDinersCollection()
-                                .document(dinerEntity.getWorkmateId())
-                                .set(dinerEntity));
+                        -> {
+                    this.getDinersCollection()
+                            .document(dinerEntity.getWorkmateId())
+                            .set(dinerEntity);
+                    listener.onSuccess();
+                });
+
             }
         }catch (Exception e) {
             e.printStackTrace();

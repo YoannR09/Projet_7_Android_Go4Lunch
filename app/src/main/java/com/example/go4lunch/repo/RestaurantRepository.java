@@ -20,12 +20,24 @@ public class RestaurantRepository {
         this.dao = dao;
     }
 
+    public LiveData<RestaurantEntity> getCurrentRestaurant() {
+        return dao.getCurrentRestaurant();
+    }
+    public void getRestaurantNotFoundOnMapById(String placeId) {
+        dao.getRestaurantNotFoundOnMapById(placeId);
+    }
+
     public LiveData<List<RestaurantModel>> getCurrentRestaurants() {
         return mappers(dao.getCurrentRestaurants());
     }
 
     public RestaurantModel getRestaurantById(String placeId) {
-        return new RestaurantEntityToModel().map(dao.getRestaurantById(placeId));
+        RestaurantEntity result = dao.getRestaurantById(placeId);
+        if(result != null) {
+            return new RestaurantEntityToModel().map(result);
+        } else {
+            return null;
+        }
     }
 
     public LiveData<List<RestaurantModel>> mappers(LiveData<List<RestaurantEntity>> list) {

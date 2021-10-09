@@ -1,6 +1,10 @@
 package com.example.go4lunch.ui;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -11,21 +15,23 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
+import com.example.go4lunch.MainActivity;
 import com.example.go4lunch.R;
 import com.example.go4lunch.entity.DinerEntity;
 import com.example.go4lunch.model.RestaurantModel;
 import com.example.go4lunch.ui.list.WorkMatesDetailAdapter;
-import com.example.go4lunch.ui.viewModel.DinerViewModel;
+import com.example.go4lunch.ui.viewModel.ui.MainActivityViewModel;
 import com.example.go4lunch.ui.viewModel.ui.RestaurantDetailsActivityViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 import static com.example.go4lunch.Go4LunchApplication.getContext;
 
 public class RestaurantDetailsActivity extends AppCompatActivity {
+
+    private final static int RESULT_CODE = 0x0123;
 
     ImageView picture;
     WorkMatesDetailAdapter adapter;
@@ -33,9 +39,10 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
     Toolbar toolbar;
     TextView description;
     FloatingActionButton dinerButton;
-    List<DinerViewModel> dinerViewModelList = new ArrayList<>();
     boolean status;
-
+    boolean valueChanged = false;
+    Button phoneButton;
+    Button webSiteButton;
     RestaurantDetailsActivityViewModel viewModel = new RestaurantDetailsActivityViewModel();
 
     @Override
@@ -49,12 +56,17 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         toolbar.setTitleTextColor(0xFFFFFFFF);
         dinerButton = findViewById(R.id.floating_action_button_diner);
-
+        webSiteButton = findViewById(R.id.detail_website);
+        phoneButton = findViewById(R.id.detail_phone);
         picture = findViewById(R.id.picture);
 
-        RestaurantModel restaurantModel = (RestaurantModel) getIntent().getSerializableExtra("data_restaurant");
+        RestaurantModel restaurantModel = (RestaurantModel) getIntent()
+                .getSerializableExtra("data_restaurant");
         assert restaurantModel != null;
-        getSupportActionBar().setTitle(restaurantModel.getName());
+        getSupportActionBar().setTitle(restaurantModel.getName()
+                +"   "
+                + restaurantModel.getOpinion()
+        +"/5 "+ R.drawable.ic_baseline_star_12);
         getSupportActionBar().setSubtitle(restaurantModel.getAddress());
         description.setText(restaurantModel.getAddress());
 
@@ -74,7 +86,6 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         circularProgressDrawable.start();
         Glide.with(getContext()).load("https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+restaurantModel.getPhotoReference()+"&key=AIzaSyD-NY3k75I5IbFh13vcv-kJ3YORhDNETSE").placeholder(circularProgressDrawable).into(picture);
 
-
         dinerButton.setOnClickListener(v -> {
             DinerEntity dinerEntity = new DinerEntity();
             dinerEntity.setRestaurantId(restaurantModel.getId());
@@ -86,6 +97,18 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             }
             dinerEntity.setStatus(status);
             viewModel.createDiner(dinerEntity);
+            valueChanged = true;
+        });
+
+        webSiteButton.setOnClickListener(v -> {
+            Intent browse = new Intent(Intent.ACTION_VIEW , Uri.parse(restaurantModel.getWebSite()));
+            startActivity(browse);
+        });
+
+        phoneButton.setOnClickListener(v -> {
+            Intent callIntent = new Intent(Intent.ACTION_CALL);
+            callIntent.setData(Uri.parse("tel:"+restaurantModel.getPhoneNumber()));
+            startActivity(callIntent);
         });
 
         recyclerView = findViewById(R.id.rvWorkmatesDetail);
@@ -95,5 +118,14 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         viewModel.loadDinersFromRestaurant(restaurantModel.getId());
         viewModel.getCurrentDiners().observe(this, data
                 -> adapter.updateList(data));
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

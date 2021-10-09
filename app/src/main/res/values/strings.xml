@@ -13,10 +13,32 @@
     <string name="like_button">LIKE</string>
     <string name="website_button">WEBSITE</string>
     <string name="undefined">undefined</string>
+
     <style name="drawer_open">Open</style>
+
     <style name="drawer_close">Close</style>
+
     <string name="title_toolbar">I\'m Hungry !</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="workmate_find">Workmate find</string>
+    <string name="not_connected">Not connected</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
+
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
+    <string name="search_area">Search area</string>
+    <string name="error_login">Error login, please retry</string>
 </resources>

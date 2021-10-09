@@ -14,13 +14,29 @@ public class RestaurantEntity {
     private double rating;
     private String photoReference;
     private boolean opening;
-    // private RestaurantType type;
     private String address;
     private int countMatesPassed;
     private List<WorkmateEntity> interestMates;
     private float opinion;
     private boolean workmateDiner;
+    private String webSite;
+    private String phoneNumber;
 
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public String getWebSite() {
+        return webSite;
+    }
+
+    public void setWebSite(String webSite) {
+        this.webSite = webSite;
+    }
 
     public String getId() {
         return id;

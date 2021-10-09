@@ -2,7 +2,6 @@ package com.example.go4lunch.dao;
 
 
 import com.example.go4lunch.entity.WorkmateEntity;
-import com.example.go4lunch.ui.ToastError;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -19,7 +18,7 @@ public class WorkmateDaoImpl implements WorkmateDao{
     private static final String COLLECTION_NAME = "workmate";
 
     // Get the Collection Reference
-    private CollectionReference getUsersCollection(){
+    protected CollectionReference getUsersCollection(){
         return FirebaseFirestore.getInstance().collection(COLLECTION_NAME);
     }
 

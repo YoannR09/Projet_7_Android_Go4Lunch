@@ -3,18 +3,24 @@ package com.example.go4lunch.ui.viewModel.ui;
 import android.location.Location;
 
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
+import androidx.lifecycle.ViewModel;
 
+import com.example.go4lunch.mapper.DinerModelToDinerViewModel;
 import com.example.go4lunch.mapper.RestaurantModelToViewModel;
 import com.example.go4lunch.model.RestaurantModel;
 import com.example.go4lunch.repo.Repositories;
+import com.example.go4lunch.ui.viewModel.DinerViewModel;
 import com.example.go4lunch.ui.viewModel.RestaurantViewModel;
 
 import java.util.List;
 
-public class MainActivityViewModel {
+public class MainActivityViewModel extends ViewModel {
 
     private Location location;
+
+    private MutableLiveData<DinerViewModel> diner = new MutableLiveData<>();
 
     public MainActivityViewModel () {
     }
@@ -41,6 +47,16 @@ public class MainActivityViewModel {
 
     public Location getCurrentPosition() {
         return location;
+    }
+
+    public LiveData<DinerViewModel> getCurrentDiner() {
+        return diner;
+    }
+
+    public void loadCurrentDiner() {
+        Repositories.getDinerRepository().getDinerFromWorkmate(data -> {
+            diner.setValue(new DinerModelToDinerViewModel().map(data));
+        });
     }
 
     public void setLocation(Location location) {

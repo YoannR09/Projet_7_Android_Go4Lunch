@@ -29,7 +29,8 @@ public class RestaurantModelToViewModel {
         Location loc = new Location("pos");
         loc.setLatitude(restaurantModel.getLatitude());
         loc.setLongitude(restaurantModel.getLongitude());
-        return new RestaurantViewModel(
+
+        RestaurantViewModel r =new RestaurantViewModel(
                 restaurantModel.getId(),
                 restaurantModel.getName(),
                 restaurantModel.getAddress(),
@@ -41,6 +42,14 @@ public class RestaurantModelToViewModel {
                 restaurantModel.getLongitude(),
                 restaurantModel.getPhotoReference(),
                 restaurantModel.getOpinion()+ "/5");
+
+        if(restaurantModel.getWebSite() != null) {
+            r.setWebSite(restaurantModel.getWebSite());
+        }
+        if(restaurantModel.getPhoneNumber() != null) {
+            r.setPhoneNumber(restaurantModel.getPhoneNumber());
+        }
+        return r;
     }
 
     public List<RestaurantViewModel> mapsForListFragment(

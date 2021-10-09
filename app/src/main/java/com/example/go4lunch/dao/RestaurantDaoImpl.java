@@ -20,25 +20,87 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class RestaurantDaoImpl implements RestaurantDao {
 
-    MutableLiveData currentList =  new MutableLiveData<List<RestaurantEntity>>();
+    MutableLiveData<List<RestaurantEntity>> currentList =  new MutableLiveData<>();
+    MutableLiveData<RestaurantEntity> restaurantData = new MutableLiveData<>();
 
     public RestaurantDaoImpl () {
     }
 
     @Override
     public RestaurantEntity getRestaurantById(String placeId) {
-        for(RestaurantEntity r: (List<RestaurantEntity>) currentList.getValue()) {
+        for(RestaurantEntity r: Objects.requireNonNull(currentList.getValue())) {
             if(r.getId().equals(placeId)) return r;
         }
         return null;
     }
 
+    public void getRestaurantNotFoundOnMapById(String placeId) {
+        RequestQueue queue = Volley.newRequestQueue(Go4LunchApplication.getContext());
+        String url = "https://maps.googleapis.com/maps/api/place/details/json?place_id="
+                +placeId+
+                "&fields=vicinity,name,rating,photo," +
+                "formatted_phone_number,website,geometry,opening_hours" +
+                "&key=AIzaSyD-NY3k75I5IbFh13vcv-kJ3YORhDNETSE";
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
+                response -> {
+                    try {
+                        JSONObject main = new JSONObject(response);
+                        System.out.println(" restaurant : " + response);
+                        JSONObject mainObject = main.getJSONObject("result");
+                        JSONObject geo = mainObject.getJSONObject("geometry");
+                        JSONObject loc = geo.getJSONObject("location");
+                        RestaurantEntity restaurant = new RestaurantEntity();
+                        restaurant.setLatitude(loc.getDouble("lat"));
+                        restaurant.setLongitude(loc.getDouble("lng"));
+                        restaurant.setName(mainObject.getString("name"));
+                        if(mainObject.has("formatted_phone_number")) {
+                            restaurant.setPhoneNumber(mainObject.getString("formatted_phone_number"));
+                        }
+                        if(mainObject.has("website")) {
+                            restaurant.setWebSite(mainObject.getString("website"));
+                        }
+                        if(mainObject.has("opening_hours")) {
+                            restaurant.setOpening(mainObject.getJSONObject("opening_hours").getBoolean("open_now"));
+                        }
+                        restaurant.setId(placeId);
+                        // restaurant.setRating(arr.getJSONObject(i).getDouble("rating"));
+                        if(mainObject.has("photos")) {
+                            if(mainObject.getJSONArray("photos").getJSONObject(0).has("photo_reference")) {
+                                restaurant.setPhotoReference(mainObject.getJSONArray("photos").getJSONObject(0).getString("photo_reference"));
+                            }
+                        }
+                        if(mainObject.has("rating")) {
+                            restaurant.setOpinion((float) mainObject.getDouble("rating"));
+                        }
+                        restaurant.setAddress(mainObject.getString("vicinity"));
+                        Repositories.getDinerRepository().getListDinersFromRestaurant(data -> {
+                            if(data.size() > 0) {
+                                restaurant.setWorkmateDiner(true);
+                            }else {
+                                restaurant.setWorkmateDiner(false);
+                            }
+                            restaurantData.setValue(restaurant);
+                        },restaurant.getId());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }, error -> {
+        });
+        queue.add(stringRequest);
+    }
+
     @Override
     public LiveData<List<RestaurantEntity>> getCurrentRestaurants() {
         return currentList;
+    }
+
+    @Override
+    public LiveData<RestaurantEntity> getCurrentRestaurant() {
+        return restaurantData;
     }
 
     @Override
@@ -48,7 +110,8 @@ public class RestaurantDaoImpl implements RestaurantDao {
         String url ="https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="
                 + location.getLatitude()
                 + "," + location.getLongitude()
-                + "&radius=1500&type=restaurant&key="
+                + "&radius=1000&type=restaurant" +
+                "&fields=name%2Crating/contact&key="
                 + "AIzaSyD-NY3k75I5IbFh13vcv-kJ3YORhDNETSE";
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -76,7 +139,7 @@ public class RestaurantDaoImpl implements RestaurantDao {
         String url ="https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="
                 + latitude
                 + "," + longitude
-                + "&fields=opening_hours/open_now&radius=1500&type=restaurant&key="
+                + "&radius=1500&type=restaurant&contact&key="
                 + "AIzaSyD-NY3k75I5IbFh13vcv-kJ3YORhDNETSE";
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -124,10 +187,5 @@ public class RestaurantDaoImpl implements RestaurantDao {
                 }, error -> {
         });
         queue.add(stringRequest);
-    }
-
-    public void getPictureList(String placeId) {
-
-
     }
 }

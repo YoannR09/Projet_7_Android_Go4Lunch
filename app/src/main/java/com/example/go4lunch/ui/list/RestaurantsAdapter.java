@@ -3,6 +3,7 @@ package com.example.go4lunch.ui.list;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,9 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
 import com.example.go4lunch.Go4LunchApplication;
+import com.example.go4lunch.MainActivity;
 import com.example.go4lunch.R;
+import com.example.go4lunch.mapper.RestaurantEntityToModel;
 import com.example.go4lunch.repo.Repositories;
 import com.example.go4lunch.ui.RestaurantDetailsActivity;
 import com.example.go4lunch.ui.viewModel.ui.ListFragmentViewModel;
@@ -95,9 +98,16 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
         @Override
         public void onClick(View view) {
             Intent intent = new Intent(context, RestaurantDetailsActivity.class);
-            intent.putExtra("data_restaurant",
-                    Repositories.getRestaurantRepository().getRestaurantById(mData.get(this.getPosition()).getId()));
-            context.startActivity(intent);
+            Repositories.getRestaurantRepository().getCurrentRestaurant().observe(
+                    this::getLifecycle,
+                    rest -> {
+                        intent.putExtra(
+                                "data_restaurant",
+                                new RestaurantEntityToModel().map(rest));
+                        context.startActivity(intent);
+                    });
+            Repositories.getRestaurantRepository()
+                    .getRestaurantNotFoundOnMapById(mData.get(this.getPosition()).getId());
         }
 
         void bind(RestaurantViewModel restaurantViewModel) {

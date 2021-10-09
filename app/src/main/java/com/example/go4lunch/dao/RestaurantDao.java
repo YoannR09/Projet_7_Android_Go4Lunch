@@ -12,6 +12,8 @@ public interface RestaurantDao {
 
     RestaurantEntity getRestaurantById(String placeId);
     LiveData<List<RestaurantEntity>> getCurrentRestaurants();
+    LiveData<RestaurantEntity> getCurrentRestaurant();
+    void getRestaurantNotFoundOnMapById(String placeId);
     void findByName(Location location, String name);
     void refreshList(double latitude, double longitude);
 }

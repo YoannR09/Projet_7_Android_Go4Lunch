@@ -1,7 +1,10 @@
 package com.example.go4lunch.repo;
 
+import androidx.lifecycle.LiveData;
+
 import com.example.go4lunch.dao.DinerDao;
 import com.example.go4lunch.entity.DinerEntity;
+import com.example.go4lunch.entity.RestaurantEntity;
 import com.example.go4lunch.mapper.DinerEntityToModel;
 import com.example.go4lunch.model.DinerModel;
 
@@ -15,7 +18,7 @@ public class DinerRepository {
         this.dao = dao;
     }
 
-    public void createDiner(DinerEntity dinerEntity, RepositoryOnSuccessListener<Void> listener) {
+    public void createDiner(DinerEntity dinerEntity, RepositoryEmptySuccessListener listener) {
         dao.createDiner(dinerEntity, listener::onSuccess);
     }
 

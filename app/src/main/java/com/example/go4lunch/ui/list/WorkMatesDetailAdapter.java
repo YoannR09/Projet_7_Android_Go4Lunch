@@ -76,8 +76,11 @@ public class WorkMatesDetailAdapter extends RecyclerView.Adapter<WorkMatesDetail
             circularProgressDrawable.setStrokeWidth(5f);
             circularProgressDrawable.setCenterRadius(30f);
             circularProgressDrawable.start();
+            String url = dinerViewModel.getWorkmatePictureUrl() == null
+                    ? "https://eu.ui-avatars.com/api/?name="+dinerViewModel.getWorkmate() :
+                    dinerViewModel.getWorkmatePictureUrl();
             Glide.with(Go4LunchApplication.getContext())
-                    .load(dinerViewModel.getWorkmatePictureUrl())
+                    .load(url)
                     .placeholder(circularProgressDrawable).into(imageView);
         }
     }

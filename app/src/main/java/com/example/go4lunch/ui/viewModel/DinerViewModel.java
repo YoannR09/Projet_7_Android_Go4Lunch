@@ -1,10 +1,8 @@
 package com.example.go4lunch.ui.viewModel;
 
-import com.example.go4lunch.entity.WorkmateEntity;
+import java.io.Serializable;
 
-import java.util.Date;
-
-public class DinerViewModel {
+public class DinerViewModel implements Serializable {
 
     private String restaurantId;
     private String workmate;

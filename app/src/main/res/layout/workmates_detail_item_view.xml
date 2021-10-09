@@ -36,10 +36,11 @@
         android:orientation="vertical">
         <TextView
             android:id="@+id/workmates_detail_title"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="65dp"
+            android:gravity="center|start"
+            android:layout_marginStart="16dp"
             tools:text="Title of the Restaurant"
-            android:gravity="center"
             android:textStyle="bold"
             android:maxLines="1"
             android:ellipsize="end"

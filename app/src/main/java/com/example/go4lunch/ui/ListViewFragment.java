@@ -34,15 +34,6 @@ public class ListViewFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_list_view, container, false);
-        // TODO
-        /*
-        val spannable = SpannableString(“Text styling”)
-spannable.setSpan(
-     ForegroundColorSpan(Color.PINK),
-     0, 4,
-     Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
-myTextView.text = spannable
-         */
         viewModel = new ListFragmentViewModel(((MainActivity) getActivity()).getViewModel());
         recyclerView = view.findViewById(R.id.rvRestaurants);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
