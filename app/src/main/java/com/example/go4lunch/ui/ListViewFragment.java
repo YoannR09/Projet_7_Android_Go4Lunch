@@ -37,7 +37,7 @@ public class ListViewFragment extends Fragment {
         viewModel = new ListFragmentViewModel(((MainActivity) getActivity()).getViewModel());
         recyclerView = view.findViewById(R.id.rvRestaurants);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter = new RestaurantsAdapter(new ArrayList<>(), this);
+        adapter = new RestaurantsAdapter(new ArrayList<>(), this, this);
         recyclerView.setAdapter(adapter);
 
         viewModel.getCurrentRestaurants().observe(getActivity(), restaurants

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
@@ -43,11 +44,12 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
     boolean valueChanged = false;
     Button phoneButton;
     Button webSiteButton;
-    RestaurantDetailsActivityViewModel viewModel = new RestaurantDetailsActivityViewModel();
+    RestaurantDetailsActivityViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel =  new ViewModelProvider(this).get(RestaurantDetailsActivityViewModel.class);
         setContentView(R.layout.activity_restaurant_details);
 
         toolbar = findViewById(R.id.toolbar);

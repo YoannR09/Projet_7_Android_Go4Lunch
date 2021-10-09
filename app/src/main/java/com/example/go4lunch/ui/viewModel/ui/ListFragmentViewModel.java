@@ -3,6 +3,7 @@ package com.example.go4lunch.ui.viewModel.ui;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
+import androidx.lifecycle.ViewModel;
 
 import com.example.go4lunch.mapper.RestaurantModelToViewModel;
 import com.example.go4lunch.repo.Repositories;
@@ -11,7 +12,7 @@ import com.example.go4lunch.ui.viewModel.RestaurantViewModel;
 
 import java.util.List;
 
-public class ListFragmentViewModel {
+public class ListFragmentViewModel extends ViewModel {
 
     private MainActivityViewModel mainActivityViewModel;
     private MutableLiveData diners = new MutableLiveData();

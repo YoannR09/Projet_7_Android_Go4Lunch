@@ -25,16 +25,19 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
 import com.example.go4lunch.mapper.RestaurantEntityToModel;
+import com.example.go4lunch.model.WorkmateModel;
 import com.example.go4lunch.repo.Repositories;
 import com.example.go4lunch.ui.ListViewFragment;
 import com.example.go4lunch.ui.MapFragment;
 import com.example.go4lunch.ui.RestaurantDetailsActivity;
 import com.example.go4lunch.ui.SettingsActivity;
 import com.example.go4lunch.ui.WorkmatesFragment;
+import com.example.go4lunch.ui.viewModel.factory.MapFragmentViewModelFactory;
 import com.example.go4lunch.ui.viewModel.ui.MainActivityViewModel;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
@@ -78,7 +81,7 @@ public class MainActivity extends AppCompatActivity{
     boolean             dinerDetailShowed = false;
 
     final       FragmentManager         fm          = getSupportFragmentManager();
-    private     MainActivityViewModel   viewModel   = new MainActivityViewModel();
+    private     MainActivityViewModel   viewModel;
 
     private final ActivityResultLauncher<Intent> signInLauncher = registerForActivityResult(
             new FirebaseAuthUIActivityResultContract(),
@@ -92,34 +95,40 @@ public class MainActivity extends AppCompatActivity{
      */
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
         if (result.getResultCode() == RESULT_OK) {
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            ImageView drawerPicture = findViewById(R.id.drawer_picture);
-            CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(this);
-            circularProgressDrawable.setStrokeWidth(5f);
-            circularProgressDrawable.setCenterRadius(30f);
-            circularProgressDrawable.start();
-            assert user != null;
-            String url = user.getPhotoUrl() == null
-                    ? "https://eu.ui-avatars.com/api/?name="+ user.getDisplayName() :
-                    String.valueOf(user.getPhotoUrl());
-            Glide.with(Go4LunchApplication.getContext())
-                    .load(url)
-                    .placeholder(circularProgressDrawable).into(drawerPicture);
-            TextView username = findViewById(R.id.drawer_username);
-            username.setText(user.getDisplayName());
-            if(FirebaseAuth.getInstance().getCurrentUser() != null) {
-                Repositories.getWorkmateRepository().getUser(
-                        FirebaseAuth.getInstance().getCurrentUser().getUid()
-                        , data -> {
-                            if(data == null) {
-                                viewModel.createUser();
-                            }
-                        });
-            }
+            initSignInInfo();
         } else {
             errorMessage(getString(R.string.error_login));
             logoutToRefreshMainActivity();
         }
+    }
+
+    private void initSignInInfo() {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        ImageView drawerPicture = findViewById(R.id.drawer_picture);
+        CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(this);
+        circularProgressDrawable.setStrokeWidth(5f);
+        circularProgressDrawable.setCenterRadius(30f);
+        circularProgressDrawable.start();
+        assert user != null;
+        String url = user.getPhotoUrl() == null
+                ? "https://eu.ui-avatars.com/api/?name="+ user.getDisplayName() :
+                String.valueOf(user.getPhotoUrl());
+        Glide.with(Go4LunchApplication.getContext())
+                .load(url)
+                .placeholder(circularProgressDrawable).into(drawerPicture);
+        TextView username = findViewById(R.id.drawer_username);
+        username.setText(user.getDisplayName());
+        Repositories.getWorkmateRepository().getWorkmatesList(data -> {
+            boolean userCanBeSaved = true;
+            for( WorkmateModel u : data) {
+                if(u.getId().equals(user.getUid())) {
+                    userCanBeSaved = false;
+                }
+            }
+            if(userCanBeSaved) {
+                viewModel.createUser();
+            }
+        });
     }
 
     /**
@@ -147,8 +156,8 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
         viewModel.setLocation(getLocation());
-        // TODO remove
         initFragment();
         if(FirebaseAuth.getInstance().getCurrentUser() == null) {
             List<AuthUI.IdpConfig> providers = Arrays.asList(

@@ -1,29 +1,22 @@
 package com.example.go4lunch.ui.viewModel.ui;
 
-import android.view.animation.Transformation;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
+import androidx.lifecycle.ViewModel;
 
 import com.example.go4lunch.entity.DinerEntity;
-import com.example.go4lunch.entity.WorkmateEntity;
-import com.example.go4lunch.mapper.DinerEntityToModel;
 import com.example.go4lunch.mapper.DinerModelToDinerViewModel;
-import com.example.go4lunch.mapper.WorkmateEntityToModel;
 import com.example.go4lunch.model.DinerModel;
 import com.example.go4lunch.repo.Repositories;
 import com.example.go4lunch.ui.viewModel.DinerViewModel;
 
 import java.util.List;
-import java.util.Objects;
 
-public class RestaurantDetailsActivityViewModel {
+public class RestaurantDetailsActivityViewModel extends ViewModel {
 
     MutableLiveData<List<DinerModel>> dinersData = new MutableLiveData<>();
     MutableLiveData<DinerModel> dinerData = new MutableLiveData<>();
-
-    int count = 0;
 
     public void createDiner(DinerEntity dinerEntity) {
         Repositories

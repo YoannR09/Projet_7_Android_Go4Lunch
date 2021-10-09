@@ -28,6 +28,13 @@ public class DinerRepository {
                 data -> listener.onSuccess(new DinerEntityToModel().map(data)));
     }
 
+    public void getDinerFromWorkmateId(
+            String workmateId,
+            RepositoryOnSuccessListener<DinerModel> listener) {
+        dao.getDinerFromWorkmateId(
+                data -> listener.onSuccess(new DinerEntityToModel().map(data)));
+    }
+
     public void getDinerFromRestaurant(
             String restaurantId,
             RepositoryOnSuccessListener<List<DinerModel>> listener) {

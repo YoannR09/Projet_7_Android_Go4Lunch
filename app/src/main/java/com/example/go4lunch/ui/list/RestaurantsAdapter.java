@@ -13,6 +13,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.Lifecycle;
 import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
@@ -25,6 +27,7 @@ import com.example.go4lunch.repo.Repositories;
 import com.example.go4lunch.ui.RestaurantDetailsActivity;
 import com.example.go4lunch.ui.viewModel.ui.ListFragmentViewModel;
 import com.example.go4lunch.ui.viewModel.RestaurantViewModel;
+import com.example.go4lunch.ui.viewModel.ui.RestaurantDetailsActivityViewModel;
 
 import java.util.List;
 
@@ -33,9 +36,15 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
     private List<RestaurantViewModel> mData;
     private LifecycleOwner lifecycleRegistry;
     private Context context;
+    private ViewModelStoreOwner owner;
 
-    public RestaurantsAdapter(List<RestaurantViewModel> data, LifecycleOwner lifecycleOwner) {
+    public RestaurantsAdapter(
+            List<RestaurantViewModel> data,
+            LifecycleOwner lifecycleOwner,
+            ViewModelStoreOwner owner
+            ) {
         this.mData = data;
+        this.owner = owner;
         lifecycleRegistry = lifecycleOwner;
     }
 
@@ -54,7 +63,10 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
     public RestaurantViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
         context = parent.getContext();
-        return new RestaurantViewHolder(view);
+        ListFragmentViewModel viewModel = new ViewModelProvider(
+                owner).get(
+                        ListFragmentViewModel .class);
+        return new RestaurantViewHolder(view, viewModel);
     }
 
     // binds the data to the TextView in each row
@@ -73,7 +85,6 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
     // stores and recycles views as they are scrolled off screen
     public class RestaurantViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, LifecycleOwner {
 
-        ListFragmentViewModel viewModel = new ListFragmentViewModel();
         TextView title;
         TextView openStatus;
         TextView description;
@@ -81,9 +92,11 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
         TextView opinion;
         ImageView imageView;
         TextView range;
+        ListFragmentViewModel viewModel;
 
-        RestaurantViewHolder(@NonNull View itemView) {
+        RestaurantViewHolder(@NonNull View itemView, ListFragmentViewModel listFragmentViewModel) {
             super(itemView);
+            viewModel = listFragmentViewModel;
             openStatus = itemView.findViewById(R.id.restaurant_opening);
             opinion = itemView.findViewById(R.id.restaurant_opinion);
             range = itemView.findViewById(R.id.restaurant_range);

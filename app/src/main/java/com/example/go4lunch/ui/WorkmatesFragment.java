@@ -3,6 +3,7 @@ package com.example.go4lunch.ui;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 
 import com.example.go4lunch.R;
 import com.example.go4lunch.ui.list.WorkmatesAdapter;
+import com.example.go4lunch.ui.viewModel.ui.MainActivityViewModel;
 import com.example.go4lunch.ui.viewModel.ui.WorkmatesFragmentViewModel;
 
 import java.util.ArrayList;
@@ -34,7 +36,7 @@ public class WorkmatesFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_workmates, container, false);
 
-        viewModel = new WorkmatesFragmentViewModel();
+        viewModel = new ViewModelProvider(this).get(WorkmatesFragmentViewModel.class);
         recyclerView = view.findViewById(R.id.rvWorkmates);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         adapter = new WorkmatesAdapter(new ArrayList<>());

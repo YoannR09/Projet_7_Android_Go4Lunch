@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide;
 import com.example.go4lunch.Go4LunchApplication;
 import com.example.go4lunch.R;
 import com.example.go4lunch.model.WorkmateModel;
+import com.example.go4lunch.repo.Repositories;
 import com.example.go4lunch.ui.viewModel.DinerViewModel;
 
 import java.util.List;
@@ -72,6 +73,7 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
 
 
         void bind(WorkmateModel workmateModel) {
+            Repositories.getDinerRepository().getDinerFromWorkmate();
             title.setText(workmateModel.getUsername());
             CircularProgressDrawable circularProgressDrawable
                     = new CircularProgressDrawable(itemView.getContext());
