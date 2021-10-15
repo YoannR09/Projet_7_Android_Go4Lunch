@@ -14,7 +14,8 @@ public class DinerEntityToModel {
                 entity.getRestaurantId(),
                 entity.getDate(),
                 entity.isStatus(),
-                new WorkmateEntityToModel().map(entity.getWorkmateEntity()));
+                new WorkmateEntityToModel().map(entity.getWorkmateEntity()),
+                entity.getInfo());
     }
 
     public List<DinerModel> maps(List<DinerEntity> vList) {

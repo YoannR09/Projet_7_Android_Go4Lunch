@@ -48,6 +48,27 @@ public class DinerDaoImpl implements DinerDao {
         }
     }
 
+    @Override
+    public void getDinerFromWorkmateId(String workmateId, DaoOnSuccessListener<DinerEntity> listener) {
+        this.getDinersCollection()
+                .document(workmateId).get()
+                .continueWith(task -> task.getResult().toObject(DinerEntity.class))
+                .addOnSuccessListener(data -> {
+                    if(data != null) {
+                        Repositories.getWorkmateRepository().getUser(data.getWorkmateId(), workmate -> {
+                            data.setWorkmateEntity(
+                                    new WorkmateEntity(
+                                            workmate.getId(),
+                                            workmate.getUsername(),
+                                            workmate.getPictureUrl(),
+                                            workmate.getMail())
+                            );
+                            listener.onSuccess(data);
+                        });
+                    }
+                });
+    }
+
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public void getDinerFromRestaurant(String restaurantId, DaoOnSuccessListener<List<DinerEntity>> listener) {

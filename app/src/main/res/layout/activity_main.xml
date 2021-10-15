@@ -50,11 +50,9 @@
                         android:id="@+id/input_search"
                         android:layout_weight="1"
                         android:layout_height="wrap_content"
+                        android:focusable="false"
                         android:layout_width="wrap_content"
-                        android:shadowRadius="2"
-                        android:shadowColor="#0000ff"
-                        android:shadowDx="2"
-                        android:shadowDy="2" />
+                        android:shadowRadius="2" />
                     <ImageButton
                         android:id="@+id/voice_button"
                         android:layout_width="wrap_content"

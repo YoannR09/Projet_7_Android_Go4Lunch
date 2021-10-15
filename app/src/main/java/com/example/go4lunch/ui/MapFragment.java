@@ -5,11 +5,9 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,7 +15,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
-import com.example.go4lunch.MainActivity;
 import com.example.go4lunch.R;
 import com.example.go4lunch.mapper.RestaurantEntityToModel;
 import com.example.go4lunch.repo.Repositories;
@@ -31,7 +28,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.database.core.Repo;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -95,6 +91,18 @@ public class MapFragment extends Fragment implements LocationListener {
         return inflater.inflate(R.layout.fragment_map, container, false);
     }
 
+
+    public void mooveCameraWithAutoComplete(LatLng latLng) {
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(
+                new LatLng(
+                        latLng.latitude,
+                        latLng.longitude)));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        viewModel.refreshList(
+                latLng.latitude,
+                latLng.longitude);
+    }
+
     /**
      * On map ready, the current positon has define
      * Action listener added on icon's marker
@@ -109,12 +117,12 @@ public class MapFragment extends Fragment implements LocationListener {
             mMap.setMyLocationEnabled(true);
             if(location != null) {
                 mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
+                mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
             }
             mMap.setOnCameraIdleListener(
                     () -> viewModel.refreshList(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude));
             mMap.setOnMarkerClickListener(marker -> {
                 Intent intent = new Intent(getContext(), RestaurantDetailsActivity.class);
-                MainActivity mainActivity = (MainActivity) getActivity();
                 Repositories.getRestaurantRepository().getCurrentRestaurant().observe(
                         getActivity(),
                         rest -> {

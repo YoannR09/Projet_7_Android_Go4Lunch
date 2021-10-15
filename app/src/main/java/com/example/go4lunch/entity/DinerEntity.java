@@ -8,6 +8,7 @@ public class DinerEntity {
 
     private String restaurantId;
     private String workmateId;
+    private String info;
     private Date date;
     private boolean status;
 
@@ -48,6 +49,14 @@ public class DinerEntity {
 
     public WorkmateEntity getWorkmateEntity() {
         return workmateEntity;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
     }
 
     public void setWorkmateEntity(WorkmateEntity workmateEntity) {

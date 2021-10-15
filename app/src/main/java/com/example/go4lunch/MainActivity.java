@@ -37,13 +37,20 @@ import com.example.go4lunch.ui.MapFragment;
 import com.example.go4lunch.ui.RestaurantDetailsActivity;
 import com.example.go4lunch.ui.SettingsActivity;
 import com.example.go4lunch.ui.WorkmatesFragment;
-import com.example.go4lunch.ui.viewModel.factory.MapFragmentViewModelFactory;
 import com.example.go4lunch.ui.viewModel.ui.MainActivityViewModel;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
+import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
+import com.google.android.libraries.places.api.Places;
+import com.google.android.libraries.places.api.model.AutocompletePrediction;
+import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.model.Place;
+import com.google.android.libraries.places.api.model.RectangularBounds;
+import com.google.android.libraries.places.api.model.TypeFilter;
+import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
+import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
@@ -54,6 +61,7 @@ import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 import static com.example.go4lunch.ui.ToastError.errorMessage;
 import static pub.devrel.easypermissions.RationaleDialogFragment.TAG;
@@ -63,22 +71,22 @@ public class MainActivity extends AppCompatActivity{
     private final int SPEECH_REQUEST_CODE = 0x1a;
     private final static int AUTOCOMPLETE_REQUEST_CODE = 0xAf;
 
-    DrawerLayout        drawer;
-    NavigationView      navigationView;
-    ImageButton         searchButton;
-    Toolbar             inputSearch;
-    Toolbar             topBar;
-    ImageButton         voiceButton;
-    ImageButton         searchDoneButton;
-    EditText            editTextSearch;
-    Button              logout;
-    Button              settings;
-    Button              lunchInfo;
-    Fragment            mapFragment;
-    Fragment            listFragment;
-    Fragment            workmatesFragment;
-    Fragment            active;
-    boolean             dinerDetailShowed = false;
+    DrawerLayout                drawer;
+    NavigationView              navigationView;
+    ImageButton                 searchButton;
+    Toolbar                     inputSearch;
+    Toolbar                     topBar;
+    ImageButton                 voiceButton;
+    ImageButton                 searchDoneButton;
+    EditText                    editTextSearch;
+    Button                      logout;
+    Button                      settings;
+    Button                      lunchInfo;
+    MapFragment                 mapFragment;
+    ListViewFragment            listFragment;
+    WorkmatesFragment            workmatesFragment;
+    Fragment                    active;
+    boolean                     dinerDetailShowed = false;
 
     final       FragmentManager         fm          = getSupportFragmentManager();
     private     MainActivityViewModel   viewModel;
@@ -234,7 +242,23 @@ public class MainActivity extends AppCompatActivity{
         });
 
         searchDoneButton.setOnClickListener(v -> {
+            PlacesClient placesClient = Places.createClient(this);
             inputSearch.setVisibility(View.GONE);
+            AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
+
+            FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
+                    .setTypeFilter(TypeFilter.ESTABLISHMENT)
+                    .setSessionToken(token)
+                    .setQuery(editTextSearch.getText().toString())
+                    .build();
+
+            placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
+                for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
+                    System.out.println("Here" + prediction.getPlaceId());
+                }
+            }).addOnFailureListener((exception) -> {
+                // TODO THROW EXCEPTION
+            });
             topBar.setVisibility(View.VISIBLE);
         });
 
@@ -275,6 +299,7 @@ public class MainActivity extends AppCompatActivity{
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Place place = Autocomplete.getPlaceFromIntent(data);
+                mapFragment.mooveCameraWithAutoComplete(Objects.requireNonNull(place.getLatLng()));
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
                 // TODO: Handle the error.
@@ -303,7 +328,7 @@ public class MainActivity extends AppCompatActivity{
     public void startAutoComplete() {
         // Set the fields to specify which types of place data to
         // return after the user has made a selection.
-        List<Place.Field> fields = Arrays.asList(Place.Field.ID, Place.Field.NAME);
+        List<Place.Field> fields = Arrays.asList(Place.Field.LAT_LNG, Place.Field.NAME);
 
         // Start the autocomplete intent.
         Intent intent = new Autocomplete.IntentBuilder(AutocompleteActivityMode.OVERLAY, fields)

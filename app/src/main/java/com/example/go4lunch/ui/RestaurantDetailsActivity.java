@@ -16,12 +16,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
-import com.example.go4lunch.MainActivity;
 import com.example.go4lunch.R;
 import com.example.go4lunch.entity.DinerEntity;
 import com.example.go4lunch.model.RestaurantModel;
 import com.example.go4lunch.ui.list.WorkMatesDetailAdapter;
-import com.example.go4lunch.ui.viewModel.ui.MainActivityViewModel;
 import com.example.go4lunch.ui.viewModel.ui.RestaurantDetailsActivityViewModel;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -93,10 +91,11 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             dinerEntity.setRestaurantId(restaurantModel.getId());
             status = !status;
             if (status) {
-                dinerButton.setImageResource(R.drawable.ic_baseline_check_circle_24_green);
+                dinerButton.setImageResource(R.drawable.ic_baseline_local_dining_24);
             } else {
-                dinerButton.setImageResource(R.drawable.ic_baseline_check_circle_24);
+                dinerButton.setImageResource(R.drawable.ic_baseline_clear_24);
             }
+            dinerEntity.setInfo(restaurantModel.getName());
             dinerEntity.setStatus(status);
             viewModel.createDiner(dinerEntity);
             valueChanged = true;

@@ -1,7 +1,5 @@
 package com.example.go4lunch.model;
 
-import com.example.go4lunch.entity.WorkmateEntity;
-
 import java.util.Date;
 
 public class DinerModel {
@@ -9,15 +7,30 @@ public class DinerModel {
     private String restaurantId;
     private String workmateId;
     private WorkmateModel workmateModel;
+    private String info;
     private Date date;
     private boolean status;
 
-    public DinerModel(String workmateId, String restaurantId, Date date, boolean status, WorkmateModel workmateModel) {
+    public DinerModel(String workmateId,
+                      String restaurantId,
+                      Date date,
+                      boolean status,
+                      WorkmateModel workmateModel,
+                      String info) {
         this.workmateId = workmateId;
         this.restaurantId = restaurantId;
         this.date = date;
         this.status = status;
+        this.info = info;
         if(workmateModel != null) this.workmateModel = workmateModel;
+    }
+
+    public String getInfo() {
+        return info;
+    }
+
+    public void setInfo(String info) {
+        this.info = info;
     }
 
     public String getRestaurantId() {

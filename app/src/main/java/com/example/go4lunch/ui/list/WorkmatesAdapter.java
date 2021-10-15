@@ -73,8 +73,19 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
 
 
         void bind(WorkmateModel workmateModel) {
-            Repositories.getDinerRepository().getDinerFromWorkmate();
-            title.setText(workmateModel.getUsername());
+            Repositories.getDinerRepository().getDinerFromWorkmateId(
+                    workmateModel.getId(),
+                    data -> {
+                        if(data != null) {
+                            title.setText(
+                                    workmateModel.getUsername() +
+                                            " ( "
+                                            + data.getInfo()
+                                            + " )");
+                        } else {
+                            title.setText(workmateModel.getUsername());
+                        }
+                    });
             CircularProgressDrawable circularProgressDrawable
                     = new CircularProgressDrawable(itemView.getContext());
             circularProgressDrawable.setStrokeWidth(5f);

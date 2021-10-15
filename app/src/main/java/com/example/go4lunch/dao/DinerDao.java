@@ -8,7 +8,7 @@ public interface DinerDao {
 
     void createDiner(DinerEntity dinerEntity, DaoEmptyOnSuccessListener listener);
 
-    void getDinerFromWorkmateId(DaoOnSuccessListener<DinerEntity> listener);
+    void getDinerFromWorkmateId(String workmateId, DaoOnSuccessListener<DinerEntity> listener);
 
     void getDinerFromWorkmate(DaoOnSuccessListener<DinerEntity> listener);
 
