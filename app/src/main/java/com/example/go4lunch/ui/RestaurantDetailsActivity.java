@@ -37,6 +37,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
     RecyclerView recyclerView;
     Toolbar toolbar;
     TextView description;
+    TextView ratioDetail;
     FloatingActionButton dinerButton;
     boolean status;
     boolean valueChanged = false;
@@ -59,25 +60,23 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
         webSiteButton = findViewById(R.id.detail_website);
         phoneButton = findViewById(R.id.detail_phone);
         picture = findViewById(R.id.picture);
+        ratioDetail = findViewById(R.id.detail_ratio);
 
         RestaurantModel restaurantModel = (RestaurantModel) getIntent()
                 .getSerializableExtra("data_restaurant");
         assert restaurantModel != null;
-        getSupportActionBar().setTitle(restaurantModel.getName()
-                +"   "
-                + restaurantModel.getOpinion()
-        +"/5 "+ R.drawable.ic_baseline_star_12);
+        getSupportActionBar().setTitle(restaurantModel.getName());
         getSupportActionBar().setSubtitle(restaurantModel.getAddress());
         description.setText(restaurantModel.getAddress());
-
+        ratioDetail.setText(restaurantModel.getOpinion() + "/5");
         viewModel.loadDinerFromWorkmate();
         viewModel.getCurrentDiner().observe(this, diner -> {
             if(diner.isStatus() && diner.getRestaurantId().equals(restaurantModel.getId())) {
                 status = true;
-                dinerButton.setImageResource(R.drawable.ic_baseline_check_circle_24_green);
+                dinerButton.setImageResource(R.drawable.ic_baseline_clear_24);
             } else {
                 status = false;
-                dinerButton.setImageResource(R.drawable.ic_baseline_check_circle_24);
+                dinerButton.setImageResource(R.drawable.ic_baseline_local_dining_24);
             }
         });
         CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(this);
@@ -91,9 +90,9 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             dinerEntity.setRestaurantId(restaurantModel.getId());
             status = !status;
             if (status) {
-                dinerButton.setImageResource(R.drawable.ic_baseline_local_dining_24);
-            } else {
                 dinerButton.setImageResource(R.drawable.ic_baseline_clear_24);
+            } else {
+                dinerButton.setImageResource(R.drawable.ic_baseline_local_dining_24);
             }
             dinerEntity.setInfo(restaurantModel.getName());
             dinerEntity.setStatus(status);

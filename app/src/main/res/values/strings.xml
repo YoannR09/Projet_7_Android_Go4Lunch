@@ -41,4 +41,5 @@
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
     <string name="search_area">Search area</string>
     <string name="error_login">Error login, please retry</string>
+    <string name="_5">../5</string>
 </resources>

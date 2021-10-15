@@ -111,8 +111,7 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
         @Override
         public void onClick(View view) {
             Intent intent = new Intent(context, RestaurantDetailsActivity.class);
-            Repositories.getRestaurantRepository().getCurrentRestaurant().observe(
-                    this::getLifecycle,
+            Repositories.getRestaurantRepository().getCurrentRestaurant().observeForever(
                     rest -> {
                         intent.putExtra(
                                 "data_restaurant",

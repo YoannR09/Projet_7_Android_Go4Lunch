@@ -33,6 +33,7 @@
                     android:fitsSystemWindows="true"
                     android:scaleType="centerCrop"/>
                 <FrameLayout
+                    android:id="@+id/frame_detail_id"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="bottom"
@@ -123,6 +124,19 @@
                 tools:listitem="@layout/workmates_detail_item_view" />
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+    <TextView
+        android:id="@+id/detail_ratio"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@id/frame_detail_id"
+        app:layout_anchorGravity="top|right|end"
+        android:paddingTop="24dp"
+        android:drawablePadding="2dp"
+        android:layout_margin="16dp"
+        android:textColor="@android:color/white"
+        android:drawableEnd="@drawable/ic_baseline_star_12"
+        android:text="@string/_5"
+        tools:text="4/5"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/floating_action_button_diner"
         android:layout_width="wrap_content"

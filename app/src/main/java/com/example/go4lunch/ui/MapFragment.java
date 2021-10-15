@@ -116,8 +116,8 @@ public class MapFragment extends Fragment implements LocationListener {
             }
             mMap.setMyLocationEnabled(true);
             if(location != null) {
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
                 mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
             }
             mMap.setOnCameraIdleListener(
                     () -> viewModel.refreshList(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude));
@@ -129,6 +129,7 @@ public class MapFragment extends Fragment implements LocationListener {
                             intent.putExtra(
                                     "data_restaurant",
                                     new RestaurantEntityToModel().map(rest));
+                            System.out.println(intent.getSerializableExtra("data_restaurant"));
                             startActivityForResult(intent, 234);
                         });
                 Repositories.getRestaurantRepository().getRestaurantNotFoundOnMapById(marker.getTitle());

@@ -22,4 +22,5 @@
     <string name="not_connected">Non connecté</string>
     <string name="search_area">Zone de recherche</string>
     <string name="error_login">Erreur pendant la connextion, veuillez ressayer</string>
+    <string name="_5">../5</string>
 </resources>
