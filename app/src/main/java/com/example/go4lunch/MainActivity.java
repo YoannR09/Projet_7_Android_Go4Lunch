@@ -177,6 +177,8 @@ public class MainActivity extends AppCompatActivity{
                     .setAvailableProviders(providers)
                     .build();
             signInLauncher.launch(signInIntent);
+        } else {
+            // initSignInInfo();
         }
 
         setContentView(R.layout.activity_main);

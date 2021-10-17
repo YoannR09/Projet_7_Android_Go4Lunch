@@ -1,6 +1,8 @@
 package com.example.go4lunch.ui.list;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,8 @@ import com.example.go4lunch.repo.Repositories;
 import com.example.go4lunch.ui.viewModel.DinerViewModel;
 
 import java.util.List;
+
+import static com.google.common.io.Resources.getResource;
 
 public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.WorkmatesViewHolder> {
 
@@ -79,11 +83,13 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
                         if(data != null) {
                             title.setText(
                                     workmateModel.getUsername() +
-                                            " ( "
+                                            " is eating ( "
                                             + data.getInfo()
                                             + " )");
                         } else {
-                            title.setText(workmateModel.getUsername());
+                            title.setTextColor(Color.LTGRAY);
+                            title.setText(workmateModel.getUsername()
+                            + R.string.workmate_no_diner);
                         }
                     });
             CircularProgressDrawable circularProgressDrawable

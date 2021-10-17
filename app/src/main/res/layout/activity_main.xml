@@ -222,7 +222,7 @@
                     android:padding="10dp"
                     android:textColor="@android:color/white"
                     android:textAlignment="textEnd"
-                    android:text="Your lucnh"
+                    android:text="@string/your_lucnh"
                     style="?android:attr/borderlessButtonStyle"
                     android:drawableLeft="@drawable/ic_baseline_local_dining_24"
                     android:drawableTint="@android:color/white"
@@ -243,7 +243,7 @@
                     android:textColor="@android:color/white"
                     android:textAlignment="textEnd"
                     android:drawableTint="@android:color/white"
-                    android:text="Settings"
+                    android:text="@string/settings"
                     android:drawableLeft="@drawable/ic_baseline_settings_24"
                     android:textSize="16sp"/>
             </LinearLayout>
@@ -261,7 +261,7 @@
                     android:textColor="@android:color/white"
                     android:textAlignment="textEnd"
                     android:drawableTint="@android:color/white"
-                    android:text="Logout"
+                    android:text="@string/logout"
                     android:drawableLeft="@drawable/ic_baseline_power_settings_new_24"
                     android:textSize="16sp"/>
             </LinearLayout>

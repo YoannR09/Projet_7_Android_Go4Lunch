@@ -129,7 +129,6 @@ public class MapFragment extends Fragment implements LocationListener {
                             intent.putExtra(
                                     "data_restaurant",
                                     new RestaurantEntityToModel().map(rest));
-                            System.out.println(intent.getSerializableExtra("data_restaurant"));
                             startActivityForResult(intent, 234);
                         });
                 Repositories.getRestaurantRepository().getRestaurantNotFoundOnMapById(marker.getTitle());
