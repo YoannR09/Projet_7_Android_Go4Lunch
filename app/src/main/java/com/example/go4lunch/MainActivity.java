@@ -1,5 +1,9 @@
 package com.example.go4lunch;
 
+import static com.example.go4lunch.error.ToastError.showError;
+import static com.example.go4lunch.ui.ToastError.errorMessage;
+import static pub.devrel.easypermissions.RationaleDialogFragment.TAG;
+
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.location.Location;
@@ -41,13 +45,11 @@ import com.example.go4lunch.ui.viewModel.ui.MainActivityViewModel;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
-import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.Status;
 import com.google.android.libraries.places.api.Places;
 import com.google.android.libraries.places.api.model.AutocompletePrediction;
 import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.RectangularBounds;
 import com.google.android.libraries.places.api.model.TypeFilter;
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
 import com.google.android.libraries.places.api.net.PlacesClient;
@@ -62,9 +64,6 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import static com.example.go4lunch.ui.ToastError.errorMessage;
-import static pub.devrel.easypermissions.RationaleDialogFragment.TAG;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -95,7 +94,6 @@ public class MainActivity extends AppCompatActivity{
             new FirebaseAuthUIActivityResultContract(),
             this::onSignInResult
     );
-
 
     /**
      * This method has called after signed result from firebase auth
@@ -163,120 +161,125 @@ public class MainActivity extends AppCompatActivity{
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
-        viewModel.setLocation(getLocation());
-        initFragment();
-        if(FirebaseAuth.getInstance().getCurrentUser() == null) {
-            List<AuthUI.IdpConfig> providers = Arrays.asList(
-                    new AuthUI.IdpConfig.EmailBuilder().build(),
-                    new AuthUI.IdpConfig.GoogleBuilder().build(),
-                    new AuthUI.IdpConfig.FacebookBuilder().build());
-            Intent signInIntent = AuthUI.getInstance()
-                    .createSignInIntentBuilder()
-                    .setAvailableProviders(providers)
-                    .build();
-            signInLauncher.launch(signInIntent);
-        } else {
-            // initSignInInfo();
-        }
+        try {
+            super.onCreate(savedInstanceState);
+            viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
+            viewModel.setLocation(getLocation());
+            initFragment();
+            if (FirebaseAuth.getInstance().getCurrentUser() == null) {
+                List<AuthUI.IdpConfig> providers = Arrays.asList(
+                        new AuthUI.IdpConfig.EmailBuilder().build(),
+                        new AuthUI.IdpConfig.GoogleBuilder().build(),
+                        new AuthUI.IdpConfig.FacebookBuilder().build());
+                Intent signInIntent = AuthUI.getInstance()
+                        .createSignInIntentBuilder()
+                        .setAvailableProviders(providers)
+                        .build();
+                signInLauncher.launch(signInIntent);
+            } else {
+                // initSignInInfo();
+            }
 
-        setContentView(R.layout.activity_main);
-        setSupportActionBar(findViewById(R.id.topAppBar));
+            setContentView(R.layout.activity_main);
+            setSupportActionBar(findViewById(R.id.topAppBar));
 
-        drawer = findViewById(R.id.drawer);
-        navigationView = findViewById(R.id.navigation_view);
-        searchButton = findViewById(R.id.search_button);
-        inputSearch = findViewById(R.id.search_bar);
-        voiceButton = findViewById(R.id.voice_button);
-        searchDoneButton = findViewById(R.id.search_button_done);
-        topBar = findViewById(R.id.topAppBar);
-        editTextSearch = findViewById(R.id.input_search);
-        settings = findViewById(R.id.drawer_settings);
-        lunchInfo = findViewById(R.id.drawer_lunch_info);
-        logout = findViewById(R.id.drawer_logout);
+            drawer = findViewById(R.id.drawer);
+            navigationView = findViewById(R.id.navigation_view);
+            searchButton = findViewById(R.id.search_button);
+            inputSearch = findViewById(R.id.search_bar);
+            voiceButton = findViewById(R.id.voice_button);
+            searchDoneButton = findViewById(R.id.search_button_done);
+            topBar = findViewById(R.id.topAppBar);
+            editTextSearch = findViewById(R.id.input_search);
+            settings = findViewById(R.id.drawer_settings);
+            lunchInfo = findViewById(R.id.drawer_lunch_info);
+            logout = findViewById(R.id.drawer_logout);
 
-        editTextSearch.setOnClickListener(v -> startAutoComplete());
+            editTextSearch.setOnClickListener(v -> startAutoComplete());
 
-        settings.setOnClickListener(v -> {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-        });
+            settings.setOnClickListener(v -> {
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+            });
 
-        lunchInfo.setOnClickListener(v -> {
-            dinerDetailShowed = false;
-            Intent intent = new Intent(this, RestaurantDetailsActivity.class);
-            viewModel.getCurrentDiner().observe(this, diner -> {
-                if(!dinerDetailShowed){
-                    dinerDetailShowed = true;
-                    if (diner != null) {
-                        if(diner.isStatus()) {
-                            Repositories
-                                    .getRestaurantRepository()
-                                    .getCurrentRestaurant().observe(this, obs -> {
-                                intent.putExtra(
-                                        "data_restaurant",
-                                        new RestaurantEntityToModel().map(obs));
-                                startActivityForResult(intent, 234);
-                            });
-                            Repositories.getRestaurantRepository()
-                                    .getRestaurantNotFoundOnMapById(
-                                            diner.getRestaurantId());
+            lunchInfo.setOnClickListener(v -> {
+                dinerDetailShowed = false;
+                Intent intent = new Intent(this, RestaurantDetailsActivity.class);
+                viewModel.getCurrentDiner().observe(this, diner -> {
+                    if (!dinerDetailShowed) {
+                        dinerDetailShowed = true;
+                        if (diner != null) {
+                            if (diner.isStatus()) {
+                                Repositories
+                                        .getRestaurantRepository()
+                                        .getCurrentRestaurant().observe(this, obs -> {
+                                    intent.putExtra(
+                                            "data_restaurant",
+                                            new RestaurantEntityToModel().map(obs));
+                                    startActivityForResult(intent, 234);
+                                });
+                                Repositories.getRestaurantRepository()
+                                        .getRestaurantNotFoundOnMapById(
+                                                diner.getRestaurantId());
+                            } else {
+                                showToastNoDiner();
+                            }
                         } else {
                             showToastNoDiner();
                         }
-                    } else {
-                        showToastNoDiner();
                     }
-                }
+                });
+                viewModel.loadCurrentDiner();
             });
-            viewModel.loadCurrentDiner();
-        });
 
-        logout.setOnClickListener(v -> {
-            FirebaseAuth.getInstance().signOut();
-            logoutToRefreshMainActivity();
-        });
-
-        searchButton.setOnClickListener(v -> {
-            inputSearch.setVisibility(View.VISIBLE);
-            topBar.setVisibility(View.GONE);
-        });
-
-        searchDoneButton.setOnClickListener(v -> {
-            PlacesClient placesClient = Places.createClient(this);
-            inputSearch.setVisibility(View.GONE);
-            AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
-
-            FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
-                    .setTypeFilter(TypeFilter.ESTABLISHMENT)
-                    .setSessionToken(token)
-                    .setQuery(editTextSearch.getText().toString())
-                    .build();
-
-            placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
-                for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
-                    System.out.println("Here" + prediction.getPlaceId());
-                }
-            }).addOnFailureListener((exception) -> {
-                // TODO THROW EXCEPTION
+            logout.setOnClickListener(v -> {
+                FirebaseAuth.getInstance().signOut();
+                logoutToRefreshMainActivity();
             });
-            topBar.setVisibility(View.VISIBLE);
-        });
 
-        voiceButton.setOnClickListener(v -> {
-            Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-            startActivityForResult(intent, SPEECH_REQUEST_CODE);
-        });
+            searchButton.setOnClickListener(v -> {
+                inputSearch.setVisibility(View.VISIBLE);
+                topBar.setVisibility(View.GONE);
+            });
 
-        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawer, 0,R.string.com_facebook_loginview_cancel_action);
-        drawer.addDrawerListener(drawerToggle);
-        drawerToggle.syncState();
+            searchDoneButton.setOnClickListener(v -> {
+                PlacesClient placesClient = Places.createClient(this);
+                inputSearch.setVisibility(View.GONE);
+                AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-        bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+                FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
+                        .setTypeFilter(TypeFilter.ESTABLISHMENT)
+                        .setSessionToken(token)
+                        .setQuery(editTextSearch.getText().toString())
+                        .build();
+
+                placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
+                    for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
+                        System.out.println("Here" + prediction.getPlaceId());
+                    }
+                }).addOnFailureListener((exception) -> {
+                    // TODO THROW EXCEPTION
+                });
+                topBar.setVisibility(View.VISIBLE);
+            });
+
+            voiceButton.setOnClickListener(v -> {
+                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                startActivityForResult(intent, SPEECH_REQUEST_CODE);
+            });
+
+            ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawer, 0, R.string.com_facebook_loginview_cancel_action);
+            drawer.addDrawerListener(drawerToggle);
+            drawerToggle.syncState();
+
+            BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+            bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+        }catch (Exception e) {
+            showError(getString(R.string.error_main));
+            e.printStackTrace();
+        }
     }
 
     /**

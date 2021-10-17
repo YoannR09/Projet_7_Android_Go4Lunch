@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import static com.example.go4lunch.Go4LunchApplication.getContext;
+import static com.example.go4lunch.error.ToastError.showError;
 
 public class RestaurantDetailsActivity extends AppCompatActivity {
 
@@ -47,77 +48,81 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        viewModel =  new ViewModelProvider(this).get(RestaurantDetailsActivityViewModel.class);
-        setContentView(R.layout.activity_restaurant_details);
+        try {
+            super.onCreate(savedInstanceState);
+            viewModel = new ViewModelProvider(this).get(RestaurantDetailsActivityViewModel.class);
+            setContentView(R.layout.activity_restaurant_details);
 
-        toolbar = findViewById(R.id.toolbar);
-        description = findViewById(R.id.detail_description);
-        setSupportActionBar(toolbar);
-        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
-        toolbar.setTitleTextColor(0xFFFFFFFF);
-        dinerButton = findViewById(R.id.floating_action_button_diner);
-        webSiteButton = findViewById(R.id.detail_website);
-        phoneButton = findViewById(R.id.detail_phone);
-        picture = findViewById(R.id.picture);
-        ratioDetail = findViewById(R.id.detail_ratio);
+            toolbar = findViewById(R.id.toolbar);
+            description = findViewById(R.id.detail_description);
+            setSupportActionBar(toolbar);
+            Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+            toolbar.setTitleTextColor(0xFFFFFFFF);
+            dinerButton = findViewById(R.id.floating_action_button_diner);
+            webSiteButton = findViewById(R.id.detail_website);
+            phoneButton = findViewById(R.id.detail_phone);
+            picture = findViewById(R.id.picture);
+            ratioDetail = findViewById(R.id.detail_ratio);
 
-        RestaurantModel restaurantModel = (RestaurantModel) getIntent()
-                .getSerializableExtra("data_restaurant");
-        assert restaurantModel != null;
-        getSupportActionBar().setTitle(restaurantModel.getName());
-        getSupportActionBar().setSubtitle(restaurantModel.getAddress());
-        description.setText(restaurantModel.getAddress());
-        ratioDetail.setText(restaurantModel.getOpinion() + "/5");
-        viewModel.loadDinerFromWorkmate();
-        viewModel.getCurrentDiner().observe(this, diner -> {
-            if(diner.isStatus() && diner.getRestaurantId().equals(restaurantModel.getId())) {
-                status = true;
-                dinerButton.setImageResource(R.drawable.ic_baseline_clear_24);
-            } else {
-                status = false;
-                dinerButton.setImageResource(R.drawable.ic_baseline_local_dining_24);
-            }
-        });
-        CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(this);
-        circularProgressDrawable.setStrokeWidth(5f);
-        circularProgressDrawable.setCenterRadius(30f);
-        circularProgressDrawable.start();
-        Glide.with(getContext()).load("https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference="+restaurantModel.getPhotoReference()+"&key=AIzaSyD-NY3k75I5IbFh13vcv-kJ3YORhDNETSE").placeholder(circularProgressDrawable).into(picture);
+            RestaurantModel restaurantModel = (RestaurantModel) getIntent()
+                    .getSerializableExtra("data_restaurant");
+            assert restaurantModel != null;
+            getSupportActionBar().setTitle(restaurantModel.getName());
+            getSupportActionBar().setSubtitle(restaurantModel.getAddress());
+            description.setText(restaurantModel.getAddress());
+            ratioDetail.setText(restaurantModel.getOpinion() + "/5");
+            viewModel.loadDinerFromWorkmate();
+            viewModel.getCurrentDiner().observe(this, diner -> {
+                if (diner.isStatus() && diner.getRestaurantId().equals(restaurantModel.getId())) {
+                    status = true;
+                    dinerButton.setImageResource(R.drawable.ic_baseline_clear_24);
+                } else {
+                    status = false;
+                    dinerButton.setImageResource(R.drawable.ic_baseline_local_dining_24);
+                }
+            });
+            CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(this);
+            circularProgressDrawable.setStrokeWidth(5f);
+            circularProgressDrawable.setCenterRadius(30f);
+            circularProgressDrawable.start();
+            Glide.with(getContext()).load("https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=" + restaurantModel.getPhotoReference() + "&key=AIzaSyD-NY3k75I5IbFh13vcv-kJ3YORhDNETSE").placeholder(circularProgressDrawable).into(picture);
 
-        dinerButton.setOnClickListener(v -> {
-            DinerEntity dinerEntity = new DinerEntity();
-            dinerEntity.setRestaurantId(restaurantModel.getId());
-            status = !status;
-            if (status) {
-                dinerButton.setImageResource(R.drawable.ic_baseline_clear_24);
-            } else {
-                dinerButton.setImageResource(R.drawable.ic_baseline_local_dining_24);
-            }
-            dinerEntity.setInfo(restaurantModel.getName());
-            dinerEntity.setStatus(status);
-            viewModel.createDiner(dinerEntity);
-            valueChanged = true;
-        });
+            dinerButton.setOnClickListener(v -> {
+                DinerEntity dinerEntity = new DinerEntity();
+                dinerEntity.setRestaurantId(restaurantModel.getId());
+                status = !status;
+                if (status) {
+                    dinerButton.setImageResource(R.drawable.ic_baseline_clear_24);
+                } else {
+                    dinerButton.setImageResource(R.drawable.ic_baseline_local_dining_24);
+                }
+                dinerEntity.setInfo(restaurantModel.getName());
+                dinerEntity.setStatus(status);
+                viewModel.createDiner(dinerEntity);
+                valueChanged = true;
+            });
 
-        webSiteButton.setOnClickListener(v -> {
-            Intent browse = new Intent(Intent.ACTION_VIEW , Uri.parse(restaurantModel.getWebSite()));
-            startActivity(browse);
-        });
+            webSiteButton.setOnClickListener(v -> {
+                Intent browse = new Intent(Intent.ACTION_VIEW, Uri.parse(restaurantModel.getWebSite()));
+                startActivity(browse);
+            });
 
-        phoneButton.setOnClickListener(v -> {
-            Intent callIntent = new Intent(Intent.ACTION_CALL);
-            callIntent.setData(Uri.parse("tel:"+restaurantModel.getPhoneNumber()));
-            startActivity(callIntent);
-        });
+            phoneButton.setOnClickListener(v -> {
+                Intent callIntent = new Intent(Intent.ACTION_CALL);
+                callIntent.setData(Uri.parse("tel:" + restaurantModel.getPhoneNumber()));
+                startActivity(callIntent);
+            });
 
-        recyclerView = findViewById(R.id.rvWorkmatesDetail);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new WorkMatesDetailAdapter(new ArrayList<>());
-        recyclerView.setAdapter(adapter);
-        viewModel.loadDinersFromRestaurant(restaurantModel.getId());
-        viewModel.getCurrentDiners().observe(this, data
-                -> adapter.updateList(data));
+            recyclerView = findViewById(R.id.rvWorkmatesDetail);
+            recyclerView.setLayoutManager(new LinearLayoutManager(this));
+            adapter = new WorkMatesDetailAdapter(new ArrayList<>());
+            recyclerView.setAdapter(adapter);
+            viewModel.loadDinersFromRestaurant(restaurantModel.getId());
+            viewModel.getCurrentDiners().observe(this, data
+                    -> adapter.updateList(data));
+        } catch (Exception e) {
+            showError(getString(R.string.error_main));
+        }
     }
 
     @Override

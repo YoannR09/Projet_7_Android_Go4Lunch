@@ -6,6 +6,7 @@ import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import org.junit.Test;
@@ -20,7 +21,8 @@ public class WorkmateDaoImplTest{
     WorkmateDaoImpl dao = new WorkmateDaoImplFake();
     CollectionReference collectionMock = mock(CollectionReference.class);
     DocumentReference documentReferenceMock = mock(DocumentReference.class);
-    Task<DocumentSnapshot> documentSnapshotMock = Tasks.forResult(new DocumentSnapshot());
+    DocumentSnapshot mock = mock(DocumentSnapshot.class);
+    Task<DocumentSnapshot> documentSnapshotMock = Tasks.forResult(mock);
 
 
 
@@ -29,14 +31,13 @@ public class WorkmateDaoImplTest{
         // GIVEN
         WorkmateEntity workmateEntity = new WorkmateEntity();
         workmateEntity.setId("22");
+        when(mock.getDocumentReference(anyString())).thenCallRealMethod();
+        when(mock.get(anyString())).thenReturn(new WorkmateEntity());
         when(collectionMock.document(anyString())).thenReturn(documentReferenceMock);
         when(documentReferenceMock.get()).thenReturn(documentSnapshotMock);
-        when(documentSnapshotMock.continueWith(any())).thenCallRealMethod();
-        when(documentSnapshotMock)
-        when(taskMock.getResult(any())).thenReturn();
         // WHEN
         dao.getUser("id", data -> {
-
+            System.out.println(data);
             // THEN
 
         });

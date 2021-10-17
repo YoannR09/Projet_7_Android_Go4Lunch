@@ -21,8 +21,8 @@ public class DinerModelToDinerViewModelTest {
     public void map() {
 
         // GIVEN
-        DinerModel model = new DinerModel("workmateId", "restaurantId", new Date(), true, null);
-        model.setWorkmateModel(new WorkmateModel("username", "mail", "url"));
+        DinerModel model = new DinerModel("workmateId", "restaurantId", new Date(), true, null, "info");
+        model.setWorkmateModel(new WorkmateModel("username", "mail", "url", "info"));
 
         // WHEN
         DinerViewModel viewModel = mapper.map(model);
@@ -38,10 +38,10 @@ public class DinerModelToDinerViewModelTest {
     @Test
     public void maps() {
         // GIVEN
-        DinerModel model1 = new DinerModel("workmateId", "restaurantId", new Date(), false, null);
-        model1.setWorkmateModel(new WorkmateModel("username1", "mail1", "url1"));
-        DinerModel model2 = new DinerModel("workmateId", "restaurantId", new Date(), false, null);
-        model2.setWorkmateModel(new WorkmateModel("username2", "mail2", "url2"));
+        DinerModel model1 = new DinerModel("workmateId", "restaurantId", new Date(), false, null, "info");
+        model1.setWorkmateModel(new WorkmateModel("username1", "mail1", "url1", "info"));
+        DinerModel model2 = new DinerModel("workmateId", "restaurantId", new Date(), false, null, "info");
+        model2.setWorkmateModel(new WorkmateModel("username2", "mail2", "url2", "info"));
         List<DinerModel> models = new ArrayList<>();
         models.add(model1);
         models.add(model2);

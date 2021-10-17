@@ -9,6 +9,7 @@ import android.os.Bundle;
 import com.example.go4lunch.R;
 
 import static android.provider.Settings.System.getString;
+import static com.example.go4lunch.error.ToastError.showError;
 import static java.lang.Boolean.getBoolean;
 
 public class SettingsActivity extends AppCompatActivity {
@@ -20,9 +21,13 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     public void changeNotificationStatus(boolean status) {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean("saved_notification", status);
-        editor.apply();
+        try {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putBoolean("saved_notification", status);
+            editor.apply();
+        } catch (Exception e) {
+          showError(getString(R.string.error_config));  
+        }
     }
 }

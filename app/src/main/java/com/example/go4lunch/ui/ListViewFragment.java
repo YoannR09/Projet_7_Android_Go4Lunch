@@ -1,10 +1,13 @@
 package com.example.go4lunch.ui;
 
+import static com.example.go4lunch.error.ToastError.showError;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -31,17 +34,22 @@ public class ListViewFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_list_view, container, false);
-        viewModel = new ListFragmentViewModel(((MainActivity) getActivity()).getViewModel());
-        recyclerView = view.findViewById(R.id.rvRestaurants);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        adapter = new RestaurantsAdapter(new ArrayList<>(), this, this);
-        recyclerView.setAdapter(adapter);
+        try {
+            View view = inflater.inflate(R.layout.fragment_list_view, container, false);
+            viewModel = new ListFragmentViewModel(((MainActivity) getActivity()).getViewModel());
+            recyclerView = view.findViewById(R.id.rvRestaurants);
+            recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+            adapter = new RestaurantsAdapter(new ArrayList<>(), this, this);
+            recyclerView.setAdapter(adapter);
 
-        viewModel.getCurrentRestaurants().observe(getActivity(), restaurants
-                -> adapter.updateList(restaurants));
-        return view;
+            viewModel.getCurrentRestaurants().observe(getActivity(), restaurants
+                    -> adapter.updateList(restaurants));
+            return view;
+        } catch (Exception e) {
+            showError(getString(R.string.error_main));
+            return inflater.inflate(R.layout.fragment_list_view, container, false);
+        }
     }
 }

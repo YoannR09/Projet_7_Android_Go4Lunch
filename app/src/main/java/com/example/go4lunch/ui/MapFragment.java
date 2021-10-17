@@ -1,5 +1,7 @@
 package com.example.go4lunch.ui;
 
+import static com.example.go4lunch.error.ToastError.showError;
+
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -48,27 +50,31 @@ public class MapFragment extends Fragment implements LocationListener {
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-        viewModel = new ViewModelProvider(
-                this,
-                new MapFragmentViewModelFactory(
-                        new ViewModelProvider(
-                                getActivity()).get(MainActivityViewModel.class)))
-                .get(MapFragmentViewModel.class);
-        viewModel = new ViewModelProvider(this).get(MapFragmentViewModel.class);
-        location = viewModel.getLocation();
-        viewModel.getRestaurantMarkersList().observe(getActivity(), restaurants -> {
-            if(mMap != null) {
-                mMap.clear();
-                for(MarkerOptions m: restaurants) {
-                    mMap.addMarker(m);
+        try {
+            super.onViewCreated(view, savedInstanceState);
+            viewModel = new ViewModelProvider(
+                    this,
+                    new MapFragmentViewModelFactory(
+                            new ViewModelProvider(
+                                    getActivity()).get(MainActivityViewModel.class)))
+                    .get(MapFragmentViewModel.class);
+            viewModel = new ViewModelProvider(this).get(MapFragmentViewModel.class);
+            location = viewModel.getLocation();
+            viewModel.getRestaurantMarkersList().observe(getActivity(), restaurants -> {
+                if (mMap != null) {
+                    mMap.clear();
+                    for (MarkerOptions m : restaurants) {
+                        mMap.addMarker(m);
+                    }
                 }
+            });
+            SupportMapFragment mapFragment =
+                    (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+            if (mapFragment != null) {
+                mapFragment.getMapAsync(callback);
             }
-        });
-        SupportMapFragment mapFragment =
-                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        if (mapFragment != null) {
-            mapFragment.getMapAsync(callback);
+        }catch (Exception e) {
+            showError(getString(R.string.error_main));
         }
     }
 
@@ -110,30 +116,34 @@ public class MapFragment extends Fragment implements LocationListener {
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
         @Override
         public void onMapReady(@NonNull GoogleMap googleMap) {
-            mMap = googleMap;
-            if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                return;
+            try {
+                mMap = googleMap;
+                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    return;
+                }
+                mMap.setMyLocationEnabled(true);
+                if (location != null) {
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
+                }
+                mMap.setOnCameraIdleListener(
+                        () -> viewModel.refreshList(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude));
+                mMap.setOnMarkerClickListener(marker -> {
+                    Intent intent = new Intent(getContext(), RestaurantDetailsActivity.class);
+                    Repositories.getRestaurantRepository().getCurrentRestaurant().observe(
+                            getActivity(),
+                            rest -> {
+                                intent.putExtra(
+                                        "data_restaurant",
+                                        new RestaurantEntityToModel().map(rest));
+                                startActivityForResult(intent, 234);
+                            });
+                    Repositories.getRestaurantRepository().getRestaurantNotFoundOnMapById(marker.getTitle());
+                    return true;
+                });
+            } catch (Exception e) {
+                showError(getString(R.string.error_map));
             }
-            mMap.setMyLocationEnabled(true);
-            if(location != null) {
-                mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
-                mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
-            }
-            mMap.setOnCameraIdleListener(
-                    () -> viewModel.refreshList(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude));
-            mMap.setOnMarkerClickListener(marker -> {
-                Intent intent = new Intent(getContext(), RestaurantDetailsActivity.class);
-                Repositories.getRestaurantRepository().getCurrentRestaurant().observe(
-                        getActivity(),
-                        rest -> {
-                            intent.putExtra(
-                                    "data_restaurant",
-                                    new RestaurantEntityToModel().map(rest));
-                            startActivityForResult(intent, 234);
-                        });
-                Repositories.getRestaurantRepository().getRestaurantNotFoundOnMapById(marker.getTitle());
-                return true;
-            });
         }
     };
 
