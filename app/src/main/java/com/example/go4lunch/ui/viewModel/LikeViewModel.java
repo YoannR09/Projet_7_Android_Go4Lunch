@@ -1,8 +1,8 @@
-package com.example.go4lunch.entity;
+package com.example.go4lunch.ui.viewModel;
 
-public class LikeEntity {
+public class LikeViewModel {
 
-    public LikeEntity(String workmateId, String restaurantId, boolean status) {
+    public LikeViewModel(String workmateId, String restaurantId, boolean status) {
         this.workmateId = workmateId;
         this.restaurantId = restaurantId;
         this.status = status;

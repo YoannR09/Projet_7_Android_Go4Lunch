@@ -6,9 +6,9 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 public interface LikeDao {
 
-    void createLike(LikeEntity like);
+    void createLike(LikeEntity like, DaoEmptyOnSuccessListener listener);
 
-    Task<QuerySnapshot> getLikeFromRestaurant(String restaurantId);
+    void getLikeFromRestaurant(String restaurantId, DaoOnSuccessListener<LikeEntity> listener);
 
     void deleteLike();
 }

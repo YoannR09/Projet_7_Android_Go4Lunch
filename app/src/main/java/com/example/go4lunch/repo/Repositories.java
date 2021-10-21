@@ -1,6 +1,7 @@
 package com.example.go4lunch.repo;
 
 import com.example.go4lunch.dao.DinerDaoImpl;
+import com.example.go4lunch.dao.LikeDaoImpl;
 import com.example.go4lunch.dao.RestaurantDaoImpl;
 import com.example.go4lunch.dao.WorkmateDaoImpl;
 
@@ -12,6 +13,7 @@ public class Repositories {
     static RestaurantRepository restaurantRepository;
     static WorkmateRepository workmateRepository;
     static DinerRepository dinerRepository;
+    static LikeRepository likeRepository;
 
     public static RestaurantRepository getRestaurantRepository() {
         if(restaurantRepository == null) {
@@ -34,6 +36,13 @@ public class Repositories {
         return dinerRepository;
     }
 
+    public static LikeRepository getLikeRepository() {
+        if(likeRepository == null) {
+            createDinerRepository();
+        }
+        return likeRepository;
+    }
+
     public static void createRestaurantRepository() {
         restaurantRepository = new RestaurantRepository(new RestaurantDaoImpl());
     }
@@ -44,5 +53,9 @@ public class Repositories {
 
     public static void createDinerRepository() {
         dinerRepository = new DinerRepository(new DinerDaoImpl());
+    }
+
+    public static void createLikeRepository() {
+        likeRepository = new LikeRepository(new LikeDaoImpl());
     }
 }
