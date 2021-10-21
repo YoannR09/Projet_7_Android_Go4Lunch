@@ -108,9 +108,12 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             });
 
             phoneButton.setOnClickListener(v -> {
-                Intent callIntent = new Intent(Intent.ACTION_CALL);
-                callIntent.setData(Uri.parse("tel:" + restaurantModel.getPhoneNumber()));
-                startActivity(callIntent);
+                Intent intent = new Intent(Intent.ACTION_DIAL,
+                        Uri.fromParts(
+                                "tel",
+                                restaurantModel.getPhoneNumber(),
+                                null));
+                startActivity(intent);
             });
 
             recyclerView = findViewById(R.id.rvWorkmatesDetail);
