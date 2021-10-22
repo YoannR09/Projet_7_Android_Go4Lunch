@@ -149,9 +149,9 @@ public class MainActivity extends AppCompatActivity{
         listFragment = new ListViewFragment();
         workmatesFragment = new WorkmatesFragment();
         active = mapFragment;
-        fm.beginTransaction().add(R.id.main_container, workmatesFragment, "3").hide(workmatesFragment).commit();
-        fm.beginTransaction().add(R.id.main_container, listFragment, "2").hide(listFragment).commit();
-        fm.beginTransaction().add(R.id.main_container,mapFragment, "1").commit();
+        fm.beginTransaction().add(R.id.main_container, workmatesFragment, "WORKMATE").hide(workmatesFragment).commit();
+        fm.beginTransaction().add(R.id.main_container, listFragment, "LIST").hide(listFragment).commit();
+        fm.beginTransaction().add(R.id.main_container,mapFragment, "MAP").commit();
     }
 
     /**
@@ -217,6 +217,7 @@ public class MainActivity extends AppCompatActivity{
                                             "data_restaurant",
                                             new RestaurantEntityToModel().map(obs));
                                     startActivityForResult(intent, 234);
+                                    onDestroy();
                                 });
                                 Repositories.getRestaurantRepository()
                                         .getRestaurantNotFoundOnMapById(
@@ -349,24 +350,19 @@ public class MainActivity extends AppCompatActivity{
             = item -> {
         switch (item.getItemId()) {
             case R.id.map_list:
-                if(mapFragment != null) {
-                    fm.beginTransaction().hide(active).show(mapFragment).commit();
-                    active = mapFragment;
-                }
+                fm.beginTransaction().hide(active).show(mapFragment).commit();
+                active = mapFragment;
+
                 return true;
 
             case R.id.view_list:
-                if(listFragment != null) {
-                    fm.beginTransaction().hide(active).show(listFragment).commit();
-                    active = listFragment;
-                }
+                fm.beginTransaction().hide(active).show(listFragment).commit();
+                active = listFragment;
                 return true;
 
             case R.id.workmates:
-                if(workmatesFragment != null) {
-                    fm.beginTransaction().hide(active).show(workmatesFragment).commit();
-                    active = workmatesFragment;
-                }
+                fm.beginTransaction().hide(active).show(workmatesFragment).commit();
+                active = workmatesFragment;
                 return true;
         }
         return false;

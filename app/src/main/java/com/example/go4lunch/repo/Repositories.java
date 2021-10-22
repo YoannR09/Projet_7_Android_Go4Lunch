@@ -3,6 +3,7 @@ package com.example.go4lunch.repo;
 import com.example.go4lunch.dao.DinerDaoImpl;
 import com.example.go4lunch.dao.LikeDaoImpl;
 import com.example.go4lunch.dao.RestaurantDaoImpl;
+import com.example.go4lunch.dao.RestaurantDaoImplMock;
 import com.example.go4lunch.dao.WorkmateDaoImpl;
 
 public class Repositories {
@@ -38,7 +39,7 @@ public class Repositories {
 
     public static LikeRepository getLikeRepository() {
         if(likeRepository == null) {
-            createDinerRepository();
+            createLikeRepository();
         }
         return likeRepository;
     }
@@ -57,5 +58,12 @@ public class Repositories {
 
     public static void createLikeRepository() {
         likeRepository = new LikeRepository(new LikeDaoImpl());
+    }
+
+    /**
+     * Test mock restaurant dao impl
+     */
+    public static void createRestaurantRepoMock(){
+        restaurantRepository = new RestaurantRepository(new RestaurantDaoImplMock());
     }
 }

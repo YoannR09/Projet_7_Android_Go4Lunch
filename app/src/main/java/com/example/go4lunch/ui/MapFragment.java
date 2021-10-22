@@ -23,6 +23,7 @@ import com.example.go4lunch.repo.Repositories;
 import com.example.go4lunch.ui.viewModel.factory.MapFragmentViewModelFactory;
 import com.example.go4lunch.ui.viewModel.ui.MainActivityViewModel;
 import com.example.go4lunch.ui.viewModel.ui.MapFragmentViewModel;
+import com.example.go4lunch.usecase.RestaurantUseCase;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -123,21 +124,24 @@ public class MapFragment extends Fragment implements LocationListener {
                 }
                 mMap.setMyLocationEnabled(true);
                 if (location != null) {
-                    mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
                     mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(location.getLatitude(), location.getLongitude())));
+                    mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
                 }
                 mMap.setOnCameraIdleListener(
                         () -> viewModel.refreshList(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude));
                 mMap.setOnMarkerClickListener(marker -> {
                     Intent intent = new Intent(getContext(), RestaurantDetailsActivity.class);
-                    Repositories.getRestaurantRepository().getCurrentRestaurant().observe(
+                    RestaurantUseCase useCase = new RestaurantUseCase();
+                    useCase.getRestaurantUseCase().observe(
                             getActivity(),
                             rest -> {
                                 intent.putExtra(
                                         "data_restaurant",
                                         new RestaurantEntityToModel().map(rest));
                                 startActivityForResult(intent, 234);
+                                onDestroy();
                             });
+                    useCase.loadRestaurantUseCase(marker.getTitle());
                     Repositories.getRestaurantRepository().getRestaurantNotFoundOnMapById(marker.getTitle());
                     return true;
                 });
