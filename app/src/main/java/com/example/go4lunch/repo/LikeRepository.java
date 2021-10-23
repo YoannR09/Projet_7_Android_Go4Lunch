@@ -19,7 +19,7 @@ public class LikeRepository {
         dao.createLike(like, listener::onSuccess);
     }
 
-    void getLikeFromRestaurant(String restaurantId, RepositoryOnSuccessListener<Like> listener) {
+    public void getLikeFromRestaurant(String restaurantId, RepositoryOnSuccessListener<Like> listener) {
         dao.getLikeFromRestaurant(restaurantId, data -> {
             listener.onSuccess(new LikeEntityToModel().map(data));
         });

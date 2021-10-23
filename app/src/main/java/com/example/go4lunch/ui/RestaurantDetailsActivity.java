@@ -18,6 +18,7 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 import com.bumptech.glide.Glide;
 import com.example.go4lunch.R;
 import com.example.go4lunch.entity.DinerEntity;
+import com.example.go4lunch.entity.LikeEntity;
 import com.example.go4lunch.model.RestaurantModel;
 import com.example.go4lunch.ui.list.WorkMatesDetailAdapter;
 import com.example.go4lunch.ui.viewModel.ui.RestaurantDetailsActivityViewModel;
@@ -42,8 +43,10 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
     FloatingActionButton dinerButton;
     boolean status;
     boolean valueChanged = false;
+    boolean isLiked = false;
     Button phoneButton;
     Button webSiteButton;
+    Button likeButton;
     RestaurantDetailsActivityViewModel viewModel;
 
     @Override
@@ -63,7 +66,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             phoneButton = findViewById(R.id.detail_phone);
             picture = findViewById(R.id.picture);
             ratioDetail = findViewById(R.id.detail_ratio);
-
+            likeButton = findViewById(R.id.detail_like);
             RestaurantModel restaurantModel = (RestaurantModel) getIntent()
                     .getSerializableExtra("data_restaurant");
             assert restaurantModel != null;
@@ -80,6 +83,28 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
                     status = false;
                     dinerButton.setImageResource(R.drawable.ic_baseline_local_dining_24);
                 }
+            });
+            viewModel.getCurrentLike().observe(this, like -> {
+                if(like != null) {
+                    isLiked = like.isStatus();
+                    String likeText = like.isStatus() ? "DISLIKE" : "LIKE";
+                    likeButton.setText(likeText);
+                } else {
+                    isLiked = false;
+                    likeButton.setText("LIKE");
+                }
+            });
+            viewModel.loadLikeFromRestaurant(restaurantModel.getId());
+            likeButton.setOnClickListener(v-> {
+                isLiked = !isLiked;
+                String likeText = isLiked ? "DISLIKE" : "LIKE";
+                likeButton.setText(likeText);
+                LikeEntity newLike = new LikeEntity(
+                        "initLater",
+                        restaurantModel.getId(),
+                        isLiked
+                );
+                viewModel.createLike(newLike);
             });
             CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(this);
             circularProgressDrawable.setStrokeWidth(5f);

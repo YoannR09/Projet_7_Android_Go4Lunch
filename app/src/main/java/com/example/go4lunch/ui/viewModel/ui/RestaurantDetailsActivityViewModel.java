@@ -6,10 +6,14 @@ import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
 import com.example.go4lunch.entity.DinerEntity;
+import com.example.go4lunch.entity.LikeEntity;
 import com.example.go4lunch.mapper.DinerModelToDinerViewModel;
+import com.example.go4lunch.mapper.LikeModelToLikeViewModel;
 import com.example.go4lunch.model.DinerModel;
+import com.example.go4lunch.model.Like;
 import com.example.go4lunch.repo.Repositories;
 import com.example.go4lunch.ui.viewModel.DinerViewModel;
+import com.example.go4lunch.ui.viewModel.LikeViewModel;
 
 import java.util.List;
 
@@ -17,6 +21,7 @@ public class RestaurantDetailsActivityViewModel extends ViewModel {
 
     MutableLiveData<List<DinerModel>> dinersData = new MutableLiveData<>();
     MutableLiveData<DinerModel> dinerData = new MutableLiveData<>();
+    MutableLiveData<Like> likeData = new MutableLiveData<>();
 
     public void createDiner(DinerEntity dinerEntity) {
         Repositories
@@ -24,6 +29,11 @@ public class RestaurantDetailsActivityViewModel extends ViewModel {
                 .createDiner(dinerEntity, () -> {
                     loadDinersFromRestaurant(dinerEntity.getRestaurantId());
                 });
+    }
+
+    public void createLike(LikeEntity likeEntity) {
+        Repositories.getLikeRepository().createLike(
+                likeEntity, () -> loadLikeFromRestaurant(likeEntity.getRestaurantId()));
     }
 
     public void loadDinersFromRestaurant(String restaurantId) {
@@ -37,7 +47,16 @@ public class RestaurantDetailsActivityViewModel extends ViewModel {
         });
     };
 
+    public void loadLikeFromRestaurant(String restaurantId) {
+        Repositories.getLikeRepository().getLikeFromRestaurant(restaurantId, data -> {
+            likeData.setValue(data);
+        });
+    }
 
+    public LiveData<LikeViewModel> getCurrentLike() {
+        return Transformations.map(likeData, like
+                -> new LikeModelToLikeViewModel().map(like));
+    }
 
     public LiveData<List<DinerViewModel>> getCurrentDiners() {
         return Transformations.map(dinersData, diners

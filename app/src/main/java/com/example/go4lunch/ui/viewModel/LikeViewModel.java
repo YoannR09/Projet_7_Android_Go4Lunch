@@ -2,15 +2,25 @@ package com.example.go4lunch.ui.viewModel;
 
 public class LikeViewModel {
 
-    public LikeViewModel(String workmateId, String restaurantId, boolean status) {
+    public LikeViewModel(String id, String workmateId, String restaurantId, boolean status) {
+        this.id = id;
         this.workmateId = workmateId;
         this.restaurantId = restaurantId;
         this.status = status;
     }
 
+    private String id;
     private String workmateId;
     private String restaurantId;
     private boolean status;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getWorkmateId() {
         return workmateId;

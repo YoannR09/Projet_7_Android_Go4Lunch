@@ -7,6 +7,7 @@ public class LikeEntityToModel {
 
     public Like map(LikeEntity likeEntity) {
         return new Like(
+                likeEntity.getId(),
                 likeEntity.getWorkmateId(),
                 likeEntity.getRestaurantId(),
                 likeEntity.isStatus());

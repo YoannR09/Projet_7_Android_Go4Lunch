@@ -24,17 +24,16 @@ public class LikeDaoImpl implements LikeDao{
     @Override
     public void createLike(LikeEntity like, DaoEmptyOnSuccessListener listener) {
         try {
-            if(like != null) {
-                like.setWorkmateId(getCurrentUser().getUid());
-                Task<DocumentSnapshot> dinerData = getLikeData();
-                dinerData.addOnSuccessListener(documentSnapshot
-                        -> {
-                    this.getLikeCollection()
-                            .document(like.getWorkmateId())
-                            .set(like);
-                    listener.onSuccess();
-                });
-            }
+            like.setWorkmateId(getCurrentUser().getUid());
+            like.setId(getCurrentUser().getUid() + like.getRestaurantId());
+            Task<DocumentSnapshot> dinerData = getLikeData(like.getRestaurantId());
+            dinerData.addOnSuccessListener(documentSnapshot
+                    -> {
+                this.getLikeCollection()
+                        .document(like.getId())
+                        .set(like);
+                listener.onSuccess();
+            });
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -57,10 +56,13 @@ public class LikeDaoImpl implements LikeDao{
 
 
 
-    public Task<DocumentSnapshot> getLikeData(){
+    public Task<DocumentSnapshot> getLikeData(String restaurantId){
         String uid = this.getCurrentLikeUID();
         if(uid != null) {
-            return this.getLikeCollection().document(uid).get();
+            return this.getLikeCollection().document(
+                    uid
+                            +
+                            restaurantId).get();
         } else{
             return null;
         }

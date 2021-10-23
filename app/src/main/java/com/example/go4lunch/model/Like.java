@@ -2,7 +2,8 @@ package com.example.go4lunch.model;
 
 public class Like {
 
-    public Like(String workmateId, String restaurantId, boolean status) {
+    public Like(String id, String workmateId, String restaurantId, boolean status) {
+        this.id = id;
         this.workmateId = workmateId;
         this.restaurantId = restaurantId;
         this.status = status;
@@ -10,7 +11,16 @@ public class Like {
 
     private String workmateId;
     private String restaurantId;
+    private String id;
     private boolean status;
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public String getWorkmateId() {
         return workmateId;

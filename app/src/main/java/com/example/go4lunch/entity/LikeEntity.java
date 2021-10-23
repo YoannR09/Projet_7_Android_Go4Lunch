@@ -2,12 +2,14 @@ package com.example.go4lunch.entity;
 
 public class LikeEntity {
 
-    public LikeEntity(String workmateId, String restaurantId, boolean status) {
+    public LikeEntity(String id, String workmateId, String restaurantId, boolean status) {
+        this.id = id;
         this.workmateId = workmateId;
         this.restaurantId = restaurantId;
         this.status = status;
     }
 
+    private String id;
     private String workmateId;
     private String restaurantId;
     private boolean status;
@@ -34,5 +36,13 @@ public class LikeEntity {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

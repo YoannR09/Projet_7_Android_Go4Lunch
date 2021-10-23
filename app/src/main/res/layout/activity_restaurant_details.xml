@@ -95,6 +95,7 @@
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"/>
                 <Button
+                    android:id="@+id/detail_like"
                     style="@style/Widget.AppCompat.Button.Borderless"
                     android:textColor="@color/colorPrimary"
                     android:drawableTop="@drawable/ic_baseline_star_24"
@@ -145,5 +146,5 @@
         app:layout_anchor="@id/appBarLayout"
         app:layout_anchorGravity="bottom|right|end"
         android:backgroundTint="@android:color/white"
-        app:srcCompat="@drawable/ic_baseline_check_circle_24" />
+        app:srcCompat="@drawable/ic_baseline_local_dining_24" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
