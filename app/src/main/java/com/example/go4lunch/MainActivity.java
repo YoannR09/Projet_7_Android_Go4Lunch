@@ -2,6 +2,7 @@ package com.example.go4lunch;
 
 import static com.example.go4lunch.error.ToastError.showError;
 import static com.example.go4lunch.ui.ToastError.errorMessage;
+import static com.example.go4lunch.util.Util.checkDiner;
 import static pub.devrel.easypermissions.RationaleDialogFragment.TAG;
 
 import android.annotation.SuppressLint;
@@ -62,6 +63,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -138,6 +140,20 @@ public class MainActivity extends AppCompatActivity{
         });
     }
 
+    public void defineTabByIndex(int index) {
+        switch (index) {
+            case 0:
+                active = mapFragment;
+                break;
+            case 1:
+                active = listFragment;
+                break;
+            case 2:
+                active = workmatesFragment;
+                break;
+        }
+    }
+
     /**
      * Init the fragment list with new instances
      * Get current location
@@ -149,7 +165,12 @@ public class MainActivity extends AppCompatActivity{
         mapFragment = new MapFragment();
         listFragment = new ListViewFragment();
         workmatesFragment = new WorkmatesFragment();
-        active = mapFragment;
+        for (Fragment fragment : fm.getFragments()) {
+            fm.beginTransaction().remove(fragment).commit();
+        }
+
+        viewModel.getCurrentTab().observe(this, this::defineTabByIndex);
+
         fm.beginTransaction().add(R.id.main_container, workmatesFragment, "WORKMATE").hide(workmatesFragment).commit();
         fm.beginTransaction().add(R.id.main_container, listFragment, "LIST").hide(listFragment).commit();
         fm.beginTransaction().add(R.id.main_container,mapFragment, "MAP").commit();
@@ -209,7 +230,7 @@ public class MainActivity extends AppCompatActivity{
                     if (!dinerDetailShowed) {
                         dinerDetailShowed = true;
                         if (diner != null) {
-                            if (diner.isStatus()) {
+                            if (checkDiner(diner)) {
                                 Repositories
                                         .getRestaurantRepository()
                                         .getCurrentRestaurant().observe(this, obs -> {
@@ -352,17 +373,19 @@ public class MainActivity extends AppCompatActivity{
             case R.id.map_list:
                 fm.beginTransaction().hide(active).show(mapFragment).commit();
                 active = mapFragment;
-
+                viewModel.setCurrentTab(0);
                 return true;
 
             case R.id.view_list:
                 fm.beginTransaction().hide(active).show(listFragment).commit();
                 active = listFragment;
+                viewModel.setCurrentTab(1);
                 return true;
 
             case R.id.workmates:
                 fm.beginTransaction().hide(active).show(workmatesFragment).commit();
                 active = workmatesFragment;
+                viewModel.setCurrentTab(2);
                 return true;
         }
         return false;

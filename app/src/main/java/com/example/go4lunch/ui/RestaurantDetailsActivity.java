@@ -29,6 +29,7 @@ import java.util.Objects;
 
 import static com.example.go4lunch.Go4LunchApplication.getContext;
 import static com.example.go4lunch.error.ToastError.showError;
+import static com.example.go4lunch.util.Util.checkDiner;
 
 public class RestaurantDetailsActivity extends AppCompatActivity {
 
@@ -76,7 +77,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
             ratioDetail.setText(restaurantModel.getOpinion() + "/5");
             viewModel.loadDinerFromWorkmate();
             viewModel.getCurrentDiner().observe(this, diner -> {
-                if (diner.isStatus() && diner.getRestaurantId().equals(restaurantModel.getId())) {
+                if (checkDiner(diner) && diner.getRestaurantId().equals(restaurantModel.getId())) {
                     status = true;
                     dinerButton.setImageResource(R.drawable.ic_baseline_clear_24);
                 } else {
@@ -85,7 +86,6 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
                 }
             });
             viewModel.getCurrentLike().observe(this, like -> {
-                System.out.println("here like : " + like.isStatus());
                 if(like != null) {
                     isLiked = like.isStatus();
                     String likeText = like.isStatus()

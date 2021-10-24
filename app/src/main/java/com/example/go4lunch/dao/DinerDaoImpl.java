@@ -8,6 +8,7 @@ import com.example.go4lunch.entity.DinerEntity;
 import com.example.go4lunch.entity.WorkmateEntity;
 import com.example.go4lunch.repo.Repositories;
 import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -16,6 +17,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class DinerDaoImpl implements DinerDao {
 

@@ -25,6 +25,7 @@ import com.example.go4lunch.R;
 import com.example.go4lunch.mapper.RestaurantEntityToModel;
 import com.example.go4lunch.repo.Repositories;
 import com.example.go4lunch.ui.RestaurantDetailsActivity;
+import com.example.go4lunch.ui.viewModel.DinerViewModel;
 import com.example.go4lunch.ui.viewModel.ui.ListFragmentViewModel;
 import com.example.go4lunch.ui.viewModel.RestaurantViewModel;
 import com.example.go4lunch.ui.viewModel.ui.RestaurantDetailsActivityViewModel;
@@ -42,7 +43,7 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
             List<RestaurantViewModel> data,
             LifecycleOwner lifecycleOwner,
             ViewModelStoreOwner owner
-            ) {
+    ) {
         this.mData = data;
         this.owner = owner;
         lifecycleRegistry = lifecycleOwner;
@@ -65,7 +66,7 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
         context = parent.getContext();
         ListFragmentViewModel viewModel = new ViewModelProvider(
                 owner).get(
-                        ListFragmentViewModel .class);
+                ListFragmentViewModel .class);
         return new RestaurantViewHolder(view, viewModel);
     }
 
@@ -126,8 +127,7 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
             title.setText(restaurantViewModel.getName());
             description.setText(restaurantViewModel.getDecription());
             range.setText(restaurantViewModel.getRange());
-            viewModel.loadDinersFromRestaurant(restaurantViewModel.getId());
-            viewModel.getDinersFromRestaurant().observe(lifecycleRegistry, diners -> {
+            viewModel.getDinersFromRestaurantSnapshot(restaurantViewModel.getId(), diners -> {
                 if (diners.size() > 0) {
                     workmateDiner.setVisibility(View.VISIBLE);
                     workmateDiner.setText(" (" + diners.size() + ")");

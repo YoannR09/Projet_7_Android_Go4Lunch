@@ -1,18 +1,17 @@
 package com.example.go4lunch.ui.viewModel.ui;
 
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.Transformations;
 
-import com.example.go4lunch.mapper.DinerEntityToModel;
 import com.example.go4lunch.mapper.DinerModelToDinerViewModel;
 import com.example.go4lunch.model.DinerModel;
 import com.example.go4lunch.repo.Repositories;
 import com.example.go4lunch.ui.viewModel.DinerViewModel;
-import com.google.firebase.database.core.Repo;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static com.example.go4lunch.util.Util.checkDiner;
 
 public class WorkerViewModel {
 
@@ -36,7 +35,13 @@ public class WorkerViewModel {
 
     public void loadDinersListFromRestaurantId(String restaurantId) {
         Repositories.getDinerRepository().getListDinersFromRestaurant(data -> {
-            this.dinersData.setValue(data);
+            List<DinerModel> vList = new ArrayList<>();
+            for(DinerModel d: data) {
+                if(checkDiner(d)) {
+                    vList.add(d);
+                }
+            }
+            dinersData.setValue(vList);
         }, restaurantId);
     }
 

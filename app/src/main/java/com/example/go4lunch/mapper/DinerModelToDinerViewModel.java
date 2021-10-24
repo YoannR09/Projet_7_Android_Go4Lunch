@@ -15,7 +15,9 @@ public class DinerModelToDinerViewModel {
                 diner.getWorkmateModel().getUsername(),
                 diner.getWorkmateModel().getPictureUrl(),
                 diner.getRestaurantId(),
-                diner.isStatus());
+                diner.isStatus(),
+                diner.getDate(),
+                diner.getInfo());
     }
 
     public List<DinerViewModel> maps(List<DinerModel> list) {

@@ -15,7 +15,10 @@ import com.example.go4lunch.repo.Repositories;
 import com.example.go4lunch.ui.viewModel.DinerViewModel;
 import com.example.go4lunch.ui.viewModel.LikeViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import static com.example.go4lunch.util.Util.checkDiner;
 
 public class RestaurantDetailsActivityViewModel extends ViewModel {
 
@@ -38,7 +41,15 @@ public class RestaurantDetailsActivityViewModel extends ViewModel {
 
     public void loadDinersFromRestaurant(String restaurantId) {
         Repositories.getDinerRepository().getListDinersFromRestaurant(
-                (data) -> dinersData.setValue(data), restaurantId);
+                (data) -> {
+                    List<DinerModel> vList = new ArrayList<>();
+                    for(DinerModel d: data) {
+                        if(checkDiner(d)) {
+                            vList.add(d);
+                        }
+                    }
+                    dinersData.setValue(vList);
+                }, restaurantId);
     }
 
     public void loadDinerFromWorkmate() {
@@ -48,11 +59,9 @@ public class RestaurantDetailsActivityViewModel extends ViewModel {
     };
 
     public void loadLikeFromRestaurant(String restaurantId) {
-        System.out.println(" call load ") ;
         Repositories.getLikeRepository().getLikeFromRestaurant(restaurantId, data
                 -> {
             likeData.setValue(data);
-            System.out.println(" here like load : " + data.isStatus()) ;
                 }
         );
     }

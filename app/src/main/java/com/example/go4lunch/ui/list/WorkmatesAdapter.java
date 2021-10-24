@@ -22,6 +22,7 @@ import com.example.go4lunch.ui.viewModel.DinerViewModel;
 
 import java.util.List;
 
+import static com.example.go4lunch.util.Util.checkDiner;
 import static com.google.common.io.Resources.getResource;
 
 public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.WorkmatesViewHolder> {
@@ -80,7 +81,7 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
             Repositories.getDinerRepository().getDinerFromWorkmateId(
                     workmateModel.getId(),
                     data -> {
-                        if(data != null) {
+                        if(checkDiner(data)) {
                             title.setText(
                                     workmateModel.getUsername() +
                                             " is eating ( "

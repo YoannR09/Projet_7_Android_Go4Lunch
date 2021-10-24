@@ -19,7 +19,10 @@ import java.util.List;
 public class MainActivityViewModel extends ViewModel {
 
     private Location location;
+    private int currentTab;
 
+
+    private MutableLiveData<Integer> tabIndex = new MutableLiveData<>();
     private MutableLiveData<DinerViewModel> diner = new MutableLiveData<>();
 
     public MainActivityViewModel () {
@@ -61,5 +64,13 @@ public class MainActivityViewModel extends ViewModel {
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+    public LiveData<Integer> getCurrentTab() {
+        return tabIndex;
+    }
+
+    public void setCurrentTab(int tab) {
+        this.tabIndex.setValue(tab);
     }
 }

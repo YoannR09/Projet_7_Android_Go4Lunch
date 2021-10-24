@@ -11,6 +11,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -24,8 +25,6 @@ public class WorkmateDaoImplTest{
     DocumentSnapshot mock = mock(DocumentSnapshot.class);
     Task<DocumentSnapshot> documentSnapshotMock = Tasks.forResult(mock);
 
-
-
     @Test
     public void getUser() {
         // GIVEN
@@ -37,8 +36,7 @@ public class WorkmateDaoImplTest{
         when(documentReferenceMock.get()).thenReturn(documentSnapshotMock);
         // WHEN
         dao.getUser("id", data -> {
-            System.out.println(data);
-            // THEN
+            assertEquals(data.getId(), 21);
 
         });
     }
