@@ -2,9 +2,16 @@ package com.example.go4lunch.entity;
 
 public class LikeEntity {
 
+    public LikeEntity() {}
+
     public LikeEntity(String id, String workmateId, String restaurantId, boolean status) {
         this.id = id;
         this.workmateId = workmateId;
+        this.restaurantId = restaurantId;
+        this.status = status;
+    }
+
+    public LikeEntity(String restaurantId, boolean status) {
         this.restaurantId = restaurantId;
         this.status = status;
     }

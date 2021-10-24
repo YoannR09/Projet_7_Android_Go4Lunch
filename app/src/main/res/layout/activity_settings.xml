@@ -6,9 +6,27 @@
     android:layout_height="match_parent"
     tools:context=".ui.SettingsActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/topAppBarSettings"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/topAppBarSettings"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="parent">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="Settings"
+            app:menu="@menu/top_app_bar"
+            style="@style/Widget.MaterialComponents.Toolbar.Primary"
+            />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
     <LinearLayout
         android:id="@+id/card_notif"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topAppBarSettings"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="parent"
         android:orientation="horizontal"
@@ -25,6 +43,7 @@
             android:textFontWeight="700"
             android:gravity="center"/>
         <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/switch_notif"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
@@ -32,7 +51,7 @@
             android:checked="true"
             app:thumbTint="@color/colorPrimary"/>
     </LinearLayout>
-
+    <!--
     <LinearLayout
         android:id="@+id/card_range"
         app:layout_constraintTop_toBottomOf="@+id/card_notif"
@@ -48,6 +67,7 @@
             android:layout_marginStart="16dp"
             android:textFontWeight="700"
             android:gravity="center"/>
+
         <com.google.android.material.slider.Slider
             android:id="@+id/settings_area"
             android:valueFrom="0"
@@ -60,4 +80,5 @@
             android:layout_margin="26dp"
             />
     </LinearLayout>
+       -->
 </androidx.constraintlayout.widget.ConstraintLayout>

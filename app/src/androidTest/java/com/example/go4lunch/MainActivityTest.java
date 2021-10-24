@@ -3,6 +3,7 @@ package com.example.go4lunch;
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.action.ViewActions.click;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -62,6 +63,8 @@ public class MainActivityTest {
         activity = rule.getActivity();
         onView(ViewMatchers.withId(R.id.view_list)).perform(click());
         assertTrue(Objects.requireNonNull(activity.fm.findFragmentByTag("LIST")).isVisible());
+        assertFalse(Objects.requireNonNull(activity.fm.findFragmentByTag("WORKMATE")).isVisible());
+        assertFalse(Objects.requireNonNull(activity.fm.findFragmentByTag("MAP")).isVisible());
     }
 
     @Test
@@ -69,6 +72,8 @@ public class MainActivityTest {
         activity = rule.getActivity();
         onView(ViewMatchers.withId(R.id.workmates)).perform(click());
         assertTrue(Objects.requireNonNull(activity.fm.findFragmentByTag("WORKMATE")).isVisible());
+        assertFalse(Objects.requireNonNull(activity.fm.findFragmentByTag("LIST")).isVisible());
+        assertFalse(Objects.requireNonNull(activity.fm.findFragmentByTag("MAP")).isVisible());
     }
 
     @Test
@@ -76,6 +81,8 @@ public class MainActivityTest {
         activity = rule.getActivity();
         onView(ViewMatchers.withId(R.id.map_list)).perform(click());
         assertTrue(Objects.requireNonNull(activity.fm.findFragmentByTag("MAP")).isVisible());
+        assertFalse(Objects.requireNonNull(activity.fm.findFragmentByTag("WORKMATE")).isVisible());
+        assertFalse(Objects.requireNonNull(activity.fm.findFragmentByTag("LIST")).isVisible());
     }
 
 }

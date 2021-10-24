@@ -48,9 +48,13 @@ public class RestaurantDetailsActivityViewModel extends ViewModel {
     };
 
     public void loadLikeFromRestaurant(String restaurantId) {
-        Repositories.getLikeRepository().getLikeFromRestaurant(restaurantId, data -> {
+        System.out.println(" call load ") ;
+        Repositories.getLikeRepository().getLikeFromRestaurant(restaurantId, data
+                -> {
             likeData.setValue(data);
-        });
+            System.out.println(" here like load : " + data.isStatus()) ;
+                }
+        );
     }
 
     public LiveData<LikeViewModel> getCurrentLike() {

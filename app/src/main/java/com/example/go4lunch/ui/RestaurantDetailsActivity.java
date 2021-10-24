@@ -85,22 +85,26 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
                 }
             });
             viewModel.getCurrentLike().observe(this, like -> {
+                System.out.println("here like : " + like.isStatus());
                 if(like != null) {
                     isLiked = like.isStatus();
-                    String likeText = like.isStatus() ? "DISLIKE" : "LIKE";
+                    String likeText = like.isStatus()
+                            ? getString(R.string.dislike_button)
+                            : getString(R.string.like_button);
                     likeButton.setText(likeText);
                 } else {
                     isLiked = false;
-                    likeButton.setText("LIKE");
+                    likeButton.setText(getString(R.string.like_button));
                 }
             });
             viewModel.loadLikeFromRestaurant(restaurantModel.getId());
             likeButton.setOnClickListener(v-> {
                 isLiked = !isLiked;
-                String likeText = isLiked ? "DISLIKE" : "LIKE";
+                String likeText = isLiked
+                        ? getString(R.string.dislike_button)
+                        : getString(R.string.like_button);
                 likeButton.setText(likeText);
                 LikeEntity newLike = new LikeEntity(
-                        "initLater",
                         restaurantModel.getId(),
                         isLiked
                 );

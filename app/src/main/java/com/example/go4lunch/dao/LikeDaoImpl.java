@@ -8,6 +8,8 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import static com.example.go4lunch.ui.ToastError.errorMessage;
+
 public class LikeDaoImpl implements LikeDao{
 
     public LikeDaoImpl() {
@@ -44,13 +46,16 @@ public class LikeDaoImpl implements LikeDao{
             String restaurantId,
             DaoOnSuccessListener<LikeEntity> listener) {
         this.getLikeCollection()
-                .whereEqualTo("workmateId", getCurrentUser().getUid())
-                .whereEqualTo("restaurantId", restaurantId).get()
-                .continueWith(task -> task.getResult().toObjects(LikeEntity.class))
-                .addOnSuccessListener((data) -> {
-                    if(data.size() > 0) {
-                        listener.onSuccess(data.get(0));
-                    }
+                .document(
+                        getCurrentUser().getUid() +
+                                restaurantId).get()
+                .continueWith(like ->
+                        like.getResult()
+                                .toObject(LikeEntity.class))
+                .addOnSuccessListener(listener::onSuccess)
+                .addOnFailureListener(err -> {
+                    System.out.println("Error : " + err);
+                    errorMessage(err.getMessage());
                 });
     }
 

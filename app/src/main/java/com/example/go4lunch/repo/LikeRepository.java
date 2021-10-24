@@ -20,8 +20,7 @@ public class LikeRepository {
     }
 
     public void getLikeFromRestaurant(String restaurantId, RepositoryOnSuccessListener<Like> listener) {
-        dao.getLikeFromRestaurant(restaurantId, data -> {
-            listener.onSuccess(new LikeEntityToModel().map(data));
-        });
+        dao.getLikeFromRestaurant(restaurantId, data
+                -> listener.onSuccess(new LikeEntityToModel().map(data)));
     }
 }

@@ -86,6 +86,7 @@ public class MainActivity extends AppCompatActivity{
     WorkmatesFragment            workmatesFragment;
     Fragment                    active;
     boolean                     dinerDetailShowed = false;
+    boolean                     hasLoggin = false;
 
     final       FragmentManager         fm          = getSupportFragmentManager();
     private     MainActivityViewModel   viewModel;
@@ -166,6 +167,8 @@ public class MainActivity extends AppCompatActivity{
             viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
             viewModel.setLocation(getLocation());
             initFragment();
+            setContentView(R.layout.activity_main);
+            setSupportActionBar(findViewById(R.id.topAppBar));
             if (FirebaseAuth.getInstance().getCurrentUser() == null) {
                 List<AuthUI.IdpConfig> providers = Arrays.asList(
                         new AuthUI.IdpConfig.EmailBuilder().build(),
@@ -177,11 +180,8 @@ public class MainActivity extends AppCompatActivity{
                         .build();
                 signInLauncher.launch(signInIntent);
             } else {
-                // initSignInInfo();
+                initSignInInfo();
             }
-
-            setContentView(R.layout.activity_main);
-            setSupportActionBar(findViewById(R.id.topAppBar));
 
             drawer = findViewById(R.id.drawer);
             navigationView = findViewById(R.id.navigation_view);
