@@ -22,50 +22,6 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.appcompat.widget.Toolbar
-                android:id="@+id/search_bar"
-                android:layout_width="match_parent"
-                android:visibility="gone"
-                android:layout_height="?attr/actionBarSize"
-                android:paddingEnd="14dp"
-                android:paddingStart="0dp"
-                android:paddingTop="6dp"
-                android:paddingBottom="6dp"
-                >
-
-                <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@android:color/white">
-                    <ImageButton
-                        android:id="@+id/search_button_done"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/ic_baseline_search_24"
-                        android:tint="@android:color/black"
-                        android:layout_gravity="end"
-                        android:backgroundTint="@android:color/white"
-                        />
-                    <EditText
-                        android:id="@+id/input_search"
-                        android:layout_weight="1"
-                        android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:layout_width="wrap_content"
-                        android:shadowRadius="2" />
-                    <ImageButton
-                        android:id="@+id/voice_button"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:src="@drawable/ic_baseline_mic_24"
-                        android:tint="@android:color/black"
-                        android:layout_gravity="end"
-                        android:backgroundTint="@android:color/white"
-                        />
-                </LinearLayout>
-            </androidx.appcompat.widget.Toolbar>
-
-            <androidx.appcompat.widget.Toolbar
                 android:id="@+id/topAppBar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"

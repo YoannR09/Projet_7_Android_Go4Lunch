@@ -35,6 +35,7 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
 import com.example.go4lunch.mapper.RestaurantEntityToModel;
+import com.example.go4lunch.mapper.RestaurantModelToViewModel;
 import com.example.go4lunch.model.WorkmateModel;
 import com.example.go4lunch.repo.Repositories;
 import com.example.go4lunch.ui.ListViewFragment;
@@ -75,11 +76,7 @@ public class MainActivity extends AppCompatActivity{
     DrawerLayout                drawer;
     NavigationView              navigationView;
     ImageButton                 searchButton;
-    Toolbar                     inputSearch;
     Toolbar                     topBar;
-    ImageButton                 voiceButton;
-    ImageButton                 searchDoneButton;
-    EditText                    editTextSearch;
     Button                      logout;
     Button                      settings;
     Button                      lunchInfo;
@@ -88,7 +85,6 @@ public class MainActivity extends AppCompatActivity{
     WorkmatesFragment            workmatesFragment;
     Fragment                    active;
     boolean                     dinerDetailShowed = false;
-    boolean                     hasLoggin = false;
 
     final       FragmentManager         fm          = getSupportFragmentManager();
     private     MainActivityViewModel   viewModel;
@@ -143,13 +139,22 @@ public class MainActivity extends AppCompatActivity{
     public void defineTabByIndex(int index) {
         switch (index) {
             case 0:
+                fm.beginTransaction().hide(active).show(mapFragment).commit();
                 active = mapFragment;
                 break;
             case 1:
+                fm.beginTransaction().hide(active).show(listFragment).commit();
                 active = listFragment;
                 break;
             case 2:
+                fm.beginTransaction().hide(active).show(workmatesFragment).commit();
                 active = workmatesFragment;
+                break;
+            default:
+                fm.beginTransaction().add(R.id.main_container, workmatesFragment, "WORKMATE").hide(workmatesFragment).commit();
+                fm.beginTransaction().add(R.id.main_container, listFragment, "MAP").hide(listFragment).commit();
+                fm.beginTransaction().add(R.id.main_container,mapFragment, "LIST").commit();
+                active = mapFragment;
                 break;
         }
     }
@@ -168,12 +173,15 @@ public class MainActivity extends AppCompatActivity{
         for (Fragment fragment : fm.getFragments()) {
             fm.beginTransaction().remove(fragment).commit();
         }
-
+        int index = 99;
+        if(viewModel.getCurrentTab().getValue() != null) {
+            index = viewModel.getCurrentTab().getValue();
+        }
+        if(active == null) {
+            active = mapFragment;
+        }
+        defineTabByIndex(index);
         viewModel.getCurrentTab().observe(this, this::defineTabByIndex);
-
-        fm.beginTransaction().add(R.id.main_container, workmatesFragment, "WORKMATE").hide(workmatesFragment).commit();
-        fm.beginTransaction().add(R.id.main_container, listFragment, "LIST").hide(listFragment).commit();
-        fm.beginTransaction().add(R.id.main_container,mapFragment, "MAP").commit();
     }
 
     /**
@@ -207,16 +215,10 @@ public class MainActivity extends AppCompatActivity{
             drawer = findViewById(R.id.drawer);
             navigationView = findViewById(R.id.navigation_view);
             searchButton = findViewById(R.id.search_button);
-            inputSearch = findViewById(R.id.search_bar);
-            voiceButton = findViewById(R.id.voice_button);
-            searchDoneButton = findViewById(R.id.search_button_done);
             topBar = findViewById(R.id.topAppBar);
-            editTextSearch = findViewById(R.id.input_search);
             settings = findViewById(R.id.drawer_settings);
             lunchInfo = findViewById(R.id.drawer_lunch_info);
             logout = findViewById(R.id.drawer_logout);
-
-            editTextSearch.setOnClickListener(v -> startAutoComplete());
 
             settings.setOnClickListener(v -> {
                 Intent intent = new Intent(this, SettingsActivity.class);
@@ -231,18 +233,14 @@ public class MainActivity extends AppCompatActivity{
                         dinerDetailShowed = true;
                         if (diner != null) {
                             if (checkDiner(diner)) {
-                                Repositories
-                                        .getRestaurantRepository()
-                                        .getCurrentRestaurant().observe(this, obs -> {
-                                    intent.putExtra(
-                                            "data_restaurant",
-                                            new RestaurantEntityToModel().map(obs));
-                                    startActivityForResult(intent, 234);
-                                    onDestroy();
-                                });
                                 Repositories.getRestaurantRepository()
-                                        .getRestaurantNotFoundOnMapById(
-                                                diner.getRestaurantId());
+                                        .getRestaurantNotFoundOnMapById(diner.getRestaurantId(),
+                                                data -> {
+                                                    intent.putExtra(
+                                                            "data_restaurant",
+                                                            data);
+                                                    startActivityForResult(intent, 234);
+                                                });
                             } else {
                                 showToastNoDiner();
                             }
@@ -259,38 +257,7 @@ public class MainActivity extends AppCompatActivity{
                 logoutToRefreshMainActivity();
             });
 
-            searchButton.setOnClickListener(v -> {
-                inputSearch.setVisibility(View.VISIBLE);
-                topBar.setVisibility(View.GONE);
-            });
-
-            searchDoneButton.setOnClickListener(v -> {
-                PlacesClient placesClient = Places.createClient(this);
-                inputSearch.setVisibility(View.GONE);
-                AutocompleteSessionToken token = AutocompleteSessionToken.newInstance();
-
-                FindAutocompletePredictionsRequest request = FindAutocompletePredictionsRequest.builder()
-                        .setTypeFilter(TypeFilter.ESTABLISHMENT)
-                        .setSessionToken(token)
-                        .setQuery(editTextSearch.getText().toString())
-                        .build();
-
-                placesClient.findAutocompletePredictions(request).addOnSuccessListener((response) -> {
-                    for (AutocompletePrediction prediction : response.getAutocompletePredictions()) {
-                        System.out.println("Here" + prediction.getPlaceId());
-                    }
-                }).addOnFailureListener((exception) -> {
-                    // TODO THROW EXCEPTION
-                });
-                topBar.setVisibility(View.VISIBLE);
-            });
-
-            voiceButton.setOnClickListener(v -> {
-                Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-                intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                        RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-                startActivityForResult(intent, SPEECH_REQUEST_CODE);
-            });
+            searchButton.setOnClickListener(v -> startAutoComplete());
 
             ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawer, 0, R.string.com_facebook_loginview_cancel_action);
             drawer.addDrawerListener(drawerToggle);
@@ -315,18 +282,19 @@ public class MainActivity extends AppCompatActivity{
         viewModel.refreshList(
                 getLocation().getLatitude(),
                 getLocation().getLongitude());
-        if (requestCode == SPEECH_REQUEST_CODE && resultCode == RESULT_OK) {
-            List<String> results = data.getStringArrayListExtra(
-                    RecognizerIntent.EXTRA_RESULTS);
-            assert results != null;
-            String spokenText = results.get(0);
-            editTextSearch.setText(spokenText);
-            // TODO Check if this one was usefull autoCompleteSearch();
-        }
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Place place = Autocomplete.getPlaceFromIntent(data);
-                mapFragment.mooveCameraWithAutoComplete(Objects.requireNonNull(place.getLatLng()));
+                switch (viewModel.getCurrentTab().getValue()) {
+                    case 0:
+                        mapFragment.mooveCameraWithAutoComplete(Objects.requireNonNull(place.getLatLng()));
+                        break;
+                    case 1:
+                        viewModel.refreshList(
+                                place.getLatLng().latitude,
+                                place.getLatLng().longitude);
+                        break;
+                }
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
                 // TODO: Handle the error.
@@ -371,20 +339,14 @@ public class MainActivity extends AppCompatActivity{
             = item -> {
         switch (item.getItemId()) {
             case R.id.map_list:
-                fm.beginTransaction().hide(active).show(mapFragment).commit();
-                active = mapFragment;
                 viewModel.setCurrentTab(0);
                 return true;
 
             case R.id.view_list:
-                fm.beginTransaction().hide(active).show(listFragment).commit();
-                active = listFragment;
                 viewModel.setCurrentTab(1);
                 return true;
 
             case R.id.workmates:
-                fm.beginTransaction().hide(active).show(workmatesFragment).commit();
-                active = workmatesFragment;
                 viewModel.setCurrentTab(2);
                 return true;
         }

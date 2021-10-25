@@ -33,12 +33,7 @@ public class RestaurantDaoImplMock implements RestaurantDao{
     }
 
     @Override
-    public void getRestaurantNotFoundOnMapById(String placeId) {
-        restaurantData.setValue(getSecondMockRestaurant());
-    }
-
-    @Override
-    public void findByName(Location location, String name) {
+    public void getRestaurantNotFoundOnMapById(String placeId, DaoOnSuccessListener listener) {
         restaurantData.setValue(getSecondMockRestaurant());
     }
 

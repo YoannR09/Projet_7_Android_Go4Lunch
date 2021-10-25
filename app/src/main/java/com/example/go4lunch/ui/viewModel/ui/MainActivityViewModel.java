@@ -21,7 +21,6 @@ public class MainActivityViewModel extends ViewModel {
     private Location location;
     private int currentTab;
 
-
     private MutableLiveData<Integer> tabIndex = new MutableLiveData<>();
     private MutableLiveData<DinerViewModel> diner = new MutableLiveData<>();
 
@@ -30,14 +29,6 @@ public class MainActivityViewModel extends ViewModel {
 
     public LiveData<List<RestaurantModel>> getCurrentRestaurants() {
         return Repositories.getRestaurantRepository().getCurrentRestaurants();
-    }
-
-    public LiveData<List<RestaurantViewModel>> mappers(LiveData<List<RestaurantModel>> list) {
-        return Transformations.map(list, restaurants -> new RestaurantModelToViewModel().maps(restaurants));
-    }
-
-    public void findByName(Location location, String name) {
-        Repositories.getRestaurantRepository().findByName(location, name);
     }
 
     public void refreshList(double latitude, double longitude) {

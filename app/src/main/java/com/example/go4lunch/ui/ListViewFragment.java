@@ -9,13 +9,18 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.go4lunch.MainActivity;
 import com.example.go4lunch.R;
 import com.example.go4lunch.ui.list.RestaurantsAdapter;
+import com.example.go4lunch.ui.viewModel.factory.ListFragmentViewModelFactory;
+import com.example.go4lunch.ui.viewModel.factory.MapFragmentViewModelFactory;
 import com.example.go4lunch.ui.viewModel.ui.ListFragmentViewModel;
+import com.example.go4lunch.ui.viewModel.ui.MainActivityViewModel;
+import com.example.go4lunch.ui.viewModel.ui.MapFragmentViewModel;
 
 import java.util.ArrayList;
 
@@ -38,7 +43,13 @@ public class ListViewFragment extends Fragment {
                              Bundle savedInstanceState) {
         try {
             View view = inflater.inflate(R.layout.fragment_list_view, container, false);
-            viewModel = new ListFragmentViewModel(((MainActivity) getActivity()).getViewModel());
+            viewModel = new ViewModelProvider(
+                    this,
+                    new ListFragmentViewModelFactory(
+                            new ViewModelProvider(
+                                    getActivity()).get(MainActivityViewModel.class)))
+                    .get(ListFragmentViewModel.class);
+            viewModel = new ViewModelProvider(this).get(ListFragmentViewModel.class);
             recyclerView = view.findViewById(R.id.rvRestaurants);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             adapter = new RestaurantsAdapter(new ArrayList<>(), this, this);

@@ -38,7 +38,9 @@ public class RestaurantDaoImpl implements RestaurantDao {
         return null;
     }
 
-    public void getRestaurantNotFoundOnMapById(String placeId) {
+    public void getRestaurantNotFoundOnMapById(
+            String placeId,
+            DaoOnSuccessListener<RestaurantEntity> listener) {
         RequestQueue queue = Volley.newRequestQueue(Go4LunchApplication.getContext());
         String url = "https://maps.googleapis.com/maps/api/place/details/json?place_id="
                 +placeId+
@@ -83,7 +85,7 @@ public class RestaurantDaoImpl implements RestaurantDao {
                             }else {
                                 restaurant.setWorkmateDiner(false);
                             }
-                            restaurantData.setValue(restaurant);
+                            listener.onSuccess(restaurant);
                         },restaurant.getId());
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -101,32 +103,6 @@ public class RestaurantDaoImpl implements RestaurantDao {
     @Override
     public LiveData<RestaurantEntity> getCurrentRestaurant() {
         return restaurantData;
-    }
-
-    @Override
-    public void findByName(Location location, String name) {
-        // Instantiate the RequestQueue.
-        RequestQueue queue = Volley.newRequestQueue(Go4LunchApplication.getContext());
-        String url ="https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="
-                + location.getLatitude()
-                + "," + location.getLongitude()
-                + "&radius=1000&type=restaurant" +
-                "&fields=name%2Crating/contact&key="
-                + "AIzaSyD-NY3k75I5IbFh13vcv-kJ3YORhDNETSE";
-
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
-                (Response.Listener<String>)
-                        response -> {
-                            try {
-                                System.out.println(response);
-                                JSONObject mainObject = new JSONObject(response);
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }, error -> {
-
-        });
-        queue.add(stringRequest);
     }
 
     @Override
@@ -150,7 +126,6 @@ public class RestaurantDaoImpl implements RestaurantDao {
                         JSONArray arr = mainObject.getJSONArray("results");
                         for (int i = 0; i < arr.length(); i++)
                         {
-                            System.out.println(" restaurant : " + arr.getJSONObject(i));
                             JSONObject geo = arr.getJSONObject(i).getJSONObject("geometry");
                             JSONObject loc = geo.getJSONObject("location");
                             RestaurantEntity restaurant = new RestaurantEntity();

@@ -112,15 +112,16 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
         @Override
         public void onClick(View view) {
             Intent intent = new Intent(context, RestaurantDetailsActivity.class);
-            Repositories.getRestaurantRepository().getCurrentRestaurant().observeForever(
-                    rest -> {
-                        intent.putExtra(
-                                "data_restaurant",
-                                new RestaurantEntityToModel().map(rest));
-                        context.startActivity(intent);
-                    });
             Repositories.getRestaurantRepository()
-                    .getRestaurantNotFoundOnMapById(mData.get(this.getPosition()).getId());
+                    .getRestaurantNotFoundOnMapById(
+                            mData.get(
+                                    this.getPosition()).getId(),
+                            data -> {
+                                intent.putExtra(
+                                        "data_restaurant",
+                                        data);
+                                context.startActivity(intent);
+                            });
         }
 
         void bind(RestaurantViewModel restaurantViewModel) {

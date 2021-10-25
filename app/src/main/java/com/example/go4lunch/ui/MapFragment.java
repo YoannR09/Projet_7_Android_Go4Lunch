@@ -1,7 +1,5 @@
 package com.example.go4lunch.ui;
 
-import static com.example.go4lunch.error.ToastError.showError;
-
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -18,12 +16,10 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.go4lunch.R;
-import com.example.go4lunch.mapper.RestaurantEntityToModel;
 import com.example.go4lunch.repo.Repositories;
 import com.example.go4lunch.ui.viewModel.factory.MapFragmentViewModelFactory;
 import com.example.go4lunch.ui.viewModel.ui.MainActivityViewModel;
 import com.example.go4lunch.ui.viewModel.ui.MapFragmentViewModel;
-import com.example.go4lunch.usecase.RestaurantUseCase;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -34,6 +30,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
+
+import static com.example.go4lunch.error.ToastError.showError;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -130,18 +128,15 @@ public class MapFragment extends Fragment implements LocationListener {
                         () -> viewModel.refreshList(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude));
                 mMap.setOnMarkerClickListener(marker -> {
                     Intent intent = new Intent(getContext(), RestaurantDetailsActivity.class);
-                    RestaurantUseCase useCase = new RestaurantUseCase();
-                    useCase.getRestaurantUseCase().observe(
-                            getActivity(),
-                            rest -> {
-                                intent.putExtra(
-                                        "data_restaurant",
-                                        new RestaurantEntityToModel().map(rest));
-                                startActivityForResult(intent, 234);
-                                onDestroy();
-                            });
-                    useCase.loadRestaurantUseCase(marker.getTitle());
-                    Repositories.getRestaurantRepository().getRestaurantNotFoundOnMapById(marker.getTitle());
+                    Repositories.getRestaurantRepository()
+                            .getRestaurantNotFoundOnMapById(
+                                    marker.getTitle(),
+                                    data -> {
+                                        intent.putExtra(
+                                                "data_restaurant",
+                                                data);
+                                        startActivityForResult(intent, 234);
+                    });
                     return true;
                 });
             } catch (Exception e) {

@@ -23,8 +23,12 @@ public class RestaurantRepository {
     public LiveData<RestaurantEntity> getCurrentRestaurant() {
         return dao.getCurrentRestaurant();
     }
-    public void getRestaurantNotFoundOnMapById(String placeId) {
-        dao.getRestaurantNotFoundOnMapById(placeId);
+    public void getRestaurantNotFoundOnMapById(
+            String placeId,
+            RepositoryOnSuccessListener<RestaurantModel> listener) {
+        dao.getRestaurantNotFoundOnMapById(placeId, data -> {
+            listener.onSuccess(new RestaurantEntityToModel().map(data));
+        });
     }
 
     public LiveData<List<RestaurantModel>> getCurrentRestaurants() {
@@ -46,10 +50,6 @@ public class RestaurantRepository {
 
     public LiveData<RestaurantModel> mapper(LiveData<RestaurantEntity> data) {
         return Transformations.map(data, restaurant -> new RestaurantEntityToModel().map(restaurant));
-    }
-
-    public void findByName(Location location,String name) {
-        dao.findByName(location, name);
     }
 
     public void refreshList(double latitude, double longitude) {
