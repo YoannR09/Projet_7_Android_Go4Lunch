@@ -27,7 +27,6 @@ public class WorkmateDaoImpl implements WorkmateDao{
                 .continueWith(task -> task.getResult().toObject(WorkmateEntity.class))
                 .addOnSuccessListener(listener::onSuccess)
                 .addOnFailureListener(err -> {
-                    System.out.println("Error : " + err);
                     errorMessage(err.getMessage());
                 });
     }

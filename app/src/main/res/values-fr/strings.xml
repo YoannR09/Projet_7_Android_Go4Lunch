@@ -42,7 +42,7 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
-    <string name="workmate_no_diner">hasn\'t decided yet</string>
+    <string name="workmate_no_diner">%1$s hasn\'t decided yet</string>
     <string name="error_main">Sorry, can you try again</string>
     <string name="error_map">Sorry, error with Google map</string>
     <string name="error_config">Sorry, error during change settings</string>

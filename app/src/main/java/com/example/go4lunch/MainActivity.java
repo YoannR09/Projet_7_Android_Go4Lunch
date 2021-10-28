@@ -1,21 +1,13 @@
 package com.example.go4lunch;
 
-import static com.example.go4lunch.error.ToastError.showError;
-import static com.example.go4lunch.ui.ToastError.errorMessage;
-import static com.example.go4lunch.util.Util.checkDiner;
-import static pub.devrel.easypermissions.RationaleDialogFragment.TAG;
-
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
-import android.speech.RecognizerIntent;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -34,8 +26,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
-import com.example.go4lunch.mapper.RestaurantEntityToModel;
-import com.example.go4lunch.mapper.RestaurantModelToViewModel;
 import com.example.go4lunch.model.WorkmateModel;
 import com.example.go4lunch.repo.Repositories;
 import com.example.go4lunch.ui.ListViewFragment;
@@ -48,13 +38,7 @@ import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
 import com.google.android.gms.common.api.Status;
-import com.google.android.libraries.places.api.Places;
-import com.google.android.libraries.places.api.model.AutocompletePrediction;
-import com.google.android.libraries.places.api.model.AutocompleteSessionToken;
 import com.google.android.libraries.places.api.model.Place;
-import com.google.android.libraries.places.api.model.TypeFilter;
-import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest;
-import com.google.android.libraries.places.api.net.PlacesClient;
 import com.google.android.libraries.places.widget.Autocomplete;
 import com.google.android.libraries.places.widget.AutocompleteActivity;
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode;
@@ -64,13 +48,16 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import static com.example.go4lunch.error.ToastError.showError;
+import static com.example.go4lunch.ui.ToastError.errorMessage;
+import static com.example.go4lunch.util.Util.checkDiner;
+import static pub.devrel.easypermissions.RationaleDialogFragment.TAG;
+
 public class MainActivity extends AppCompatActivity{
 
-    private final int SPEECH_REQUEST_CODE = 0x1a;
     private final static int AUTOCOMPLETE_REQUEST_CODE = 0xAf;
 
     DrawerLayout                drawer;
@@ -96,7 +83,7 @@ public class MainActivity extends AppCompatActivity{
 
     /**
      * This method has called after signed result from firebase auth
-     * @param result
+     * @param result: FirebaseAuthUIAuthenticationResult
      */
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
         if (result.getResultCode() == RESULT_OK) {
@@ -138,10 +125,6 @@ public class MainActivity extends AppCompatActivity{
 
     public void defineTabByIndex(int index) {
         switch (index) {
-            case 0:
-                fm.beginTransaction().hide(active).show(mapFragment).commit();
-                active = mapFragment;
-                break;
             case 1:
                 fm.beginTransaction().hide(active).show(listFragment).commit();
                 active = listFragment;
@@ -151,9 +134,7 @@ public class MainActivity extends AppCompatActivity{
                 active = workmatesFragment;
                 break;
             default:
-                fm.beginTransaction().add(R.id.main_container, workmatesFragment, "WORKMATE").hide(workmatesFragment).commit();
-                fm.beginTransaction().add(R.id.main_container, listFragment, "MAP").hide(listFragment).commit();
-                fm.beginTransaction().add(R.id.main_container,mapFragment, "LIST").commit();
+                fm.beginTransaction().hide(active).show(mapFragment).commit();
                 active = mapFragment;
                 break;
         }
@@ -173,6 +154,9 @@ public class MainActivity extends AppCompatActivity{
         for (Fragment fragment : fm.getFragments()) {
             fm.beginTransaction().remove(fragment).commit();
         }
+        fm.beginTransaction().add(R.id.main_container, workmatesFragment, "WORKMATE").hide(workmatesFragment).commit();
+        fm.beginTransaction().add(R.id.main_container, listFragment, "MAP").hide(listFragment).commit();
+        fm.beginTransaction().add(R.id.main_container,mapFragment, "LIST").hide(mapFragment).commit();
         int index = 99;
         if(viewModel.getCurrentTab().getValue() != null) {
             index = viewModel.getCurrentTab().getValue();
@@ -187,7 +171,7 @@ public class MainActivity extends AppCompatActivity{
     /**
      * Here we are instanciate the each component on view
      * Start sign in activity from firebase auth
-     * @param savedInstanceState
+     * @param savedInstanceState: Bundle
      */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -273,40 +257,48 @@ public class MainActivity extends AppCompatActivity{
 
     /**
      * This activuty result has used to catch microphone input search
-     * @param requestCode
-     * @param resultCode
-     * @param data
+     * @param requestCode: int
+     * @param resultCode: int
+     * @param data: Intent
      */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        try {
         viewModel.refreshList(
                 getLocation().getLatitude(),
                 getLocation().getLongitude());
         if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 Place place = Autocomplete.getPlaceFromIntent(data);
-                switch (viewModel.getCurrentTab().getValue()) {
-                    case 0:
-                        mapFragment.mooveCameraWithAutoComplete(Objects.requireNonNull(place.getLatLng()));
-                        break;
-                    case 1:
-                        viewModel.refreshList(
-                                place.getLatLng().latitude,
-                                place.getLatLng().longitude);
-                        break;
+                if(viewModel.getCurrentTab().getValue() == null) {
+                    throw new NullPointerException("viewModel getCurrenTab shouldn't be null");
+                } else {
+                    switch (viewModel.getCurrentTab().getValue()) {
+                        case 0:
+                            mapFragment.mooveCameraWithAutoComplete(Objects.requireNonNull(place.getLatLng()));
+                            break;
+                        case 1:
+                            viewModel.refreshList(
+                                    place.getLatLng().latitude,
+                                    place.getLatLng().longitude);
+                            break;
+                    }
                 }
                 Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
             } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-                // TODO: Handle the error.
                 Status status = Autocomplete.getStatusFromIntent(data);
                 assert status.getStatusMessage() != null;
                 Log.i(TAG, status.getStatusMessage());
             } else if (resultCode == RESULT_CANCELED) {
+                Log.i(TAG, "User canceled");
                 // The user canceled the operation.
             }
             return;
         }
         super.onActivityResult(requestCode, resultCode, data);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void showToastNoDiner() {
@@ -318,7 +310,7 @@ public class MainActivity extends AppCompatActivity{
 
     /**
      * Start autoComplete Activity
-     * Result has catched on OnResult method
+     * Result has catches on OnResult method
      */
     public void startAutoComplete() {
         // Set the fields to specify which types of place data to
@@ -355,8 +347,8 @@ public class MainActivity extends AppCompatActivity{
 
     /**
      * This method was user to display drawer menu
-     * @param item
-     * @return
+     * @param item: MenuItem
+     * @return boolean
      */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -370,7 +362,7 @@ public class MainActivity extends AppCompatActivity{
 
     /**
      * Return the current isntance of viewModel
-     * @return
+     * @return MainActivityViewModel
      */
     public MainActivityViewModel getViewModel() {
         return viewModel;
@@ -388,7 +380,7 @@ public class MainActivity extends AppCompatActivity{
 
     /**
      * Return the current location from device
-     * @return
+     * @return Location
      */
     public Location getLocation() {
         LocationManager mLocationManager = (LocationManager)getApplicationContext().getSystemService(LOCATION_SERVICE);

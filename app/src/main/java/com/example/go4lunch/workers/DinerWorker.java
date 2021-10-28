@@ -10,32 +10,23 @@ import android.preference.PreferenceManager;
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
-import androidx.lifecycle.ProcessLifecycleOwner;
 import androidx.work.ExistingPeriodicWorkPolicy;
-import androidx.work.OneTimeWorkRequest;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
-import androidx.work.WorkRequest;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 
 import com.example.go4lunch.Go4LunchApplication;
 import com.example.go4lunch.R;
 import com.example.go4lunch.repo.Repositories;
-import com.example.go4lunch.ui.viewModel.DinerViewModel;
-import com.example.go4lunch.ui.viewModel.ui.WorkerViewModel;
 
 import java.util.concurrent.TimeUnit;
-
-import static android.provider.Settings.System.getString;
 
 public class DinerWorker extends Worker {
 
     private static long msToTwelve (){
         return 1000;
     }
-
-    WorkerViewModel viewModel = new WorkerViewModel();
 
     public DinerWorker(
             @NonNull Context context,
@@ -49,26 +40,40 @@ public class DinerWorker extends Worker {
         try {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             boolean notif = sharedPref.getBoolean("saved_notification", true);
+            System.out.println("notif here" + notif);
             if(notif) {
-                viewModel.loadDinerFromWorkmate();
-                Thread.sleep(100);
-                DinerViewModel diner = viewModel.getCurrentDiner();
-                if(diner != null) {
-                    viewModel.loadDinersListFromRestaurantId(diner.getRestaurantId());
-                    Thread.sleep(100);
+                Repositories.getDinerRepository().getDinerFromWorkmate(data -> {
                     createNotificationChannel();
-                    NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
-                            .setSmallIcon(R.drawable.ic_baseline_local_dining_24)
-                            .setContentTitle("Hey, its time to lunch !")
-                            .setContentText("You have actually "+ viewModel.getCurrentDiners().size()
-                            + "mates eating on same restaurant")
-                            .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-                    NotificationManagerCompat notificationManager
-                            = NotificationManagerCompat.from(getApplicationContext());
-                    notificationManager.notify(44, builder.build());
-                }
+                    if(data != null) {
+                        Repositories.getDinerRepository().getListDinersFromRestaurant(listDiners -> {
+                            String notifText;
+                            if (listDiners.size() != 0) {
+                                notifText = "You are alone to diner, invite your mates !";
+                            } else {
+                                notifText = "You are diner with " +listDiners.size() + "mates";
+                            }
+                            NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
+                                    .setSmallIcon(R.drawable.ic_baseline_local_dining_24)
+                                    .setContentTitle("Hey, its time to lunch !")
+                                    .setContentText(notifText)
+                                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                            NotificationManagerCompat notificationManager
+                                    = NotificationManagerCompat.from(getApplicationContext());
+                            notificationManager.notify(44, builder.build());
+                        }, data.getRestaurantId());
+                    } else {
+                        NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
+                                .setSmallIcon(R.drawable.ic_baseline_local_dining_24)
+                                .setContentTitle("Hey, its time to lunch !")
+                                .setContentText("Select a restauraut to diner !")
+                                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                        NotificationManagerCompat notificationManager
+                                = NotificationManagerCompat.from(getApplicationContext());
+                        notificationManager.notify(44, builder.build());
+                    }
+                });
             }
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return Result.success();

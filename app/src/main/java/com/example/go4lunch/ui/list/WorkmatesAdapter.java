@@ -89,8 +89,8 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
                                             + " )");
                         } else {
                             title.setTextColor(Color.LTGRAY);
-                            title.setText(workmateModel.getUsername()
-                            + R.string.workmate_no_diner);
+                            title.setText(title.getContext().getString(
+                                    R.string.workmate_no_diner, workmateModel.getUsername()));
                         }
                     });
             CircularProgressDrawable circularProgressDrawable

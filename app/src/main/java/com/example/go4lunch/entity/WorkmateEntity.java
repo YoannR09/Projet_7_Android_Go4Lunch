@@ -7,7 +7,7 @@ public class WorkmateEntity {
     private String urlPicture;
     private String mail;
 
-    public WorkmateEntity (){}
+    public WorkmateEntity () {}
 
     public WorkmateEntity(String id, String username, String urlPicture, String mail) {
         this.id = id;

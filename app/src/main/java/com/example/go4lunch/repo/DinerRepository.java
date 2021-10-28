@@ -49,14 +49,6 @@ public class DinerRepository {
         dao.getListDiner(data -> listener.onSuccess(new DinerEntityToModel().maps(data)));
     }
 
-    public void getListDinersFromRestaurantSnapshot(
-            String restaurantId,
-            RepositoryOnSuccessListener<List<DinerModel>> listener) {
-        dao.getListDinerFromRestaurant(data -> {
-            listener.onSuccess(new DinerEntityToModel().maps(data));
-        }, restaurantId);
-    }
-
     public void getListDinersFromRestaurant(RepositoryOnSuccessListener<List<DinerModel>> listener, String restaurantId) {
         dao.getListDinerFromRestaurant(data -> listener.onSuccess(new DinerEntityToModel().maps(data)), restaurantId);
     }

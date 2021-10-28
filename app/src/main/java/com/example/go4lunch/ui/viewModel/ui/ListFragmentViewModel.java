@@ -29,9 +29,9 @@ public class ListFragmentViewModel extends ViewModel {
     }
 
     public void getDinersFromRestaurantSnapshot(String restaurantId, ViewModelOnSuccessListener<List<DinerViewModel>> listener) {
-        Repositories.getDinerRepository().getListDinersFromRestaurantSnapshot(restaurantId, data -> {
+        Repositories.getDinerRepository().getListDinersFromRestaurant(data -> {
             listener.onSuccess(new DinerModelToDinerViewModel().maps(data));
-        });
+        }, restaurantId);
     }
 }
 

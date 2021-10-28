@@ -40,7 +40,7 @@
     <string name="attachment_summary_on">Automatically download attachments for incoming emails
     </string>
     <string name="attachment_summary_off">Only download attachments when manually requested</string>
-    <string name="workmate_no_diner">hasn\'t decided yet</string>
+    <string name="workmate_no_diner">%1$s hasn\'t decided yet</string>
     <string name="search_area">Search area</string>
     <string name="error_login">Error login, please retry</string>
     <string name="_5">../5</string>
