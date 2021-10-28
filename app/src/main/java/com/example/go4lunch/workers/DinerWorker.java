@@ -40,7 +40,6 @@ public class DinerWorker extends Worker {
         try {
             SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
             boolean notif = sharedPref.getBoolean("saved_notification", true);
-            System.out.println("notif here" + notif);
             if(notif) {
                 Repositories.getDinerRepository().getDinerFromWorkmate(data -> {
                     createNotificationChannel();

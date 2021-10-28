@@ -1,17 +1,15 @@
 package com.example.go4lunch.dao;
 
-import android.location.Location;
-
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
-import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.go4lunch.Go4LunchApplication;
 import com.example.go4lunch.entity.RestaurantEntity;
+import com.example.go4lunch.model.DinerModel;
 import com.example.go4lunch.repo.Repositories;
 
 import org.json.JSONArray;
@@ -21,6 +19,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
+import static com.example.go4lunch.util.Util.checkDiner;
 
 public class RestaurantDaoImpl implements RestaurantDao {
 
@@ -51,7 +51,6 @@ public class RestaurantDaoImpl implements RestaurantDao {
                 response -> {
                     try {
                         JSONObject main = new JSONObject(response);
-                        System.out.println(" restaurant : " + response);
                         JSONObject mainObject = main.getJSONObject("result");
                         JSONObject geo = mainObject.getJSONObject("geometry");
                         JSONObject loc = geo.getJSONObject("location");
@@ -81,7 +80,7 @@ public class RestaurantDaoImpl implements RestaurantDao {
                         restaurant.setAddress(mainObject.getString("vicinity"));
                         Repositories.getDinerRepository().getListDinersFromRestaurant(data -> {
                             if(data.size() > 0) {
-                                restaurant.setWorkmateDiner(true);
+                                restaurant.setWorkmateDiner(checkDinerFromDinerList(data));
                             }else {
                                 restaurant.setWorkmateDiner(false);
                             }
@@ -148,7 +147,7 @@ public class RestaurantDaoImpl implements RestaurantDao {
                             restaurant.setAddress(arr.getJSONObject(i).getString("vicinity"));
                             Repositories.getDinerRepository().getListDinersFromRestaurant(data -> {
                                 if(data.size() > 0) {
-                                    restaurant.setWorkmateDiner(true);
+                                    restaurant.setWorkmateDiner(checkDinerFromDinerList(data));
                                 }else {
                                     restaurant.setWorkmateDiner(false);
                                 }
@@ -162,5 +161,15 @@ public class RestaurantDaoImpl implements RestaurantDao {
                 }, error -> {
         });
         queue.add(stringRequest);
+    }
+
+    public boolean checkDinerFromDinerList(List<DinerModel> vList) {
+        boolean checkedDiner = false;
+        for(DinerModel diner: vList) {
+            if(checkDiner(diner)) {
+                checkedDiner = true;
+            }
+        }
+        return checkedDiner;
     }
 }

@@ -52,7 +52,11 @@ public class LikeDaoImpl implements LikeDao{
                 .continueWith(like ->
                         like.getResult()
                                 .toObject(LikeEntity.class))
-                .addOnSuccessListener(listener::onSuccess)
+                .addOnSuccessListener(l -> {
+                    if (l != null) {
+                        listener.onSuccess(l);
+                    }
+                })
                 .addOnFailureListener(err -> {
                     System.out.println("Error : " + err);
                     errorMessage(err.getMessage());
