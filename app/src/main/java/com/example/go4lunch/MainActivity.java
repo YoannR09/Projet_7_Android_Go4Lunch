@@ -7,6 +7,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -71,7 +72,6 @@ public class MainActivity extends AppCompatActivity{
     ListViewFragment            listFragment;
     WorkmatesFragment            workmatesFragment;
     Fragment                    active;
-    boolean                     dinerDetailShowed = false;
 
     final       FragmentManager         fm          = getSupportFragmentManager();
     private     MainActivityViewModel   viewModel;
@@ -126,14 +126,17 @@ public class MainActivity extends AppCompatActivity{
     public void defineTabByIndex(int index) {
         switch (index) {
             case 1:
+                if(searchButton!= null)  {searchButton.setVisibility(View.VISIBLE);}
                 fm.beginTransaction().hide(active).show(listFragment).commit();
                 active = listFragment;
                 break;
             case 2:
                 fm.beginTransaction().hide(active).show(workmatesFragment).commit();
                 active = workmatesFragment;
+                if(searchButton!= null)  {searchButton.setVisibility(View.GONE);}
                 break;
             default:
+                if(searchButton!= null)  {searchButton.setVisibility(View.VISIBLE);}
                 fm.beginTransaction().hide(active).show(mapFragment).commit();
                 active = mapFragment;
                 break;
@@ -186,7 +189,8 @@ public class MainActivity extends AppCompatActivity{
                 List<AuthUI.IdpConfig> providers = Arrays.asList(
                         new AuthUI.IdpConfig.EmailBuilder().build(),
                         new AuthUI.IdpConfig.GoogleBuilder().build(),
-                        new AuthUI.IdpConfig.FacebookBuilder().build());
+                        new AuthUI.IdpConfig.FacebookBuilder().build(),
+                        new AuthUI.IdpConfig.TwitterBuilder().build());
                 Intent signInIntent = AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
@@ -210,30 +214,25 @@ public class MainActivity extends AppCompatActivity{
             });
 
             lunchInfo.setOnClickListener(v -> {
-                dinerDetailShowed = false;
                 Intent intent = new Intent(this, RestaurantDetailsActivity.class);
-                viewModel.getCurrentDiner().observe(this, diner -> {
-                    if (!dinerDetailShowed) {
-                        dinerDetailShowed = true;
-                        if (diner != null) {
-                            if (checkDiner(diner)) {
-                                Repositories.getRestaurantRepository()
-                                        .getRestaurantNotFoundOnMapById(diner.getRestaurantId(),
-                                                data -> {
-                                                    intent.putExtra(
-                                                            "data_restaurant",
-                                                            data);
-                                                    startActivityForResult(intent, 234);
-                                                });
-                            } else {
-                                showToastNoDiner();
-                            }
+                viewModel.getCurrentDinerSnapshot(data -> {
+                    if (data != null) {
+                        if (checkDiner(data)) {
+                            Repositories.getRestaurantRepository()
+                                    .getRestaurantNotFoundOnMapById(data.getRestaurantId(),
+                                            r -> {
+                                                intent.putExtra(
+                                                        "data_restaurant",
+                                                        r);
+                                                startActivityForResult(intent, 234);
+                                            });
                         } else {
                             showToastNoDiner();
                         }
+                    } else {
+                        showToastNoDiner();
                     }
                 });
-                viewModel.loadCurrentDiner();
             });
 
             logout.setOnClickListener(v -> {
@@ -264,38 +263,44 @@ public class MainActivity extends AppCompatActivity{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         try {
-        viewModel.refreshList(
-                getLocation().getLatitude(),
-                getLocation().getLongitude());
-        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
-            if (resultCode == RESULT_OK) {
-                Place place = Autocomplete.getPlaceFromIntent(data);
-                if(viewModel.getCurrentTab().getValue() == null) {
-                    throw new NullPointerException("viewModel getCurrenTab shouldn't be null");
-                } else {
+            if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+                if (resultCode == RESULT_OK) {
+                    Place place = Autocomplete.getPlaceFromIntent(data);
+                    if(viewModel.getCurrentTab().getValue() == null) {
+                        mapFragment.mooveCameraWithAutoComplete(Objects.requireNonNull(place.getLatLng()));
+                        return;
+                    }
                     switch (viewModel.getCurrentTab().getValue()) {
                         case 0:
                             mapFragment.mooveCameraWithAutoComplete(Objects.requireNonNull(place.getLatLng()));
                             break;
                         case 1:
                             viewModel.refreshList(
-                                    place.getLatLng().latitude,
-                                    place.getLatLng().longitude);
+                                    Objects.requireNonNull(place.getLatLng()).latitude,
+                                    Objects.requireNonNull(place.getLatLng()).longitude);
                             break;
                     }
+
+                    Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
+                } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
+                    Status status = Autocomplete.getStatusFromIntent(data);
+                    assert status.getStatusMessage() != null;
+                    Log.i(TAG, status.getStatusMessage());
+                } else if (resultCode == RESULT_CANCELED) {
+                    Log.i(TAG, "User canceled");
+                    // The user canceled the operation.
+                } else {
+                    viewModel.refreshList(
+                            getLocation().getLatitude(),
+                            getLocation().getLongitude());
+
+                    if(workmatesFragment != null) {
+                        workmatesFragment.refreshList();
+                    }
                 }
-                Log.i(TAG, "Place: " + place.getName() + ", " + place.getId());
-            } else if (resultCode == AutocompleteActivity.RESULT_ERROR) {
-                Status status = Autocomplete.getStatusFromIntent(data);
-                assert status.getStatusMessage() != null;
-                Log.i(TAG, status.getStatusMessage());
-            } else if (resultCode == RESULT_CANCELED) {
-                Log.i(TAG, "User canceled");
-                // The user canceled the operation.
+                return;
             }
-            return;
-        }
-        super.onActivityResult(requestCode, resultCode, data);
+            super.onActivityResult(requestCode, resultCode, data);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -303,7 +308,7 @@ public class MainActivity extends AppCompatActivity{
 
     public void showToastNoDiner() {
         Toast noDiner = new Toast(this);
-        noDiner.setText("You have actually not selected resturant");
+        noDiner.setText(getString(R.string.no_diner));
         noDiner.setDuration(Toast.LENGTH_SHORT);
         noDiner.show();
     }

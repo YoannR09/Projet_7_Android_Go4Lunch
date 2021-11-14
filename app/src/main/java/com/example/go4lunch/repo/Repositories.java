@@ -11,6 +11,8 @@ public class Repositories {
     public Repositories() {
     }
 
+
+
     static RestaurantRepository restaurantRepository;
     static WorkmateRepository workmateRepository;
     static DinerRepository dinerRepository;
@@ -58,6 +60,22 @@ public class Repositories {
 
     public static void createLikeRepository() {
         likeRepository = new LikeRepository(new LikeDaoImpl());
+    }
+
+    public static void setRestaurantRepository(RestaurantRepository restaurantRepository) {
+        Repositories.restaurantRepository = restaurantRepository;
+    }
+
+    public static void setWorkmateRepository(WorkmateRepository workmateRepository) {
+        Repositories.workmateRepository = workmateRepository;
+    }
+
+    public static void setDinerRepository(DinerRepository dinerRepository) {
+        Repositories.dinerRepository = dinerRepository;
+    }
+
+    public static void setLikeRepository(LikeRepository likeRepository) {
+        Repositories.likeRepository = likeRepository;
     }
 
     /**

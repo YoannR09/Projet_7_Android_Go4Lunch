@@ -43,7 +43,7 @@ public class WorkmatesFragment extends Fragment {
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             adapter = new WorkmatesAdapter(new ArrayList<>());
             recyclerView.setAdapter(adapter);
-            viewModel.loadWormatesList();
+            viewModel.loadWorkmatesList();
             viewModel.getWorkmatesList().observe(getActivity(), workmates
                     -> adapter.updateList(workmates));
             return view;
@@ -51,5 +51,9 @@ public class WorkmatesFragment extends Fragment {
             showError(getString(R.string.error_main));
             return inflater.inflate(R.layout.fragment_workmates, container, false);
         }
+    }
+
+    public void refreshList() {
+        viewModel.loadWorkmatesList();
     }
 }

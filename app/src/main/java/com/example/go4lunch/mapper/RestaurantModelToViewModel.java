@@ -57,7 +57,9 @@ public class RestaurantModelToViewModel {
             Location location) {
         List<RestaurantViewModel> restaurantViewModels = new ArrayList<>();
         for(RestaurantModel r: restaurantModels) {
-            restaurantViewModels.add(mapForListFragment(r,location));
+            if(location != null) {
+                restaurantViewModels.add(mapForListFragment(r,location));
+            }
         }
         return restaurantViewModels;
     }

@@ -13,7 +13,8 @@ public class WorkmateEntityToModel {
                 workmateEntity.getId(),
                 workmateEntity.getUsername(),
                 workmateEntity.getMail(),
-                workmateEntity.getUrlPicture());
+                workmateEntity.getUrlPicture(),
+                workmateEntity.hasDiner());
     }
 
     public List<WorkmateModel> maps(List<WorkmateEntity> workmateEntities) {

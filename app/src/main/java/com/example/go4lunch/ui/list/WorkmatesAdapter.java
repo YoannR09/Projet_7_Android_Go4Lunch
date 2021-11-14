@@ -1,7 +1,5 @@
 package com.example.go4lunch.ui.list;
 
-import android.content.Context;
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,18 +16,16 @@ import com.example.go4lunch.Go4LunchApplication;
 import com.example.go4lunch.R;
 import com.example.go4lunch.model.WorkmateModel;
 import com.example.go4lunch.repo.Repositories;
-import com.example.go4lunch.ui.viewModel.DinerViewModel;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.example.go4lunch.util.Util.checkDiner;
-import static com.google.common.io.Resources.getResource;
 
 public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.WorkmatesViewHolder> {
 
     private List<WorkmateModel> mData;
-
-    private Context context;
 
     public WorkmatesAdapter(List<WorkmateModel> data) {
         this.mData = data;
@@ -37,7 +33,12 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
 
     public void updateList(List<WorkmateModel> viewModelList) {
         mData.clear();
+        // TODO Remove to DAO !
+
         mData.addAll(viewModelList);
+        Collections.sort(mData,
+                (s1, s2) ->
+                        (s1.isHasDiner() ? 1 : 0) - (s2.isHasDiner() ? 1 : 0));
         notifyDataSetChanged();
     }
 
@@ -50,9 +51,9 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
     @Override
     public WorkmatesAdapter.WorkmatesViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(viewType, parent, false);
-        context = parent.getContext();
         return new WorkmatesAdapter.WorkmatesViewHolder(view);
     }
+
 
     @Override
     public void onBindViewHolder(WorkmatesAdapter.WorkmatesViewHolder holder, int position) {

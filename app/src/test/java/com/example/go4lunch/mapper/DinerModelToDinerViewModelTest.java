@@ -22,7 +22,7 @@ public class DinerModelToDinerViewModelTest {
 
         // GIVEN
         DinerModel model = new DinerModel("workmateId", "restaurantId", new Date(), true, null, "info");
-        model.setWorkmateModel(new WorkmateModel("username", "mail", "url", "info"));
+        model.setWorkmateModel(new WorkmateModel("id", "username", "mail", "url", false));
 
         // WHEN
         DinerViewModel viewModel = mapper.map(model);
@@ -39,9 +39,9 @@ public class DinerModelToDinerViewModelTest {
     public void maps() {
         // GIVEN
         DinerModel model1 = new DinerModel("workmateId", "restaurantId", new Date(), false, null, "info");
-        model1.setWorkmateModel(new WorkmateModel("username1", "mail1", "url1", "info"));
+        model1.setWorkmateModel(new WorkmateModel("id1", "username1", "mail1", "url", false));
         DinerModel model2 = new DinerModel("workmateId", "restaurantId", new Date(), false, null, "info");
-        model2.setWorkmateModel(new WorkmateModel("username2", "mail2", "url2", "info"));
+        model2.setWorkmateModel(new WorkmateModel("id2", "username2", "mail2", "url", false));
         List<DinerModel> models = new ArrayList<>();
         models.add(model1);
         models.add(model2);
@@ -52,9 +52,9 @@ public class DinerModelToDinerViewModelTest {
         // THEN
         assertNotNull(viewModels.get(0));
         assertEquals(viewModels.get(0).getWorkmate(), "username1");
-        assertEquals(viewModels.get(0).getWorkmatePictureUrl(), "url1");
+        assertEquals(viewModels.get(0).getWorkmatePictureUrl(), "url");
         assertNotNull(viewModels.get(1));
         assertEquals(viewModels.get(1).getWorkmate(), "username2");
-        assertEquals(viewModels.get(1).getWorkmatePictureUrl(), "url2");
+        assertEquals(viewModels.get(1).getWorkmatePictureUrl(), "url");
     }
 }

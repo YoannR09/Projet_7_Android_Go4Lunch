@@ -28,6 +28,8 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import java.util.List;
+
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
@@ -37,7 +39,7 @@ import static com.example.go4lunch.error.ToastError.showError;
  * A simple {@link Fragment} subclass.
  * create an instance of this fragment.
  */
-public class MapFragment extends Fragment implements LocationListener {
+public class MapFragment extends Fragment implements LocationListener, EasyPermissions.PermissionCallbacks {
 
     private GoogleMap mMap;
     private final int REQUEST_LOCATION_PERMISSION = 1;
@@ -171,7 +173,6 @@ public class MapFragment extends Fragment implements LocationListener {
 
     @AfterPermissionGranted(REQUEST_LOCATION_PERMISSION)
     public void requestLocationPermission() {
-        // TODO Add while ask permission
         String[] perms = {Manifest.permission.ACCESS_FINE_LOCATION};
         if(EasyPermissions.hasPermissions(getActivity(), perms)) {
 
@@ -179,7 +180,7 @@ public class MapFragment extends Fragment implements LocationListener {
         else {
             EasyPermissions.requestPermissions(
                     this,
-                    "Please grant the location permission",
+                    getString(R.string.ask_permission),
                     REQUEST_LOCATION_PERMISSION,
                     perms);
         }
@@ -189,5 +190,19 @@ public class MapFragment extends Fragment implements LocationListener {
     public void onLocationChanged(@NonNull Location location) {
         LatLng currentPos = new LatLng(location.getLatitude(), location.getLongitude());
         mMap.moveCamera(CameraUpdateFactory.newLatLng(currentPos));
+    }
+
+    @Override
+    public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
+        if(requestCode == REQUEST_LOCATION_PERMISSION) {
+            // TODO refresh map
+        }
+    }
+
+    @Override
+    public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
+        if(requestCode == REQUEST_LOCATION_PERMISSION) {
+            // TODO Define default location
+        }
     }
 }

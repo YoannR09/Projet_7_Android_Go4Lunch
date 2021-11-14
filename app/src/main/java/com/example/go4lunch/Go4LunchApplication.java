@@ -2,8 +2,11 @@ package com.example.go4lunch;
 
 import android.app.Application;
 import android.content.Context;
+import android.location.Location;
 
 import com.example.go4lunch.workers.DinerWorker;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.libraries.places.api.Places;
 
 import java.util.Locale;

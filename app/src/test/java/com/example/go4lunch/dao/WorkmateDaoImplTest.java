@@ -31,14 +31,11 @@ public class WorkmateDaoImplTest{
         WorkmateEntity workmateEntity = new WorkmateEntity();
         workmateEntity.setId("22");
         when(mock.getDocumentReference(anyString())).thenCallRealMethod();
-        when(mock.get(anyString())).thenReturn(new WorkmateEntity());
-        when(collectionMock.document(anyString())).thenReturn(documentReferenceMock);
+        when(mock.get(anyString())).thenReturn(workmateEntity);
         when(documentReferenceMock.get()).thenReturn(documentSnapshotMock);
-        // WHEN
-        dao.getUser("id", data -> {
-            assertEquals(data.getId(), 21);
-
-        });
+        when(collectionMock.document(anyString())).thenReturn(documentReferenceMock);
+        // WHEN - THEN
+        dao.getUser("id", data -> assertEquals(data.getId(), 21));
     }
 
     public class WorkmateDaoImplFake extends WorkmateDaoImpl{

@@ -2,6 +2,7 @@ package com.example.go4lunch.dao;
 
 
 import com.example.go4lunch.entity.WorkmateEntity;
+import com.example.go4lunch.repo.Repositories;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -16,6 +17,7 @@ import static com.example.go4lunch.ui.ToastError.errorMessage;
 public class WorkmateDaoImpl implements WorkmateDao{
 
     private static final String COLLECTION_NAME = "workmate";
+    int indexWorkmate = 0;
 
     // Get the Collection Reference
     protected CollectionReference getUsersCollection(){
@@ -26,16 +28,33 @@ public class WorkmateDaoImpl implements WorkmateDao{
         this.getUsersCollection().document(userId).get()
                 .continueWith(task -> task.getResult().toObject(WorkmateEntity.class))
                 .addOnSuccessListener(listener::onSuccess)
-                .addOnFailureListener(err -> {
-                    errorMessage(err.getMessage());
-                });
+                .addOnFailureListener(err -> errorMessage(err.getMessage()));
     }
 
     @Override
     public void getWorkmatesLits(DaoOnSuccessListener<List<WorkmateEntity>> listener) {
         this.getUsersCollection().get()
                 .continueWith(task -> task.getResult().toObjects(WorkmateEntity.class))
-                .addOnSuccessListener(listener::onSuccess);
+                .addOnSuccessListener(data -> {
+                    if(data.size() == 0) {
+                        listener.onSuccess(data);
+                    } else {
+                        indexWorkmate = 0;
+                        for(WorkmateEntity w: data) {
+                            Repositories.getDinerRepository().getDinerFromWorkmateId(w.getId(), d -> {
+                                if(d != null) {
+                                    w.setHasDiner(true);
+                                } else {
+                                    w.setHasDiner(false);
+                                }
+                                indexWorkmate++;
+                                if(indexWorkmate == data.size() -1) {
+                                    listener.onSuccess(data);
+                                }
+                            });
+                        }
+                    }
+                });
     }
 
     // Create User in Firestore

@@ -6,12 +6,22 @@ public class WorkmateModel {
     private String username;
     private String mail;
     private String pictureUrl;
+    private boolean hasDiner;
 
-    public WorkmateModel(String id, String username, String mail, String pictureUrl) {
+    public WorkmateModel(String id, String username, String mail, String pictureUrl, boolean hasDiner) {
         this.id = id;
         this.username = username;
         this.mail = mail;
         this.pictureUrl = pictureUrl;
+        this.hasDiner = hasDiner;
+    }
+
+    public boolean isHasDiner() {
+        return hasDiner;
+    }
+
+    public void setHasDiner(boolean hasDiner) {
+        this.hasDiner = hasDiner;
     }
 
     public String getId() {

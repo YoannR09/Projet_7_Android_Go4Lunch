@@ -61,6 +61,12 @@ dependencies {
     // FirebaseUI for Firebase Realtime Database
     implementation 'com.firebaseui:firebase-ui-database:7.2.0'
 
+    // https://mvnrepository.com/artifact/net.bytebuddy/byte-buddy
+    implementation 'net.bytebuddy:byte-buddy:1.11.15'
+// https://mvnrepository.com/artifact/org.objenesis/objenesis
+    testImplementation 'org.objenesis:objenesis:3.0.1'
+
+
     def work_version = "2.6.0"
 
     // (Java only)

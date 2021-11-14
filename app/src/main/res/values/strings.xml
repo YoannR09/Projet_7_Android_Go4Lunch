@@ -50,4 +50,6 @@
     <string name="error_main">Sorry, can you try again</string>
     <string name="error_map">Sorry, error with Google map</string>
     <string name="error_config">Sorry, error during change settings</string>
+    <string name="ask_permission">ask permission</string>
+    <string name="no_diner">You have actually no selected restaurant</string>
 </resources>

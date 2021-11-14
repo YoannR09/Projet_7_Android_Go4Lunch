@@ -13,6 +13,7 @@ import com.example.go4lunch.model.RestaurantModel;
 import com.example.go4lunch.repo.Repositories;
 import com.example.go4lunch.ui.viewModel.DinerViewModel;
 import com.example.go4lunch.ui.viewModel.RestaurantViewModel;
+import com.example.go4lunch.ui.viewModel.ViewModelOnSuccessListener;
 
 import java.util.List;
 
@@ -50,6 +51,12 @@ public class MainActivityViewModel extends ViewModel {
     public void loadCurrentDiner() {
         Repositories.getDinerRepository().getDinerFromWorkmate(data -> {
             diner.setValue(new DinerModelToDinerViewModel().map(data));
+        });
+    }
+
+    public void getCurrentDinerSnapshot(ViewModelOnSuccessListener<DinerViewModel> listener) {
+        Repositories.getDinerRepository().getDinerFromWorkmate(data -> {
+            listener.onSuccess(new DinerModelToDinerViewModel().map(data));
         });
     }
 
