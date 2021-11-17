@@ -289,16 +289,13 @@ public class MainActivity extends AppCompatActivity{
                 } else if (resultCode == RESULT_CANCELED) {
                     Log.i(TAG, "User canceled");
                     // The user canceled the operation.
-                } else {
-                    viewModel.refreshList(
-                            getLocation().getLatitude(),
-                            getLocation().getLongitude());
-
-                    if(workmatesFragment != null) {
-                        workmatesFragment.refreshList();
-                    }
                 }
                 return;
+            } else {
+                viewModel.refreshList(
+                        getLocation().getLatitude(),
+                        getLocation().getLongitude());
+                workmatesFragment.refreshList();
             }
             super.onActivityResult(requestCode, resultCode, data);
         } catch (Exception e) {

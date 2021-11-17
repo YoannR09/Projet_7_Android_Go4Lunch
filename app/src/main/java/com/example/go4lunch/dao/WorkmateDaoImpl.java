@@ -10,9 +10,11 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.Collections;
 import java.util.List;
 
 import static com.example.go4lunch.ui.ToastError.errorMessage;
+import static com.example.go4lunch.util.Util.checkDiner;
 
 public class WorkmateDaoImpl implements WorkmateDao{
 
@@ -42,13 +44,13 @@ public class WorkmateDaoImpl implements WorkmateDao{
                         indexWorkmate = 0;
                         for(WorkmateEntity w: data) {
                             Repositories.getDinerRepository().getDinerFromWorkmateId(w.getId(), d -> {
-                                if(d != null) {
-                                    w.setHasDiner(true);
-                                } else {
-                                    w.setHasDiner(false);
-                                }
+                                w.setHasDiner(checkDiner(d));
                                 indexWorkmate++;
                                 if(indexWorkmate == data.size() -1) {
+                                    Collections.sort(data,
+                                            (s1, s2) ->
+                                                    (s1.hasDiner() ? 0 : 1) - (s2.hasDiner() ? 0 : 1));
+                                    indexWorkmate = 0;
                                     listener.onSuccess(data);
                                 }
                             });

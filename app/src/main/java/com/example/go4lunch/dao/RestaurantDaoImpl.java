@@ -7,6 +7,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.go4lunch.BuildConfig;
 import com.example.go4lunch.Go4LunchApplication;
 import com.example.go4lunch.entity.RestaurantEntity;
 import com.example.go4lunch.model.DinerModel;
@@ -23,6 +24,8 @@ import java.util.Objects;
 import static com.example.go4lunch.util.Util.checkDiner;
 
 public class RestaurantDaoImpl implements RestaurantDao {
+
+    private static final String GOOGLE_PLACE_API_KEY = BuildConfig.GOOGLE_PLACE_API_KEY;
 
     MutableLiveData<List<RestaurantEntity>> currentList =  new MutableLiveData<>();
     MutableLiveData<RestaurantEntity> restaurantData = new MutableLiveData<>();
@@ -46,7 +49,7 @@ public class RestaurantDaoImpl implements RestaurantDao {
                 +placeId+
                 "&fields=vicinity,name,rating,photo," +
                 "formatted_phone_number,website,geometry,opening_hours" +
-                "&key=AIzaSyD-NY3k75I5IbFh13vcv-kJ3YORhDNETSE";
+                "&key="+GOOGLE_PLACE_API_KEY;
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {
                     try {
@@ -115,7 +118,7 @@ public class RestaurantDaoImpl implements RestaurantDao {
                 + latitude
                 + "," + longitude
                 + "&radius=1500&type=restaurant&contact&key="
-                + "AIzaSyD-NY3k75I5IbFh13vcv-kJ3YORhDNETSE";
+                + GOOGLE_PLACE_API_KEY;
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 response -> {

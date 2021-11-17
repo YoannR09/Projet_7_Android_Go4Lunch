@@ -33,12 +33,7 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
 
     public void updateList(List<WorkmateModel> viewModelList) {
         mData.clear();
-        // TODO Remove to DAO !
-
         mData.addAll(viewModelList);
-        Collections.sort(mData,
-                (s1, s2) ->
-                        (s1.isHasDiner() ? 1 : 0) - (s2.isHasDiner() ? 1 : 0));
         notifyDataSetChanged();
     }
 

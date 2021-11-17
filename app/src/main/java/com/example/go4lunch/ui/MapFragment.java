@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.go4lunch.R;
@@ -195,7 +196,6 @@ public class MapFragment extends Fragment implements LocationListener, EasyPermi
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
         if(requestCode == REQUEST_LOCATION_PERMISSION) {
-            // TODO refresh map
         }
     }
 

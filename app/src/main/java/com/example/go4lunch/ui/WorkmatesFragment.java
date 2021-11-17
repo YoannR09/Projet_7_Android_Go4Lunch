@@ -43,9 +43,9 @@ public class WorkmatesFragment extends Fragment {
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             adapter = new WorkmatesAdapter(new ArrayList<>());
             recyclerView.setAdapter(adapter);
-            viewModel.loadWorkmatesList();
             viewModel.getWorkmatesList().observe(getActivity(), workmates
                     -> adapter.updateList(workmates));
+            viewModel.loadWorkmatesList();
             return view;
         } catch (Exception e) {
             showError(getString(R.string.error_main));
