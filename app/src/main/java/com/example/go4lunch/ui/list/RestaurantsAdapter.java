@@ -1,5 +1,6 @@
 package com.example.go4lunch.ui.list;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
@@ -23,6 +24,7 @@ import com.example.go4lunch.Go4LunchApplication;
 import com.example.go4lunch.MainActivity;
 import com.example.go4lunch.R;
 import com.example.go4lunch.mapper.RestaurantEntityToModel;
+import com.example.go4lunch.model.DinerModel;
 import com.example.go4lunch.repo.Repositories;
 import com.example.go4lunch.ui.RestaurantDetailsActivity;
 import com.example.go4lunch.ui.viewModel.DinerViewModel;
@@ -31,6 +33,8 @@ import com.example.go4lunch.ui.viewModel.RestaurantViewModel;
 import com.example.go4lunch.ui.viewModel.ui.RestaurantDetailsActivityViewModel;
 
 import java.util.List;
+
+import static com.example.go4lunch.util.Util.checkDiner;
 
 public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.RestaurantViewHolder> {
 
@@ -120,7 +124,7 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
                                 intent.putExtra(
                                         "data_restaurant",
                                         data);
-                                context.startActivity(intent);
+                                ((Activity) context).startActivityForResult(intent, 234);
                             });
         }
 
@@ -130,9 +134,17 @@ public class RestaurantsAdapter extends RecyclerView.Adapter<RestaurantsAdapter.
             range.setText(restaurantViewModel.getRange());
             viewModel.getDinersFromRestaurantSnapshot(restaurantViewModel.getId(), diners -> {
                 if (diners.size() > 0) {
-                    workmateDiner.setVisibility(View.VISIBLE);
-                    workmateDiner.setText(" (" + diners.size() + ")");
-                    workmateDiner.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_emoji_people_24, 0, 0, 0);
+                    int currentDinersSize = 0;
+                    for(DinerViewModel d: diners) {
+                        if(checkDiner(d)) {
+                            currentDinersSize++;
+                        }
+                    }
+                    if(currentDinersSize > 0) {
+                        workmateDiner.setVisibility(View.VISIBLE);
+                        workmateDiner.setText(" (" + diners.size() + ")");
+                        workmateDiner.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_emoji_people_24, 0, 0, 0);
+                    }
                 } else {
                     workmateDiner.setVisibility(View.GONE);
                 }
