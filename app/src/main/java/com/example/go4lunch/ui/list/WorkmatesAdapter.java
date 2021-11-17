@@ -1,10 +1,13 @@
 package com.example.go4lunch.ui.list;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,6 +19,7 @@ import com.example.go4lunch.Go4LunchApplication;
 import com.example.go4lunch.R;
 import com.example.go4lunch.model.WorkmateModel;
 import com.example.go4lunch.repo.Repositories;
+import com.example.go4lunch.ui.RestaurantDetailsActivity;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -65,11 +69,15 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
 
         TextView title;
         ImageView imageView;
+        LinearLayout card;
+        View view;
 
         WorkmatesViewHolder(@NonNull View itemView) {
             super(itemView);
+            view = itemView;
             title = itemView.findViewById(R.id.workmates_detail_title);
             imageView = itemView.findViewById(R.id.workmates_detail_picture);
+            card = itemView.findViewById(R.id.card_workmate);
         }
 
 
@@ -78,11 +86,23 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
                     workmateModel.getId(),
                     data -> {
                         if(checkDiner(data)) {
+                            card.setOnClickListener(v -> {
+                                Intent intent = new Intent(view.getContext(), RestaurantDetailsActivity.class);
+                                Repositories.getRestaurantRepository()
+                                        .getRestaurantNotFoundOnMapById(data.getRestaurantId(),
+                                                r -> {
+                                                    intent.putExtra(
+                                                            "data_restaurant",
+                                                            r);
+                                                    ((Activity) view.getContext()).startActivityForResult(intent, 234);
+                                                });
+                            });
                             title.setText(
                                     workmateModel.getUsername() +
                                             " is eating ( "
                                             + data.getInfo()
                                             + " )");
+                            title.setTextColor(Color.BLACK);
                         } else {
                             title.setTextColor(Color.LTGRAY);
                             title.setText(title.getContext().getString(

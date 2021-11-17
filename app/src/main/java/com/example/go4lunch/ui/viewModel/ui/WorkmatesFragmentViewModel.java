@@ -1,11 +1,14 @@
 package com.example.go4lunch.ui.viewModel.ui;
 
+import android.content.Intent;
+
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.go4lunch.model.WorkmateModel;
 import com.example.go4lunch.repo.Repositories;
+import com.example.go4lunch.ui.RestaurantDetailsActivity;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,6 +29,7 @@ public class WorkmatesFragmentViewModel extends ViewModel {
     public LiveData<List<WorkmateModel>> getWorkmatesList() {
         return workmates;
     }
+
 
 
 }
