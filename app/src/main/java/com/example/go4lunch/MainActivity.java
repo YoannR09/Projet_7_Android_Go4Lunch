@@ -200,6 +200,8 @@ public class MainActivity extends AppCompatActivity{
                 Intent signInIntent = AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
+                        .setTheme(R.style.LoginTheme)
+                        .setLogo(R.drawable.main_logo)
                         .build();
                 signInLauncher.launch(signInIntent);
             } else {

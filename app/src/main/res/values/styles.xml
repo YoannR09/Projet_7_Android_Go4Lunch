@@ -37,5 +37,12 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
+    <style name="LoginTheme" parent="AppTheme.DetailPageTheme">
+        <!--
+        <item name="android:windowBackground">@drawable/back</item>
+        <item name="android:textColor">@color/quantum_white_100</item>
+        -->
+    </style>
+
 
 </resources>
