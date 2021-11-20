@@ -13,9 +13,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.go4lunch.MainActivity;
 import com.example.go4lunch.R;
 import com.example.go4lunch.repo.Repositories;
 import com.example.go4lunch.ui.viewModel.factory.MapFragmentViewModelFactory;
@@ -128,7 +128,13 @@ public class MapFragment extends Fragment implements LocationListener, EasyPermi
                     mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(location.getLatitude(), location.getLongitude()), 15));
                 }
                 mMap.setOnCameraIdleListener(
-                        () -> viewModel.refreshList(mMap.getCameraPosition().target.latitude, mMap.getCameraPosition().target.longitude));
+                        () -> {
+                            viewModel.refreshList(
+                                    mMap.getCameraPosition().target.latitude,
+                                    mMap.getCameraPosition().target.longitude);
+                            ((MainActivity) getActivity()).setMapLocation(mMap.getCameraPosition().target.latitude,
+                                    mMap.getCameraPosition().target.longitude);
+                        });
                 mMap.setOnMarkerClickListener(marker -> {
                     Intent intent = new Intent(getContext(), RestaurantDetailsActivity.class);
                     Repositories.getRestaurantRepository()

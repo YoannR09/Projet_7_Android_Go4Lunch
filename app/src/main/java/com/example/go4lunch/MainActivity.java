@@ -35,6 +35,8 @@ import com.example.go4lunch.ui.RestaurantDetailsActivity;
 import com.example.go4lunch.ui.SettingsActivity;
 import com.example.go4lunch.ui.WorkmatesFragment;
 import com.example.go4lunch.ui.viewModel.ui.MainActivityViewModel;
+import com.example.go4lunch.util.MapPosition;
+import com.example.go4lunch.util.RefreshMap;
 import com.firebase.ui.auth.AuthUI;
 import com.firebase.ui.auth.FirebaseAuthUIActivityResultContract;
 import com.firebase.ui.auth.data.model.FirebaseAuthUIAuthenticationResult;
@@ -60,6 +62,10 @@ import static pub.devrel.easypermissions.RationaleDialogFragment.TAG;
 public class MainActivity extends AppCompatActivity{
 
     private final static int AUTOCOMPLETE_REQUEST_CODE = 0xAf;
+    private static boolean hasChanged = false;
+    private static RefreshMap checkMap = RefreshMap.LOCALISATION;
+    public MapPosition mapPosition;
+    public MapPosition listPosition;
 
     DrawerLayout                drawer;
     NavigationView              navigationView;
@@ -278,6 +284,9 @@ public class MainActivity extends AppCompatActivity{
                             viewModel.refreshList(
                                     Objects.requireNonNull(place.getLatLng()).latitude,
                                     Objects.requireNonNull(place.getLatLng()).longitude);
+                            setListLocation(
+                                    Objects.requireNonNull(place.getLatLng()).latitude,
+                                    Objects.requireNonNull(place.getLatLng()).longitude);
                             break;
                     }
 
@@ -292,10 +301,28 @@ public class MainActivity extends AppCompatActivity{
                 }
                 return;
             } else {
-                viewModel.refreshList(
-                        getLocation().getLatitude(),
-                        getLocation().getLongitude());
-                workmatesFragment.refreshList();
+                if(hasChanged) {
+                    switch (checkMap) {
+                        case LOCALISATION:
+                            viewModel.refreshList(
+                                    getLocation().getLatitude(),
+                                    getLocation().getLongitude());
+                            break;
+                        case MAP:
+                            viewModel.refreshList(
+                                    getMapLocation().getLat(),
+                                    getMapLocation().getLng());
+                            break;
+                        case LIST:
+                            viewModel.refreshList(
+                                    getListPosition().getLat(),
+                                    getListPosition().getLng());
+                            break;
+                    }
+
+                    workmatesFragment.refreshList();
+                    hasChanged = false;
+                }
             }
             super.onActivityResult(requestCode, resultCode, data);
         } catch (Exception e) {
@@ -399,5 +426,27 @@ public class MainActivity extends AppCompatActivity{
             }
         }
         return bestLocation;
+    }
+
+    public static void dataHasChanged(boolean state) {
+        hasChanged = state;
+    }
+
+    public void setMapLocation(double latitude, double longitude) {
+        checkMap = RefreshMap.MAP;
+        mapPosition = new MapPosition(latitude, longitude);
+    }
+
+    public void setListLocation(double latitude, double longitude) {
+        checkMap = RefreshMap.LIST;
+        mapPosition = new MapPosition(latitude, longitude);
+    }
+
+    public MapPosition getMapLocation() {
+        return mapPosition;
+    }
+
+    public MapPosition getListPosition() {
+        return listPosition;
     }
 }

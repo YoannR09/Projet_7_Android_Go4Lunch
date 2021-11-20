@@ -10,16 +10,22 @@ public class Util {
 
     public static boolean checkDiner (DinerViewModel diner) {
         if(diner == null) { return false; }
-        return diner.getDate().getDay() == new Date().getDay() && diner.isStatus();
+        return (diner.getDate().getDay() == new Date().getDay())
+                && (diner.isStatus())
+                && (diner.getDate().getMonth() == new Date().getMonth());
     }
 
     public static boolean checkDiner (DinerModel diner) {
         if(diner == null) { return false; }
-        return diner.getDate().getDay() == new Date().getDay() && diner.isStatus();
+        return (diner.getDate().getDay() == new Date().getDay())
+                && (diner.isStatus())
+                && (diner.getDate().getMonth() == new Date().getMonth());
     }
 
     public static boolean checkDiner (DinerEntity diner) {
         if(diner == null) { return false; }
-        return diner.getDate().getDay() == new Date().getDay() && diner.isStatus();
+        return (diner.getDate().getDay() == new Date().getDay())
+                && (diner.isStatus())
+                && (diner.getDate().getMonth() == new Date().getMonth());
     }
 }

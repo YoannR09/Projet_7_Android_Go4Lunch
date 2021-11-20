@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
+import com.example.go4lunch.MainActivity;
 import com.example.go4lunch.R;
 import com.example.go4lunch.entity.DinerEntity;
 import com.example.go4lunch.entity.LikeEntity;
@@ -129,6 +130,7 @@ public class RestaurantDetailsActivity extends AppCompatActivity {
                 dinerEntity.setStatus(status);
                 viewModel.createDiner(dinerEntity);
                 valueChanged = true;
+                MainActivity.dataHasChanged(true);
             });
 
             webSiteButton.setOnClickListener(v -> {
