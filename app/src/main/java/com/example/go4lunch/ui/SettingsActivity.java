@@ -6,19 +6,14 @@ import androidx.preference.PreferenceManager;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.CompoundButton;
 
 import com.example.go4lunch.R;
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.slider.Slider;
 import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.Objects;
 
-import static android.provider.Settings.System.getString;
-import static com.example.go4lunch.error.ToastError.showError;
-import static java.lang.Boolean.getBoolean;
+import static com.example.go4lunch.ui.error.ToastError.showError;
 
 public class SettingsActivity extends AppCompatActivity {
 

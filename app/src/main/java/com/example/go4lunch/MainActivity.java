@@ -54,7 +54,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static com.example.go4lunch.error.ToastError.showError;
+import static com.example.go4lunch.ui.error.ToastError.showError;
 import static com.example.go4lunch.ui.ToastError.errorMessage;
 import static com.example.go4lunch.util.Util.checkDiner;
 import static pub.devrel.easypermissions.RationaleDialogFragment.TAG;
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity{
         }
     }
 
-    private void initSignInInfo() {
+    public void initSignInInfo() {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         ImageView drawerPicture = findViewById(R.id.drawer_picture);
         CircularProgressDrawable circularProgressDrawable = new CircularProgressDrawable(this);
@@ -124,7 +124,7 @@ public class MainActivity extends AppCompatActivity{
                 }
             }
             if(userCanBeSaved) {
-                viewModel.createUser();
+                viewModel.createUser(() -> workmatesFragment.refreshList());
             }
         });
     }
@@ -200,6 +200,7 @@ public class MainActivity extends AppCompatActivity{
                 Intent signInIntent = AuthUI.getInstance()
                         .createSignInIntentBuilder()
                         .setAvailableProviders(providers)
+                        .setIsSmartLockEnabled(false)
                         .setTheme(R.style.LoginTheme)
                         .setLogo(R.drawable.main_logo)
                         .build();

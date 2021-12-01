@@ -1,6 +1,6 @@
 package com.example.go4lunch.ui;
 
-import static com.example.go4lunch.error.ToastError.showError;
+import static com.example.go4lunch.ui.error.ToastError.showError;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,14 +13,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.go4lunch.MainActivity;
 import com.example.go4lunch.R;
 import com.example.go4lunch.ui.list.RestaurantsAdapter;
 import com.example.go4lunch.ui.viewModel.factory.ListFragmentViewModelFactory;
-import com.example.go4lunch.ui.viewModel.factory.MapFragmentViewModelFactory;
 import com.example.go4lunch.ui.viewModel.ui.ListFragmentViewModel;
 import com.example.go4lunch.ui.viewModel.ui.MainActivityViewModel;
-import com.example.go4lunch.ui.viewModel.ui.MapFragmentViewModel;
 
 import java.util.ArrayList;
 

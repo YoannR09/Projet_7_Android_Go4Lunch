@@ -7,12 +7,15 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.Transformations;
 import androidx.lifecycle.ViewModel;
 
+import com.example.go4lunch.dao.DaoEmptyOnSuccessListener;
 import com.example.go4lunch.mapper.DinerModelToDinerViewModel;
 import com.example.go4lunch.mapper.RestaurantModelToViewModel;
 import com.example.go4lunch.model.RestaurantModel;
 import com.example.go4lunch.repo.Repositories;
+import com.example.go4lunch.repo.RepositoryEmptySuccessListener;
 import com.example.go4lunch.ui.viewModel.DinerViewModel;
 import com.example.go4lunch.ui.viewModel.RestaurantViewModel;
+import com.example.go4lunch.ui.viewModel.ViewModelEmptyOnSuccessListener;
 import com.example.go4lunch.ui.viewModel.ViewModelOnSuccessListener;
 
 import java.util.List;
@@ -36,8 +39,8 @@ public class MainActivityViewModel extends ViewModel {
        Repositories.getRestaurantRepository().refreshList(latitude, longitude);
     }
 
-    public void createUser() {
-        Repositories.getWorkmateRepository().createUser();
+    public void createUser(ViewModelEmptyOnSuccessListener listener) {
+        Repositories.getWorkmateRepository().createUser(listener::onSuccess);
     }
 
     public Location getCurrentPosition() {

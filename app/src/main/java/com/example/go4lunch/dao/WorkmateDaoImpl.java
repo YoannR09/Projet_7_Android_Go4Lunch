@@ -60,7 +60,7 @@ public class WorkmateDaoImpl implements WorkmateDao{
     }
 
     // Create User in Firestore
-    public void createUser() {
+    public void createUser(DaoEmptyOnSuccessListener listener) {
         FirebaseUser user = getCurrentUser();
         if(user != null){
             String urlPicture = (user.getPhotoUrl() != null) ? user.getPhotoUrl().toString() : null;
@@ -73,7 +73,8 @@ public class WorkmateDaoImpl implements WorkmateDao{
 
             Task<DocumentSnapshot> userData = getUserData();
             userData.addOnSuccessListener(documentSnapshot
-                    -> this.getUsersCollection().document(user.getUid()).set(userToCreate));
+                    -> this.getUsersCollection().document(user.getUid()).set(userToCreate)
+                            .addOnSuccessListener(success -> listener.onSuccess()));
         }
     }
 

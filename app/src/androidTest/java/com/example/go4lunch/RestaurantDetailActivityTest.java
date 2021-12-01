@@ -7,6 +7,7 @@ import androidx.test.espresso.Espresso;
 import androidx.test.espresso.ViewInteraction;
 import androidx.test.espresso.assertion.ViewAssertions;
 import androidx.test.espresso.matcher.ViewMatchers;
+import androidx.test.ext.junit.runners.AndroidJUnit4;
 import androidx.test.rule.ActivityTestRule;
 
 import com.example.go4lunch.model.RestaurantModel;
@@ -18,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import static androidx.test.espresso.Espresso.onView;
 import static androidx.test.espresso.assertion.ViewAssertions.matches;
@@ -27,10 +29,11 @@ import static androidx.test.espresso.matcher.ViewMatchers.withText;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+@RunWith(AndroidJUnit4.class)
 public class RestaurantDetailActivityTest {
 
     public RestaurantDetailActivityTest() {
-        FirebaseAuth.getInstance().signInWithEmailAndPassword("mytestmail@outlook.com", "azerty");
+        FirebaseAuth.getInstance().signInWithEmailAndPassword("yocorps17@gmail.com", "azerty");
     }
 
     RestaurantDetailsActivity activity;
@@ -73,7 +76,7 @@ public class RestaurantDetailActivityTest {
     public void detailsInfo() {
         activity = rule.getActivity();
         ViewInteraction opinion = onView(withId(R.id.detail_ratio));
-        opinion.check(matches(withText("4/5")));
+        opinion.check(matches(withText("4.0/5")));
         onView(withId(R.id.appBarLayout)).check(matches(hasDescendant(withText("name"))));
     }
 }

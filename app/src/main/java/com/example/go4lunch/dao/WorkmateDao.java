@@ -11,7 +11,7 @@ import java.util.List;
 
 public interface WorkmateDao {
 
-    void createUser();
+    void createUser(DaoEmptyOnSuccessListener listener);
 
     void getUser(String userId, DaoOnSuccessListener<WorkmateEntity> listener);
 

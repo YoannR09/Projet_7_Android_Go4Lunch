@@ -1,5 +1,6 @@
 package com.example.go4lunch.repo;
 
+import com.example.go4lunch.dao.DaoEmptyOnSuccessListener;
 import com.example.go4lunch.dao.WorkmateDao;
 import com.example.go4lunch.mapper.WorkmateEntityToModel;
 import com.example.go4lunch.model.WorkmateModel;
@@ -22,8 +23,8 @@ public class WorkmateRepository {
         dao.getWorkmatesLits(data -> listener.onSuccess(new WorkmateEntityToModel().maps(data)));
     }
 
-    public void createUser() {
-        dao.createUser();
+    public void createUser(RepositoryEmptySuccessListener listener) {
+        dao.createUser(listener::onSuccess);
     }
 
     public void deleteUser() {

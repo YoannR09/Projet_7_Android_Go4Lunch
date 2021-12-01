@@ -34,7 +34,7 @@ import java.util.List;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-import static com.example.go4lunch.error.ToastError.showError;
+import static com.example.go4lunch.ui.error.ToastError.showError;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -145,7 +145,7 @@ public class MapFragment extends Fragment implements LocationListener, EasyPermi
                                                 "data_restaurant",
                                                 data);
                                         startActivityForResult(intent, 234);
-                    });
+                                    });
                     return true;
                 });
             } catch (Exception e) {
@@ -201,14 +201,18 @@ public class MapFragment extends Fragment implements LocationListener, EasyPermi
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
-        if(requestCode == REQUEST_LOCATION_PERMISSION) {
-        }
+        ((MainActivity) getActivity()).logoutToRefreshMainActivity();
     }
 
     @Override
     public void onPermissionsDenied(int requestCode, @NonNull List<String> perms) {
-        if(requestCode == REQUEST_LOCATION_PERMISSION) {
-            // TODO Define default location
-        }
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(
+                new LatLng(
+                        mMap.getCameraPosition().target.latitude,
+                        mMap.getCameraPosition().target.longitude)));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(15));
+        viewModel.refreshList(
+                mMap.getCameraPosition().target.latitude,
+                mMap.getCameraPosition().target.longitude);
     }
 }
