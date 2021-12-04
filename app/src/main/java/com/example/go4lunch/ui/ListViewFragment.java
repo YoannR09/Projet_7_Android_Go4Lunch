@@ -1,6 +1,6 @@
 package com.example.go4lunch.ui;
 
-import static com.example.go4lunch.ui.error.ToastError.showError;
+import static com.example.go4lunch.ui.ToastError.showError;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

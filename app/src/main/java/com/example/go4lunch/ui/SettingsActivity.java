@@ -13,7 +13,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 
 import java.util.Objects;
 
-import static com.example.go4lunch.ui.error.ToastError.showError;
+import static com.example.go4lunch.ui.ToastError.showError;
 
 public class SettingsActivity extends AppCompatActivity {
 

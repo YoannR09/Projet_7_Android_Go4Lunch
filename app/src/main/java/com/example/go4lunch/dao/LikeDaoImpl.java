@@ -8,7 +8,6 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import static com.example.go4lunch.ui.ToastError.errorMessage;
 
 public class LikeDaoImpl implements LikeDao{
 
@@ -57,10 +56,7 @@ public class LikeDaoImpl implements LikeDao{
                         listener.onSuccess(l);
                     }
                 })
-                .addOnFailureListener(err -> {
-                    System.out.println("Error : " + err);
-                    errorMessage(err.getMessage());
-                });
+                .addOnFailureListener(System.out::println);
     }
 
 

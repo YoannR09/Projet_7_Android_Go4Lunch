@@ -13,7 +13,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.Collections;
 import java.util.List;
 
-import static com.example.go4lunch.ui.ToastError.errorMessage;
 import static com.example.go4lunch.util.Util.checkDiner;
 
 public class WorkmateDaoImpl implements WorkmateDao{
@@ -30,7 +29,7 @@ public class WorkmateDaoImpl implements WorkmateDao{
         this.getUsersCollection().document(userId).get()
                 .continueWith(task -> task.getResult().toObject(WorkmateEntity.class))
                 .addOnSuccessListener(listener::onSuccess)
-                .addOnFailureListener(err -> errorMessage(err.getMessage()));
+                .addOnFailureListener(err -> System.out.println(err.getMessage()));
     }
 
     @Override

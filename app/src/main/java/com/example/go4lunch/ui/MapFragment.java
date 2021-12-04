@@ -34,7 +34,7 @@ import java.util.List;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
-import static com.example.go4lunch.ui.error.ToastError.showError;
+import static com.example.go4lunch.ui.ToastError.showError;
 
 /**
  * A simple {@link Fragment} subclass.

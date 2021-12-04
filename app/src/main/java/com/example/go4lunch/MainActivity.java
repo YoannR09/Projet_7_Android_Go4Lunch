@@ -54,8 +54,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static com.example.go4lunch.ui.error.ToastError.showError;
-import static com.example.go4lunch.ui.ToastError.errorMessage;
+import static com.example.go4lunch.ui.ToastError.showError;
 import static com.example.go4lunch.util.Util.checkDiner;
 import static pub.devrel.easypermissions.RationaleDialogFragment.TAG;
 
@@ -95,7 +94,9 @@ public class MainActivity extends AppCompatActivity{
         if (result.getResultCode() == RESULT_OK) {
             initSignInInfo();
         } else {
-            errorMessage(getString(R.string.error_login));
+            Toast toast = Toast.makeText(Go4LunchApplication.getContext(),
+                    getString(R.string.error_login), Toast.LENGTH_LONG);
+            toast.show();
             logoutToRefreshMainActivity();
         }
     }

@@ -29,7 +29,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 import static com.example.go4lunch.Go4LunchApplication.getContext;
-import static com.example.go4lunch.ui.error.ToastError.showError;
+import static com.example.go4lunch.ui.ToastError.showError;
 import static com.example.go4lunch.util.Util.checkDiner;
 
 public class RestaurantDetailsActivity extends AppCompatActivity {
