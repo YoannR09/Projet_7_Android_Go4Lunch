@@ -52,4 +52,9 @@
     <string name="error_config">Sorry, error during change settings</string>
     <string name="ask_permission">ask permission</string>
     <string name="no_diner">You have actually no selected restaurant</string>
+    <string name="time_to_lunch">Hey, its time to lunch !</string>
+    <string name="alone_to_diner">You are alone to diner, invite your mates !</string>
+    <string name="select_restaurant">Hey select an restaurant !</string>
+    <string name="diner_with_mate">You are diner with</string>
+    <string name="mates">mates</string>
 </resources>

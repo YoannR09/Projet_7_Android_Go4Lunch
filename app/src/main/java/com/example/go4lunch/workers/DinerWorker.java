@@ -20,13 +20,10 @@ import com.example.go4lunch.Go4LunchApplication;
 import com.example.go4lunch.R;
 import com.example.go4lunch.repo.Repositories;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 public class DinerWorker extends Worker {
-
-    private static long msToTwelve (){
-        return 1000;
-    }
 
     public DinerWorker(
             @NonNull Context context,
@@ -47,13 +44,15 @@ public class DinerWorker extends Worker {
                         Repositories.getDinerRepository().getListDinersFromRestaurant(listDiners -> {
                             String notifText;
                             if (listDiners.size() != 0) {
-                                notifText = "You are alone to diner, invite your mates !";
+                                notifText = getApplicationContext().getString(R.string.alone_to_diner);
                             } else {
-                                notifText = "You are diner with " +listDiners.size() + "mates";
+                                notifText = getApplicationContext().getString(R.string.diner_with_mate)
+                                        + listDiners.size()
+                                        + getApplicationContext().getString(R.string.mates);
                             }
                             NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
                                     .setSmallIcon(R.drawable.ic_baseline_local_dining_24)
-                                    .setContentTitle("Hey, its time to lunch !")
+                                    .setContentTitle(getApplicationContext().getString(R.string.time_to_lunch))
                                     .setContentText(notifText)
                                     .setPriority(NotificationCompat.PRIORITY_DEFAULT);
                             NotificationManagerCompat notificationManager
@@ -63,8 +62,8 @@ public class DinerWorker extends Worker {
                     } else {
                         NotificationCompat.Builder builder = new NotificationCompat.Builder(getApplicationContext(), "channel_id")
                                 .setSmallIcon(R.drawable.ic_baseline_local_dining_24)
-                                .setContentTitle("Hey, its time to lunch !")
-                                .setContentText("Select a restauraut to diner !")
+                                .setContentTitle(getApplicationContext().getString(R.string.time_to_lunch))
+                                .setContentText(getApplicationContext().getString(R.string.select_restaurant))
                                 .setPriority(NotificationCompat.PRIORITY_DEFAULT);
                         NotificationManagerCompat notificationManager
                                 = NotificationManagerCompat.from(getApplicationContext());
@@ -103,5 +102,20 @@ public class DinerWorker extends Worker {
         PeriodicWorkRequest myWork = myWorkBuilder.build();
         WorkManager.getInstance(Go4LunchApplication.getContext())
                 .enqueueUniquePeriodicWork("dinerWorker", ExistingPeriodicWorkPolicy.REPLACE, myWork);
+    }
+
+    /**
+     * Use this to call first time notification at twelve.
+     * @return int time to ms
+     */
+    public int getInitDelayMs() {
+        Date date = new Date();
+        if(date.getHours() > 12) {
+            int hourDiff = 36 - date.getHours();
+            return hourDiff * 60 * 60 * 1000;
+        } else {
+            int hourDiff = 12 - date.getHours();
+            return hourDiff * 60 * 60  * 1000;
+        }
     }
 }
