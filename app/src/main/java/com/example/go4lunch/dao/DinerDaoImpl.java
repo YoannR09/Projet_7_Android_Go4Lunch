@@ -42,7 +42,8 @@ public class DinerDaoImpl implements DinerDao {
                             .document(dinerEntity.getWorkmateId())
                             .set(dinerEntity);
                     listener.onSuccess();
-                });
+                })
+                        .addOnFailureListener(Throwable::printStackTrace);;
 
             }
         }catch (Exception e) {
@@ -68,7 +69,8 @@ public class DinerDaoImpl implements DinerDao {
                             listener.onSuccess(data);
                         });
                     }
-                });
+                })
+                .addOnFailureListener(Throwable::printStackTrace);;
     }
 
     @RequiresApi(api = Build.VERSION_CODES.N)
@@ -93,7 +95,7 @@ public class DinerDaoImpl implements DinerDao {
                                     listener.onSuccess(data);
                                 }
                             }));
-                });
+                }).addOnFailureListener(Throwable::printStackTrace);;
     }
 
     @Override
@@ -114,7 +116,7 @@ public class DinerDaoImpl implements DinerDao {
                             listener.onSuccess(data);
                         });
                     }
-                });
+                }).addOnFailureListener(Throwable::printStackTrace);;
     }
 
     @Override
@@ -144,7 +146,7 @@ public class DinerDaoImpl implements DinerDao {
                                     listener.onSuccess(data);
                                 }
                             }));
-                });
+                }).addOnFailureListener(Throwable::printStackTrace);;
     }
 
     @Override

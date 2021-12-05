@@ -29,7 +29,7 @@ public class WorkmateDaoImpl implements WorkmateDao{
         this.getUsersCollection().document(userId).get()
                 .continueWith(task -> task.getResult().toObject(WorkmateEntity.class))
                 .addOnSuccessListener(listener::onSuccess)
-                .addOnFailureListener(err -> System.out.println(err.getMessage()));
+                .addOnFailureListener(Throwable::printStackTrace);
     }
 
     @Override
@@ -55,7 +55,8 @@ public class WorkmateDaoImpl implements WorkmateDao{
                             });
                         }
                     }
-                });
+                })
+                .addOnFailureListener(Throwable::printStackTrace);
     }
 
     // Create User in Firestore
@@ -73,7 +74,8 @@ public class WorkmateDaoImpl implements WorkmateDao{
             Task<DocumentSnapshot> userData = getUserData();
             userData.addOnSuccessListener(documentSnapshot
                     -> this.getUsersCollection().document(user.getUid()).set(userToCreate)
-                            .addOnSuccessListener(success -> listener.onSuccess()));
+                            .addOnSuccessListener(success -> listener.onSuccess()))
+                    .addOnFailureListener(Throwable::printStackTrace);;
         }
     }
 

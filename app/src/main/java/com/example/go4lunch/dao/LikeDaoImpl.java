@@ -7,6 +7,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 
 
 public class LikeDaoImpl implements LikeDao{
@@ -34,7 +35,7 @@ public class LikeDaoImpl implements LikeDao{
                         .document(like.getId())
                         .set(like);
                 listener.onSuccess();
-            });
+            }).addOnFailureListener(Throwable::printStackTrace);
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -56,7 +57,7 @@ public class LikeDaoImpl implements LikeDao{
                         listener.onSuccess(l);
                     }
                 })
-                .addOnFailureListener(System.out::println);
+                .addOnFailureListener(Throwable::printStackTrace);
     }
 
 
