@@ -52,6 +52,7 @@
                         android:layout_marginStart="16dp"
                         tools:text="Title of the Restaurant"
                         android:textStyle="bold"
+                        android:textColor="@android:color/black"
                         android:maxLines="1"
                         android:textSize="12sp"/>
                 </LinearLayout>

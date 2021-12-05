@@ -53,10 +53,14 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
         return new WorkmatesAdapter.WorkmatesViewHolder(view);
     }
 
-
     @Override
     public void onBindViewHolder(WorkmatesAdapter.WorkmatesViewHolder holder, int position) {
         holder.bind(mData.get(position));
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return position;
     }
 
     // total number of rows
@@ -67,59 +71,67 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
 
     public static class WorkmatesViewHolder extends RecyclerView.ViewHolder  {
 
-        TextView title;
-        ImageView imageView;
-        LinearLayout card;
-        View view;
+        final TextView title;
+        final ImageView imageView;
+        final LinearLayout card;
+        final View view;
 
         WorkmatesViewHolder(@NonNull View itemView) {
             super(itemView);
-            view = itemView;
-            title = itemView.findViewById(R.id.workmates_detail_title);
-            imageView = itemView.findViewById(R.id.workmates_detail_picture);
-            card = itemView.findViewById(R.id.card_workmate);
+            this.view = itemView;
+            this.title = itemView.findViewById(R.id.workmates_detail_title);
+            this.imageView = itemView.findViewById(R.id.workmates_detail_picture);
+            this.card = itemView.findViewById(R.id.card_workmate);
         }
 
 
         void bind(WorkmateModel workmateModel) {
+            this.title.setTextColor(Color.LTGRAY);
+            this.title.setText(title.getContext().getString(
+                    R.string.workmate_no_diner, workmateModel.getUsername()));
             Repositories.getDinerRepository().getDinerFromWorkmateId(
                     workmateModel.getId(),
                     data -> {
-                        if(checkDiner(data)) {
-                            card.setOnClickListener(v -> {
-                                Intent intent = new Intent(view.getContext(), RestaurantDetailsActivity.class);
-                                Repositories.getRestaurantRepository()
-                                        .getRestaurantNotFoundOnMapById(data.getRestaurantId(),
-                                                r -> {
-                                                    intent.putExtra(
-                                                            "data_restaurant",
-                                                            r);
-                                                    ((Activity) view.getContext()).startActivityForResult(intent, 234);
-                                                });
-                            });
-                            title.setText(
-                                    workmateModel.getUsername() +
-                                            " is eating ( "
-                                            + data.getInfo()
-                                            + " )");
-                            title.setTextColor(Color.BLACK);
-                        } else {
-                            title.setTextColor(Color.LTGRAY);
-                            title.setText(title.getContext().getString(
+                        if (data == null) {
+                            this.title.setText(title.getContext().getString(
                                     R.string.workmate_no_diner, workmateModel.getUsername()));
+                        } else {
+                            if (checkDiner(data)) {
+                                this.card.setOnClickListener(v -> {
+                                    Intent intent = new Intent(this.view.getContext(), RestaurantDetailsActivity.class);
+                                    Repositories.getRestaurantRepository()
+                                            .getRestaurantNotFoundOnMapById(data.getRestaurantId(),
+                                                    r -> {
+                                                        intent.putExtra(
+                                                                "data_restaurant",
+                                                                r);
+                                                        ((Activity) this.view.getContext()).startActivityForResult(intent, 234);
+                                                    });
+                                });
+                                this.title.setText(
+                                        workmateModel.getUsername() +
+                                                " is eating ( "
+                                                + data.getInfo()
+                                                + " )");
+                                this.title.setTextColor(Color.BLACK);
+                            } else {
+                                this.title.setTextColor(Color.LTGRAY);
+                                this.title.setText(title.getContext().getString(
+                                        R.string.workmate_no_diner, workmateModel.getUsername()));
+                            }
                         }
                     });
             CircularProgressDrawable circularProgressDrawable
-                    = new CircularProgressDrawable(itemView.getContext());
+                    = new CircularProgressDrawable(this.view.getContext());
             circularProgressDrawable.setStrokeWidth(5f);
             circularProgressDrawable.setCenterRadius(30f);
             circularProgressDrawable.start();
             String url = workmateModel.getPictureUrl() == null
-                    ? "https://eu.ui-avatars.com/api/?name="+workmateModel.getUsername() :
+                    ? "https://eu.ui-avatars.com/api/?name=" + workmateModel.getUsername() :
                     workmateModel.getPictureUrl();
             Glide.with(Go4LunchApplication.getContext())
                     .load(url)
-                    .placeholder(circularProgressDrawable).into(imageView);
+                    .placeholder(circularProgressDrawable).into(this.imageView);
         }
     }
 }
