@@ -47,20 +47,15 @@ public class MainActivityViewModel extends ViewModel {
         return location;
     }
 
-    public LiveData<DinerViewModel> getCurrentDiner() {
-        return diner;
-    }
-
-    public void loadCurrentDiner() {
-        Repositories.getDinerRepository().getDinerFromWorkmate(data -> {
-            diner.setValue(new DinerModelToDinerViewModel().map(data));
-        });
-    }
-
     public void getCurrentDinerSnapshot(ViewModelOnSuccessListener<DinerViewModel> listener) {
-        Repositories.getDinerRepository().getDinerFromWorkmate(data -> {
-            listener.onSuccess(new DinerModelToDinerViewModel().map(data));
-        });
+        Repositories.getDinerRepository().getDinerFromWorkmate(
+                data -> {
+                    if(data != null) {
+                        listener.onSuccess(new DinerModelToDinerViewModel().map(data));
+                    } else {
+                        listener.onSuccess(null);
+                    }
+                });
     }
 
     public void setLocation(Location location) {

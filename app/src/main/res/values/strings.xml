@@ -57,4 +57,5 @@
     <string name="select_restaurant">Hey select an restaurant !</string>
     <string name="diner_with_mate">You are diner with</string>
     <string name="mates">mates</string>
+    <string name="is_eating">is eating</string>
 </resources>

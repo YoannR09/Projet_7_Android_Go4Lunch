@@ -7,10 +7,9 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 
 
-public class LikeDaoImpl implements LikeDao{
+public class LikeDaoImpl implements LikeDao {
 
     public LikeDaoImpl() {
 

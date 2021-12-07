@@ -27,7 +27,6 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.swiperefreshlayout.widget.CircularProgressDrawable;
 
 import com.bumptech.glide.Glide;
-import com.example.go4lunch.model.WorkmateModel;
 import com.example.go4lunch.repo.Repositories;
 import com.example.go4lunch.ui.ListViewFragment;
 import com.example.go4lunch.ui.MapFragment;
@@ -92,6 +91,7 @@ public class MainActivity extends AppCompatActivity{
      */
     private void onSignInResult(FirebaseAuthUIAuthenticationResult result) {
         if (result.getResultCode() == RESULT_OK) {
+            initView();
             initSignInInfo();
         } else {
             Toast toast = Toast.makeText(Go4LunchApplication.getContext(),
@@ -117,14 +117,8 @@ public class MainActivity extends AppCompatActivity{
                 .placeholder(circularProgressDrawable).into(drawerPicture);
         TextView username = findViewById(R.id.drawer_username);
         username.setText(user.getDisplayName());
-        Repositories.getWorkmateRepository().getWorkmatesList(data -> {
-            boolean userCanBeSaved = true;
-            for( WorkmateModel u : data) {
-                if(u.getId().equals(user.getUid())) {
-                    userCanBeSaved = false;
-                }
-            }
-            if(userCanBeSaved) {
+        Repositories.getWorkmateRepository().freeUsername(user.getUid(),data -> {
+            if(data) {
                 viewModel.createUser(() -> workmatesFragment.refreshList());
             }
         });
@@ -187,16 +181,11 @@ public class MainActivity extends AppCompatActivity{
     protected void onCreate(Bundle savedInstanceState) {
         try {
             super.onCreate(savedInstanceState);
-            viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
-            viewModel.setLocation(getLocation());
-            initFragment();
-            setContentView(R.layout.activity_main);
-            setSupportActionBar(findViewById(R.id.topAppBar));
             if (FirebaseAuth.getInstance().getCurrentUser() == null) {
                 List<AuthUI.IdpConfig> providers = Arrays.asList(
                         new AuthUI.IdpConfig.EmailBuilder().build(),
                         new AuthUI.IdpConfig.GoogleBuilder().build(),
-                        new AuthUI.IdpConfig.FacebookBuilder().build(),
+                        // new AuthUI.IdpConfig.FacebookBuilder().build(),
                         new AuthUI.IdpConfig.TwitterBuilder().build());
                 Intent signInIntent = AuthUI.getInstance()
                         .createSignInIntentBuilder()
@@ -207,61 +196,69 @@ public class MainActivity extends AppCompatActivity{
                         .build();
                 signInLauncher.launch(signInIntent);
             } else {
+                initView();
                 initSignInInfo();
             }
-
-            drawer = findViewById(R.id.drawer);
-            navigationView = findViewById(R.id.navigation_view);
-            searchButton = findViewById(R.id.search_button);
-            topBar = findViewById(R.id.topAppBar);
-            settings = findViewById(R.id.drawer_settings);
-            lunchInfo = findViewById(R.id.drawer_lunch_info);
-            logout = findViewById(R.id.drawer_logout);
-
-            settings.setOnClickListener(v -> {
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
-            });
-
-            lunchInfo.setOnClickListener(v -> {
-                Intent intent = new Intent(this, RestaurantDetailsActivity.class);
-                viewModel.getCurrentDinerSnapshot(data -> {
-                    if (data != null) {
-                        if (checkDiner(data)) {
-                            Repositories.getRestaurantRepository()
-                                    .getRestaurantNotFoundOnMapById(data.getRestaurantId(),
-                                            r -> {
-                                                intent.putExtra(
-                                                        "data_restaurant",
-                                                        r);
-                                                startActivityForResult(intent, 234);
-                                            });
-                        } else {
-                            showToastNoDiner();
-                        }
-                    } else {
-                        showToastNoDiner();
-                    }
-                });
-            });
-
-            logout.setOnClickListener(v -> {
-                FirebaseAuth.getInstance().signOut();
-                logoutToRefreshMainActivity();
-            });
-
-            searchButton.setOnClickListener(v -> startAutoComplete());
-
-            ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawer, 0, R.string.com_facebook_loginview_cancel_action);
-            drawer.addDrawerListener(drawerToggle);
-            drawerToggle.syncState();
-
-            BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
-            bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         }catch (Exception e) {
             showError(getString(R.string.error_main));
             e.printStackTrace();
         }
+    }
+
+    public void initView() {
+        viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
+        viewModel.setLocation(getLocation());
+        initFragment();
+        setContentView(R.layout.activity_main);
+        setSupportActionBar(findViewById(R.id.topAppBar));
+        drawer = findViewById(R.id.drawer);
+        navigationView = findViewById(R.id.navigation_view);
+        searchButton = findViewById(R.id.search_button);
+        topBar = findViewById(R.id.topAppBar);
+        settings = findViewById(R.id.drawer_settings);
+        lunchInfo = findViewById(R.id.drawer_lunch_info);
+        logout = findViewById(R.id.drawer_logout);
+
+        settings.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+        });
+
+        lunchInfo.setOnClickListener(v -> {
+            Intent intent = new Intent(this, RestaurantDetailsActivity.class);
+            viewModel.getCurrentDinerSnapshot(data -> {
+                if (data != null) {
+                    if (checkDiner(data)) {
+                        Repositories.getRestaurantRepository()
+                                .getRestaurantNotFoundOnMapById(data.getRestaurantId(),
+                                        r -> {
+                                            intent.putExtra(
+                                                    "data_restaurant",
+                                                    r);
+                                            startActivityForResult(intent, 234);
+                                        });
+                    } else {
+                        showToastNoDiner();
+                    }
+                } else {
+                    showToastNoDiner();
+                }
+            });
+        });
+
+        logout.setOnClickListener(v -> {
+            FirebaseAuth.getInstance().signOut();
+            logoutToRefreshMainActivity();
+        });
+
+        searchButton.setOnClickListener(v -> startAutoComplete());
+
+        ActionBarDrawerToggle drawerToggle = new ActionBarDrawerToggle(this, drawer, 0, R.string.com_facebook_loginview_cancel_action);
+        drawer.addDrawerListener(drawerToggle);
+        drawerToggle.syncState();
+
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
     /**
@@ -323,8 +320,7 @@ public class MainActivity extends AppCompatActivity{
                                     getListPosition().getLng());
                             break;
                     }
-
-                    workmatesFragment.refreshList();
+                    refreshWorkmateList();
                     hasChanged = false;
                 }
             }
@@ -332,6 +328,10 @@ public class MainActivity extends AppCompatActivity{
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void refreshWorkmateList() {
+        workmatesFragment.refreshList();
     }
 
     public void showToastNoDiner() {

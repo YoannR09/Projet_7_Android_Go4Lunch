@@ -16,11 +16,23 @@ public class WorkmateRepository {
     }
 
     public void getUser(String id, RepositoryOnSuccessListener<WorkmateModel> listener) {
-        dao.getUser(id, data -> listener.onSuccess(new WorkmateEntityToModel().map(data)));
+        if(id != null) {
+            dao.getUser(id, data -> {
+                if (data != null) {
+                    listener.onSuccess(new WorkmateEntityToModel().map(data));
+                }
+            });
+        } else {
+            System.out.println("id null can return data");
+        }
     }
 
     public void getWorkmatesList(RepositoryOnSuccessListener<List<WorkmateModel>> listener) {
         dao.getWorkmatesLits(data -> listener.onSuccess(new WorkmateEntityToModel().maps(data)));
+    }
+
+    public void freeUsername(String id, RepositoryOnSuccessListener<Boolean> listener) {
+        dao.freeUsername(id, listener::onSuccess);
     }
 
     public void createUser(RepositoryEmptySuccessListener listener) {

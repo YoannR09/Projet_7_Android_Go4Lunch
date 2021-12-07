@@ -110,7 +110,7 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
                                 });
                                 this.title.setText(
                                         workmateModel.getUsername() +
-                                                " is eating ( "
+                                                title.getContext().getString(R.string.is_eating) + " ( "
                                                 + data.getInfo()
                                                 + " )");
                                 this.title.setTextColor(Color.BLACK);
@@ -129,9 +129,13 @@ public class WorkmatesAdapter extends RecyclerView.Adapter<WorkmatesAdapter.Work
             String url = workmateModel.getPictureUrl() == null
                     ? "https://eu.ui-avatars.com/api/?name=" + workmateModel.getUsername() :
                     workmateModel.getPictureUrl();
-            Glide.with(Go4LunchApplication.getContext())
-                    .load(url)
-                    .placeholder(circularProgressDrawable).into(this.imageView);
+            try {
+                Glide.with(Go4LunchApplication.getContext())
+                        .load(url)
+                        .placeholder(circularProgressDrawable).into(this.imageView);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }

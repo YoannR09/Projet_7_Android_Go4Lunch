@@ -68,6 +68,8 @@ public class DinerDaoImpl implements DinerDao {
                             );
                             listener.onSuccess(data);
                         });
+                    } else {
+                        listener.onSuccess(null);
                     }
                 })
                 .addOnFailureListener(Throwable::printStackTrace);;
@@ -82,16 +84,20 @@ public class DinerDaoImpl implements DinerDao {
                 .continueWith(task -> task.getResult().toObjects(DinerEntity.class))
                 .addOnSuccessListener(data -> {
                     if(data.size() == 0) listener.onSuccess(data);
-                    i = 0;
                     data.forEach(item -> Repositories.getWorkmateRepository()
                             .getUser(item.getWorkmateId(), workmate -> {
-                                i++;
                                 item.setWorkmateEntity(new WorkmateEntity(
                                         workmate.getId(),
                                         workmate.getUsername(),
                                         workmate.getPictureUrl(),
                                         workmate.getMail()));
-                                if(i == data.size()) {
+                                boolean canReturn = true;
+                                for(DinerEntity d: data) {
+                                    if(d.getWorkmateEntity() == null) {
+                                        canReturn = false;
+                                    }
+                                }
+                                if(canReturn) {
                                     listener.onSuccess(data);
                                 }
                             }));
@@ -100,23 +106,27 @@ public class DinerDaoImpl implements DinerDao {
 
     @Override
     public void getDinerFromWorkmate(DaoOnSuccessListener<DinerEntity> listener) {
-        this.getDinersCollection()
-                .document(getCurrentUser().getUid()).get()
-                .continueWith(task -> task.getResult().toObject(DinerEntity.class))
-                .addOnSuccessListener(data -> {
-                    if(data != null) {
-                        Repositories.getWorkmateRepository().getUser(data.getWorkmateId(), workmate -> {
-                            data.setWorkmateEntity(
-                                    new WorkmateEntity(
-                                            workmate.getId(),
-                                            workmate.getUsername(),
-                                            workmate.getPictureUrl(),
-                                            workmate.getMail())
-                            );
-                            listener.onSuccess(data);
-                        });
-                    }
-                }).addOnFailureListener(Throwable::printStackTrace);;
+        if(getCurrentUser() != null) {
+            this.getDinersCollection()
+                    .document(getCurrentUser().getUid()).get()
+                    .continueWith(task -> task.getResult().toObject(DinerEntity.class))
+                    .addOnSuccessListener(data -> {
+                        if(data != null) {
+                            Repositories.getWorkmateRepository().getUser(data.getWorkmateId(), workmate -> {
+                                data.setWorkmateEntity(
+                                        new WorkmateEntity(
+                                                workmate.getId(),
+                                                workmate.getUsername(),
+                                                workmate.getPictureUrl(),
+                                                workmate.getMail())
+                                );
+                                listener.onSuccess(data);
+                            });
+                        } else {
+                            listener.onSuccess(null);
+                        }
+                    }).addOnFailureListener(Throwable::printStackTrace);
+        }
     }
 
     @Override
@@ -133,16 +143,20 @@ public class DinerDaoImpl implements DinerDao {
                     if(data.size() == 0) {
                         listener.onSuccess(data);
                     }
-                    i = 0;
                     data.forEach(item -> Repositories.getWorkmateRepository()
                             .getUser(item.getWorkmateId(), workmate -> {
-                                i++;
                                 item.setWorkmateEntity(new WorkmateEntity(
                                         workmate.getId(),
                                         workmate.getUsername(),
                                         workmate.getPictureUrl(),
                                         workmate.getMail()));
-                                if(i == data.size()) {
+                                boolean canReturn = true;
+                                for(DinerEntity d: data) {
+                                    if(d.getWorkmateEntity() == null) {
+                                        canReturn = false;
+                                    }
+                                }
+                                if(canReturn) {
                                     listener.onSuccess(data);
                                 }
                             }));

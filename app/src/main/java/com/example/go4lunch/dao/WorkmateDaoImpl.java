@@ -32,6 +32,23 @@ public class WorkmateDaoImpl implements WorkmateDao{
                 .addOnFailureListener(Throwable::printStackTrace);
     }
 
+    public void freeUsername(String id, DaoOnSuccessListener<Boolean> listener) {
+        this.getUsersCollection().get()
+                .continueWith(task -> task.getResult().toObjects(WorkmateEntity.class))
+                .addOnSuccessListener(data -> {
+                    if(data.size() == 0) {
+                        listener.onSuccess(true);
+                    }
+                    boolean canCreate = true;
+                    for(WorkmateEntity w: data) {
+                        if(w.getId().equals(id)) {
+                            canCreate = false;
+                        }
+                    }
+                    listener.onSuccess(canCreate);
+                });
+    }
+
     @Override
     public void getWorkmatesLits(DaoOnSuccessListener<List<WorkmateEntity>> listener) {
         this.getUsersCollection().get()
@@ -40,17 +57,20 @@ public class WorkmateDaoImpl implements WorkmateDao{
                     if(data.size() == 0) {
                         listener.onSuccess(data);
                     } else {
-                        indexWorkmate = 0;
                         for(WorkmateEntity w: data) {
                             Repositories.getDinerRepository().getDinerFromWorkmateId(w.getId(), d -> {
-                                w.setHasDiner(checkDiner(d));
+                                if(d == null) {
+                                    w.setHasDiner(false);
+                                } else {
+                                    w.setHasDiner(checkDiner(d));
+                                }
                                 indexWorkmate++;
-                                if(indexWorkmate == data.size() -1) {
+                                if(indexWorkmate == data.size()) {
                                     Collections.sort(data,
                                             (s1, s2) ->
                                                     (s1.hasDiner() ? 0 : 1) - (s2.hasDiner() ? 0 : 1));
-                                    indexWorkmate = 0;
                                     listener.onSuccess(data);
+                                    indexWorkmate = 0;
                                 }
                             });
                         }

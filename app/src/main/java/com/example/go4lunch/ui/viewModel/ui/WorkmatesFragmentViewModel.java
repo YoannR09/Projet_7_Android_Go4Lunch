@@ -23,7 +23,9 @@ public class WorkmatesFragmentViewModel extends ViewModel {
     }
 
     public void loadWorkmatesList() {
-        Repositories.getWorkmateRepository().getWorkmatesList(data -> workmates.setValue(data));
+        Repositories.getWorkmateRepository().getWorkmatesList(data ->{
+                workmates.setValue(data);
+        });
     }
 
     public LiveData<List<WorkmateModel>> getWorkmatesList() {

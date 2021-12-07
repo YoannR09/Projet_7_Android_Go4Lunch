@@ -54,7 +54,9 @@ public class RestaurantDetailsActivityViewModel extends ViewModel {
 
     public void loadDinerFromWorkmate() {
         Repositories.getDinerRepository().getDinerFromWorkmate(data -> {
-            dinerData.setValue(data);
+            if(data != null) {
+                dinerData.setValue(data);
+            }
         });
     };
 

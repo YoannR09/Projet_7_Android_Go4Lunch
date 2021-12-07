@@ -25,7 +25,13 @@ public class DinerRepository {
     public void getDinerFromWorkmate(
             RepositoryOnSuccessListener<DinerModel> listener) {
         dao.getDinerFromWorkmate(
-                data -> listener.onSuccess(new DinerEntityToModel().map(data)));
+                data -> {
+                    if(data != null) {
+                        listener.onSuccess(new DinerEntityToModel().map(data));
+                    }else {
+                        listener.onSuccess(null);
+                    }
+                });
     }
 
     public void getDinerFromWorkmateId(
@@ -33,7 +39,13 @@ public class DinerRepository {
             RepositoryOnSuccessListener<DinerModel> listener) {
         dao.getDinerFromWorkmateId(
                 workmateId,
-                data -> listener.onSuccess(new DinerEntityToModel().map(data)));
+                data -> {
+                    if(data != null) {
+                        listener.onSuccess(new DinerEntityToModel().map(data));
+                    } else {
+                        listener.onSuccess(null);
+                    }
+                });
     }
 
     public void getDinerFromRestaurant(

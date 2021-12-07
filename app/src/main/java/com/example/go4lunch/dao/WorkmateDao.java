@@ -17,5 +17,7 @@ public interface WorkmateDao {
 
     void getWorkmatesLits(DaoOnSuccessListener<List<WorkmateEntity>> listener);
 
+    void freeUsername(String id, DaoOnSuccessListener<Boolean> listener);
+
     void deleteUser();
 }

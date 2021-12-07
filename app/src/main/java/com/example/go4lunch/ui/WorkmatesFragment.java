@@ -12,10 +12,13 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
+import com.example.go4lunch.MainActivity;
 import com.example.go4lunch.R;
 import com.example.go4lunch.ui.list.WorkmatesAdapter;
 import com.example.go4lunch.ui.viewModel.ui.WorkmatesFragmentViewModel;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 
@@ -37,13 +40,17 @@ public class WorkmatesFragment extends Fragment {
                              Bundle savedInstanceState) {
         try {
             View view = inflater.inflate(R.layout.fragment_workmates, container, false);
-
+            final SwipeRefreshLayout pullToRefresh = view.findViewById(R.id.pullToRefresh);
+            pullToRefresh.setOnRefreshListener(() -> {
+                viewModel.loadWorkmatesList();
+                pullToRefresh.setRefreshing(false);
+            });
             viewModel = new ViewModelProvider(this).get(WorkmatesFragmentViewModel.class);
             recyclerView = view.findViewById(R.id.rvWorkmates);
             recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
             adapter = new WorkmatesAdapter(new ArrayList<>());
             recyclerView.setAdapter(adapter);
-            viewModel.getWorkmatesList().observe(getActivity(), workmates
+            viewModel.getWorkmatesList().observe(getViewLifecycleOwner(), workmates
                     -> adapter.updateList(workmates));
             viewModel.loadWorkmatesList();
             return view;
